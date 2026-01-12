@@ -126,6 +126,20 @@ function hmpro_get_active_preset_id() {
 }
 
 /**
+ * Get active preset data.
+ */
+function hmpro_get_active_preset() {
+	$preset_id = hmpro_get_active_preset_id();
+	$preset    = hmpro_get_preset_by_id( $preset_id );
+
+	if ( $preset ) {
+		return $preset;
+	}
+
+	return null;
+}
+
+/**
  * Set active preset id (only if exists).
  */
 function hmpro_set_active_preset_id( $preset_id ) {

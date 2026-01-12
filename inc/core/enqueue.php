@@ -11,12 +11,4 @@ add_action( 'wp_enqueue_scripts', function () {
 		[],
 		HMPRO_VERSION
 	);
-
-	wp_enqueue_style(
-		'hmpro-base',
-		HMPRO_URL . '/assets/css/base.css',
-		[],
-		HMPRO_VERSION
-	);
-
 } );

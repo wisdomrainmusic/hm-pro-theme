@@ -1,20 +1,33 @@
 :root {
 	--hm-primary: #111111;
+	--hm-dark: #000000;
 	--hm-bg: #ffffff;
 	--hm-surface: #f7f7f7;
 	--hm-text: #222222;
 	--hm-muted: #777777;
 	--hm-link: var(--hm-primary);
 	--hm-border: #e5e5e5;
+	--hm-footer: #111111;
 
 	--hm-body-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 	--hm-heading-font: inherit;
 }
 
+/* Base colors */
 body {
-	background: var(--hm-bg);
-	color: var(--hm-text);
+	background-color: var(--hm-bg);
+	color: var(--hm-dark);
 	font-family: var(--hm-body-font);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--hm-heading-font);
+	color: var(--hm-dark);
 }
 
 .hmpro-container {
@@ -23,14 +36,12 @@ body {
 	padding: 24px;
 }
 
-/* Basic UI elements (visible change on preset switch) */
+/* Buttons */
 button,
-.button,
 input[type="submit"],
-input[type="button"],
-.wp-element-button {
-	background: var(--hm-primary);
-	border: 1px solid var(--hm-primary);
+.button {
+	background-color: var(--hm-primary);
+	border-color: var(--hm-primary);
 	color: #fff;
 	padding: 10px 14px;
 	border-radius: 8px;
@@ -38,11 +49,10 @@ input[type="button"],
 }
 
 button:hover,
-.button:hover,
 input[type="submit"]:hover,
-input[type="button"]:hover,
-.wp-element-button:hover {
-	opacity: 0.9;
+.button:hover {
+	background-color: var(--hm-dark);
+	border-color: var(--hm-dark);
 }
 
 input[type="text"],
@@ -57,21 +67,18 @@ select {
 	color: var(--hm-text);
 }
 
-.site-header,
-.site-footer {
-	border-bottom: 1px solid var(--hm-border);
-}
-
-.site-footer {
-	border-top: 1px solid var(--hm-border);
-	border-bottom: none;
-}
-
 a {
 	color: var(--hm-link);
 	text-decoration: none;
 }
 
 a:hover {
-	opacity: 0.85;
+	color: var(--hm-primary);
+}
+
+/* Footer */
+footer,
+.site-footer {
+	background-color: var(--hm-footer);
+	color: #fff;
 }
