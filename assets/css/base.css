@@ -23,6 +23,50 @@ body {
 	padding: 24px;
 }
 
+/* Basic UI elements (visible change on preset switch) */
+button,
+.button,
+input[type="submit"],
+input[type="button"],
+.wp-element-button {
+	background: var(--hm-primary);
+	border: 1px solid var(--hm-primary);
+	color: #fff;
+	padding: 10px 14px;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+button:hover,
+.button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.wp-element-button:hover {
+	opacity: 0.9;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+	border: 1px solid var(--hm-border);
+	border-radius: 8px;
+	padding: 10px 12px;
+	background: var(--hm-surface);
+	color: var(--hm-text);
+}
+
+.site-header,
+.site-footer {
+	border-bottom: 1px solid var(--hm-border);
+}
+
+.site-footer {
+	border-top: 1px solid var(--hm-border);
+	border-bottom: none;
+}
+
 a {
 	color: var(--hm-link);
 	text-decoration: none;
