@@ -35,7 +35,11 @@ function hmpro_handle_admin_actions() {
 	}
 
 	// Handle CSV import (POST) early.
-	if ( isset( $_GET['page'] ) && 'hmpro-presets' === sanitize_key( wp_unslash( $_GET['page'] ) ) && isset( $_POST['hmpro_import_csv'] ) ) {
+	if (
+		isset( $_GET['page'] )
+		&& in_array( sanitize_key( wp_unslash( $_GET['page'] ) ), [ 'hmpro-presets', 'hmpro-theme' ], true )
+		&& isset( $_POST['hmpro_import_csv'] )
+	) {
 		check_admin_referer( 'hmpro_import_csv' );
 
 		$mode = isset( $_POST['import_mode'] ) ? sanitize_key( wp_unslash( $_POST['import_mode'] ) ) : 'update';

@@ -60,7 +60,7 @@ function hmpro_render_presets_page() {
 			<a class="button" href="<?php echo esc_url( $template_url ); ?>">Download CSV Template</a>
 		</p>
 
-		<form method="post" enctype="multipart/form-data">
+		<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin.php?page=hmpro-presets' ) ); ?>">
 			<?php wp_nonce_field( 'hmpro_import_csv' ); ?>
 
 			<table class="form-table" role="presentation">
