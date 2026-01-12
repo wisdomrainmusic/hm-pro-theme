@@ -22,12 +22,14 @@ function hmpro_get_default_preset() {
 		'id'           => 'default',
 		'name'         => 'Default',
 		'primary'      => '#111111',
+		'dark'         => '#0B1220',
 		'bg'           => '#ffffff',
 		'surface'      => '#f7f7f7',
 		'text'         => '#222222',
 		'muted'        => '#777777',
 		'link'         => '#111111',
 		'border'       => '#e5e5e5',
+		'footer'       => '#0B1220',
 		'body_font'    => 'system',
 		'heading_font' => 'system',
 		'created_at'   => gmdate( 'c' ),
@@ -155,12 +157,14 @@ function hmpro_seed_sample_presets() {
 			'id'           => 'midnight_pro',
 			'name'         => 'Midnight Pro',
 			'primary'      => '#0B1220',
+			'dark'         => '#0B1220',
 			'bg'           => '#FFFFFF',
 			'surface'      => '#F4F6FA',
 			'text'         => '#101828',
 			'muted'        => '#667085',
 			'link'         => '#0B1220',
 			'border'       => '#E4E7EC',
+			'footer'       => '#0B1220',
 			'body_font'    => 'system',
 			'heading_font' => 'system',
 			'created_at'   => $now,
@@ -170,12 +174,14 @@ function hmpro_seed_sample_presets() {
 			'id'           => 'rose_elegance',
 			'name'         => 'Rose Elegance',
 			'primary'      => '#D97C8A',
+			'dark'         => '#7A3340',
 			'bg'           => '#FFF6F7',
 			'surface'      => '#FFFFFF',
 			'text'         => '#2B2B2B',
 			'muted'        => '#7A6670',
 			'link'         => '#D97C8A',
 			'border'       => '#F2D7DB',
+			'footer'       => '#7A3340',
 			'body_font'    => 'system',
 			'heading_font' => 'system',
 			'created_at'   => $now,
@@ -185,12 +191,14 @@ function hmpro_seed_sample_presets() {
 			'id'           => 'sand_latte',
 			'name'         => 'Sand Latte',
 			'primary'      => '#8B6B4F',
+			'dark'         => '#2A241F',
 			'bg'           => '#FBF5EF',
 			'surface'      => '#FFFFFF',
 			'text'         => '#2A241F',
 			'muted'        => '#6B5E55',
 			'link'         => '#8B6B4F',
 			'border'       => '#E9DED6',
+			'footer'       => '#2A241F',
 			'body_font'    => 'system',
 			'heading_font' => 'system',
 			'created_at'   => $now,
@@ -201,5 +209,50 @@ function hmpro_seed_sample_presets() {
 	// Keep Default + add samples
 	$new = array_merge( $presets, $samples );
 	update_option( hmpro_presets_option_key(), $new, false );
+	return true;
+}
+
+/**
+ * Update a preset by id (whitelisted fields).
+ */
+function hmpro_update_preset( $preset_id, array $data ) {
+	$preset_id = sanitize_key( (string) $preset_id );
+	$presets   = hmpro_get_presets();
+
+	$allowed = [
+		'name',
+		'primary',
+		'dark',
+		'bg',
+		'footer',
+		'link',
+		'body_font',
+		'heading_font',
+	];
+
+	$found = false;
+
+	foreach ( $presets as $i => $p ) {
+		$pid = isset( $p['id'] ) ? sanitize_key( (string) $p['id'] ) : '';
+		if ( $pid !== $preset_id ) {
+			continue;
+		}
+
+		foreach ( $allowed as $k ) {
+			if ( array_key_exists( $k, $data ) ) {
+				$presets[ $i ][ $k ] = is_string( $data[ $k ] ) ? trim( $data[ $k ] ) : $data[ $k ];
+			}
+		}
+
+		$presets[ $i ]['updated_at'] = gmdate( 'c' );
+		$found = true;
+		break;
+	}
+
+	if ( ! $found ) {
+		return false;
+	}
+
+	update_option( hmpro_presets_option_key(), $presets, false );
 	return true;
 }
