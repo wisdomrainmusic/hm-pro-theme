@@ -59,7 +59,7 @@ function hmpro_render_presets_page() {
 							<?php else : ?>
 								<?php
 								$url = wp_nonce_url(
-									admin_url( 'admin.php?page=hmpro-presets&hmpro_action=set_active&preset=' . rawurlencode( $preset['id'] ) ),
+				admin_url( 'admin.php?page=hmpro-presets&hmpro_action=set_active&preset=' . rawurlencode( sanitize_key( (string) ( $preset['id'] ?? '' ) ) ) ),
 									'hmpro_set_active_preset'
 								);
 								?>
