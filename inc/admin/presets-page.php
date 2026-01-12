@@ -8,15 +8,15 @@ function hmpro_render_presets_page() {
 		return;
 	}
 
-	// Handle actions (Set Active).
-	if ( isset( $_GET['hmpro_action'], $_GET['preset'], $_GET['_wpnonce'] ) && $_GET['hmpro_action'] === 'set_active' ) {
-		$preset_id = sanitize_key( wp_unslash( $_GET['preset'] ) );
-		$nonce_ok  = wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'hmpro_set_active_preset' );
-
-		if ( $nonce_ok ) {
-			hmpro_set_active_preset_id( $preset_id );
-			wp_safe_redirect( admin_url( 'admin.php?page=hmpro-presets' ) );
-			exit;
+	// Admin notices
+	if ( isset( $_GET['hmpro_notice'] ) ) {
+		$notice = sanitize_key( wp_unslash( $_GET['hmpro_notice'] ) );
+		if ( 'preset_activated' === $notice ) {
+			echo '<div class="notice notice-success is-dismissible"><p>Preset activated.</p></div>';
+		} elseif ( 'preset_not_found' === $notice ) {
+			echo '<div class="notice notice-error is-dismissible"><p>Preset not found.</p></div>';
+		} elseif ( 'nonce_failed' === $notice ) {
+			echo '<div class="notice notice-error is-dismissible"><p>Security check failed. Please try again.</p></div>';
 		}
 	}
 
