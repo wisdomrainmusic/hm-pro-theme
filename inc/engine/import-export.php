@@ -51,7 +51,25 @@ function hmpro_import_presets_csv( $file_path, $mode = 'update' ) {
 		return [ 'imported' => 0, 'updated' => 0, 'created' => 0, 'skipped' => 0 ];
 	}
 
-	$header = fgetcsv( $fh );
+	// Read first line raw and auto-detect delimiter (comma/semicolon/tab).
+	$first_line = fgets( $fh );
+	if ( $first_line === false ) {
+		fclose( $fh );
+		return [ 'imported' => 0, 'updated' => 0, 'created' => 0, 'skipped' => 0 ];
+	}
+
+	$delims = [ ',', ';', "\t" ];
+	$best_delim = ',';
+	$best_count = -1;
+	foreach ( $delims as $d ) {
+		$c = substr_count( $first_line, $d );
+		if ( $c > $best_count ) {
+			$best_count = $c;
+			$best_delim = $d;
+		}
+	}
+
+	$header = str_getcsv( $first_line, $best_delim );
 	if ( ! is_array( $header ) ) {
 		fclose( $fh );
 		return [ 'imported' => 0, 'updated' => 0, 'created' => 0, 'skipped' => 0 ];
@@ -93,7 +111,8 @@ function hmpro_import_presets_csv( $file_path, $mode = 'update' ) {
 	$created  = 0;
 	$skipped  = 0;
 
-	while ( ( $row = fgetcsv( $fh ) ) !== false ) {
+	while ( ( $line = fgets( $fh ) ) !== false ) {
+		$row = str_getcsv( $line, $best_delim );
 		if ( ! is_array( $row ) || empty( $row ) ) {
 			continue;
 		}
