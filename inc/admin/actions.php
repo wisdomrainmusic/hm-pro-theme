@@ -34,6 +34,39 @@ function hmpro_handle_admin_actions() {
 		exit;
 	}
 
+	// Handle CSV import (POST) early.
+	if ( isset( $_GET['page'] ) && 'hmpro-presets' === sanitize_key( wp_unslash( $_GET['page'] ) ) && isset( $_POST['hmpro_import_csv'] ) ) {
+		check_admin_referer( 'hmpro_import_csv' );
+
+		$mode = isset( $_POST['import_mode'] ) ? sanitize_key( wp_unslash( $_POST['import_mode'] ) ) : 'update';
+		$mode = ( 'create' === $mode ) ? 'create' : 'update';
+
+		if ( empty( $_FILES['csv_file']['tmp_name'] ) ) {
+			$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
+			wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => 'csv_missing' ], $back ) );
+			exit;
+		}
+
+		$tmp = (string) $_FILES['csv_file']['tmp_name'];
+		$res = hmpro_import_presets_csv( $tmp, $mode );
+
+		$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
+		$back = remove_query_arg( [ 'hmpro_notice' ], $back );
+		$back = add_query_arg(
+			[
+				'hmpro_notice' => 'csv_imported',
+				'i'            => (int) $res['imported'],
+				'u'            => (int) $res['updated'],
+				'c'            => (int) $res['created'],
+				's'            => (int) $res['skipped'],
+			],
+			$back
+		);
+
+		wp_safe_redirect( $back );
+		exit;
+	}
+
 	$action = '';
 	if ( ! empty( $_POST['hmpro_action'] ) ) {
 		$action = sanitize_key( wp_unslash( $_POST['hmpro_action'] ) );
@@ -89,6 +122,10 @@ function hmpro_handle_admin_actions() {
 		$back = remove_query_arg( [ 'hmpro_action', '_wpnonce' ], $back );
 		wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => ( $ok ? 'seeded' : 'already_seeded' ) ], $back ) );
 		exit;
+	}
+
+	if ( 'download_csv_template' === $action ) {
+		hmpro_download_csv_template();
 	}
 
 	if ( 'set_active' !== $action ) {
