@@ -16,6 +16,20 @@ function hmpro_handle_admin_actions() {
 
 	$action = sanitize_key( wp_unslash( $_GET['hmpro_action'] ) );
 
+	if ( 'seed_presets' === $action ) {
+		if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'hmpro_seed_presets' ) ) {
+			$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
+			wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => 'nonce_failed' ], $back ) );
+			exit;
+		}
+
+		$ok   = hmpro_seed_sample_presets();
+		$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
+		$back = remove_query_arg( [ 'hmpro_action', '_wpnonce' ], $back );
+		wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => ( $ok ? 'seeded' : 'already_seeded' ) ], $back ) );
+		exit;
+	}
+
 	if ( 'set_active' !== $action ) {
 		return;
 	}
