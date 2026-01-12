@@ -1,0 +1,96 @@
+.wrhr-reader-wrapper {
+    padding: 20px;
+}
+
+.wrhr-header h2 {
+    font-size: 32px !important;    /* daha büyük */
+    font-weight: 800 !important;   /* daha güçlü */
+    color: #111 !important;        /* saf siyah */
+    letter-spacing: 0.02em !important;
+    margin-bottom: 24px !important;
+}
+
+.wrhr-book-list {
+    display: grid;
+    gap: 20px;
+}
+
+.wrhr-book-card {
+    border: 1px solid #e4d296;
+    padding: 15px;
+    border-radius: 8px;
+    background: #fffaf0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wrhr-book-card h4 {
+    color: #b8860b !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    margin-bottom: 4px !important;
+    opacity: 1 !important;
+}
+
+.wrhr-info h4 {
+    margin: 0 0 6px;
+    font-size: 18px;
+}
+
+.wrhr-author {
+    margin: 0;
+    opacity: .8;
+}
+
+.wrhr-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.wrhr-read-btn {
+    background: #b8860b;
+    color: white;
+    border: 0;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.wrhr-read-btn:hover {
+    background: #916d08;
+}
+
+.wrhr-buy-link {
+    background: #fffbe8;
+    color: #b8860b !important;
+    border: 1px solid #b8860b;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.wrhr-buy-link:hover {
+    background: #b8860b;
+    color: #fff !important;
+}
+
+/* WRHR Modal — Force Top Layer */
+.wrhr-modal-backdrop {
+    position: fixed !important;
+    z-index: 99998 !important;
+}
+
+.wrhr-modal-frame {
+    position: fixed !important;
+    z-index: 99999 !important;
+    background: #FDFBF4 !important; /* ivory */
+}
+
+.wrhr-modal-content {
+    position: relative !important;
+    z-index: 100000 !important;
+    background: #FDFBF4 !important;
+    color: #000 !important;
+}
