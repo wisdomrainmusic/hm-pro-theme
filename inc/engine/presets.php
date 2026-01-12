@@ -136,3 +136,70 @@ function hmpro_set_active_preset_id( $preset_id ) {
 	update_option( hmpro_active_preset_option_key(), $preset_id, false );
 	return true;
 }
+
+/**
+ * Seed a few sample presets for testing.
+ */
+function hmpro_seed_sample_presets() {
+	$presets = hmpro_get_presets();
+
+	// If we already have more than 1 preset, don't spam.
+	if ( count( $presets ) > 1 ) {
+		return false;
+	}
+
+	$now = gmdate( 'c' );
+
+	$samples = [
+		[
+			'id'           => 'midnight_pro',
+			'name'         => 'Midnight Pro',
+			'primary'      => '#0B1220',
+			'bg'           => '#FFFFFF',
+			'surface'      => '#F4F6FA',
+			'text'         => '#101828',
+			'muted'        => '#667085',
+			'link'         => '#0B1220',
+			'border'       => '#E4E7EC',
+			'body_font'    => 'system',
+			'heading_font' => 'system',
+			'created_at'   => $now,
+			'updated_at'   => $now,
+		],
+		[
+			'id'           => 'rose_elegance',
+			'name'         => 'Rose Elegance',
+			'primary'      => '#D97C8A',
+			'bg'           => '#FFF6F7',
+			'surface'      => '#FFFFFF',
+			'text'         => '#2B2B2B',
+			'muted'        => '#7A6670',
+			'link'         => '#D97C8A',
+			'border'       => '#F2D7DB',
+			'body_font'    => 'system',
+			'heading_font' => 'system',
+			'created_at'   => $now,
+			'updated_at'   => $now,
+		],
+		[
+			'id'           => 'sand_latte',
+			'name'         => 'Sand Latte',
+			'primary'      => '#8B6B4F',
+			'bg'           => '#FBF5EF',
+			'surface'      => '#FFFFFF',
+			'text'         => '#2A241F',
+			'muted'        => '#6B5E55',
+			'link'         => '#8B6B4F',
+			'border'       => '#E9DED6',
+			'body_font'    => 'system',
+			'heading_font' => 'system',
+			'created_at'   => $now,
+			'updated_at'   => $now,
+		],
+	];
+
+	// Keep Default + add samples
+	$new = array_merge( $presets, $samples );
+	update_option( hmpro_presets_option_key(), $new, false );
+	return true;
+}
