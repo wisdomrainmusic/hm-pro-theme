@@ -1,0 +1,33 @@
+/* Prices */
+.woocommerce div.product p.price,
+.woocommerce div.product span.price,
+.woocommerce ul.products li.product .price {
+	color: var(--hm-primary);
+}
+
+/* Sale badge */
+.woocommerce span.onsale {
+	background-color: var(--hm-primary);
+	color: #fff;
+}
+
+/* Add to cart */
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button {
+	background-color: var(--hm-primary);
+	border-color: var(--hm-primary);
+	color: #fff;
+}
+
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce input.button:hover {
+	background-color: var(--hm-dark);
+	border-color: var(--hm-dark);
+}
+
+/* Notices */
+.woocommerce-message {
+	border-left-color: var(--hm-primary);
+}

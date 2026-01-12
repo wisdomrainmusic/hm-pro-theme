@@ -93,13 +93,27 @@ function hmpro_render_preset_edit_page() {
 						<td>
 							<select name="body_font" id="body_font">
 								<?php
-								$fonts = [ 'system', 'Inter', 'Poppins', 'Lato', 'Open Sans', 'Playfair Display' ];
-								foreach ( $fonts as $f ) {
+								$fonts = [
+									'system',
+									'Inter',
+									'Poppins',
+									'Lato',
+									'Open Sans',
+									'Playfair Display',
+									'Caveat (Handwritten)',
+									'Dancing Script (Handwritten)',
+									'Pacifico (Handwritten)',
+								];
+								foreach ( $fonts as $label ) {
+									$value = $label;
+									// Strip helper text for tokenization.
+									$value = preg_replace( '/\s*\(.*\)$/', '', $value );
+									$value = str_replace( ' ', '_', strtolower( $value ) );
 									printf(
 										'<option value="%1$s" %2$s>%3$s</option>',
-										esc_attr( $f ),
-										selected( (string) ( $preset['body_font'] ?? 'system' ), (string) $f, false ),
-										esc_html( $f )
+										esc_attr( $value ),
+										selected( hmpro_normalize_font_token( (string) ( $preset['body_font'] ?? 'system' ) ), hmpro_normalize_font_token( (string) $value ), false ),
+										esc_html( $label )
 									);
 								}
 								?>
@@ -111,13 +125,27 @@ function hmpro_render_preset_edit_page() {
 						<td>
 							<select name="heading_font" id="heading_font">
 								<?php
-								$fonts = [ 'system', 'Inter', 'Poppins', 'Lato', 'Open Sans', 'Playfair Display' ];
-								foreach ( $fonts as $f ) {
+								$fonts = [
+									'system',
+									'Inter',
+									'Poppins',
+									'Lato',
+									'Open Sans',
+									'Playfair Display',
+									'Caveat (Handwritten)',
+									'Dancing Script (Handwritten)',
+									'Pacifico (Handwritten)',
+								];
+								foreach ( $fonts as $label ) {
+									$value = $label;
+									// Strip helper text for tokenization.
+									$value = preg_replace( '/\s*\(.*\)$/', '', $value );
+									$value = str_replace( ' ', '_', strtolower( $value ) );
 									printf(
 										'<option value="%1$s" %2$s>%3$s</option>',
-										esc_attr( $f ),
-										selected( (string) ( $preset['heading_font'] ?? 'system' ), (string) $f, false ),
-										esc_html( $f )
+										esc_attr( $value ),
+										selected( hmpro_normalize_font_token( (string) ( $preset['heading_font'] ?? 'system' ) ), hmpro_normalize_font_token( (string) $value ), false ),
+										esc_html( $label )
 									);
 								}
 								?>
