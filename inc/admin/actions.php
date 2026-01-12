@@ -82,6 +82,36 @@ function hmpro_handle_admin_actions() {
 		return;
 	}
 
+	// Apply a typography combo to the currently active preset.
+	if ( 'apply_typography_preset' === $action ) {
+		if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'hmpro_apply_typography' ) ) {
+			$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
+			wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => 'nonce_failed' ], $back ) );
+			exit;
+		}
+
+		$key = isset( $_GET['preset_key'] ) ? sanitize_key( wp_unslash( $_GET['preset_key'] ) ) : '';
+		$all = hmpro_typography_presets();
+		if ( empty( $key ) || empty( $all[ $key ] ) ) {
+			$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
+			wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => 'typo_invalid' ], $back ) );
+			exit;
+		}
+
+		$active_id = hmpro_get_active_preset_id();
+		$data      = [
+			'body_font'    => hmpro_normalize_font_token( $all[ $key ]['body_font'] ?? 'system' ),
+			'heading_font' => hmpro_normalize_font_token( $all[ $key ]['heading_font'] ?? 'system' ),
+		];
+
+		$ok = hmpro_update_preset( $active_id, $data );
+
+		$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
+		$back = remove_query_arg( [ 'hmpro_action', 'preset_key', '_wpnonce' ], $back );
+		wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => ( $ok ? 'typo_applied' : 'typo_failed' ) ], $back ) );
+		exit;
+	}
+
 	if ( 'update_preset' === $action ) {
 		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'hmpro_update_preset' ) ) {
 			$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
