@@ -86,10 +86,13 @@ function hmpro_render_presets_page() {
 				$label = isset( $t['label'] ) ? $t['label'] : $key;
 				$body  = isset( $t['body_font'] ) ? $t['body_font'] : 'system';
 				$head  = isset( $t['heading_font'] ) ? $t['heading_font'] : 'system';
+				$body_stack = hmpro_font_token_to_stack( (string) ( $t['body_font'] ?? 'system' ) );
+				$head_stack = hmpro_font_token_to_stack( (string) ( $t['heading_font'] ?? 'system' ) );
 				?>
-				<a class="button" href="<?php echo esc_url( $url ); ?>">
-					<?php echo esc_html( $label ); ?>
-					<span style="opacity:.7;">(<?php echo esc_html( $body ); ?> / <?php echo esc_html( $head ); ?>)</span>
+				<a class="button hmpro-typo-btn" href="<?php echo esc_url( $url ); ?>">
+					<span class="hmpro-typo-aa" style="font-family: <?php echo esc_attr( $head_stack ); ?>;">Aa</span>
+					<span class="hmpro-typo-label"><?php echo esc_html( $label ); ?></span>
+					<span class="hmpro-typo-meta">(<?php echo esc_html( $body ); ?> / <?php echo esc_html( $head ); ?>)</span>
 				</a>
 			<?php endforeach; ?>
 		</div>
