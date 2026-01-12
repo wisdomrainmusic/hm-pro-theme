@@ -34,34 +34,15 @@ function hmpro_render_preset_edit_page() {
 		return;
 	}
 
-	// Save handler.
-	if ( isset( $_POST['hmpro_save_preset'] ) ) {
-		check_admin_referer( 'hmpro_save_preset_' . $preset_id );
-
-		$data = [
-			'name'         => isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '',
-			'primary'      => isset( $_POST['primary'] ) ? sanitize_text_field( wp_unslash( $_POST['primary'] ) ) : '',
-			'dark'         => isset( $_POST['dark'] ) ? sanitize_text_field( wp_unslash( $_POST['dark'] ) ) : '',
-			'bg'           => isset( $_POST['bg'] ) ? sanitize_text_field( wp_unslash( $_POST['bg'] ) ) : '',
-			'footer'       => isset( $_POST['footer'] ) ? sanitize_text_field( wp_unslash( $_POST['footer'] ) ) : '',
-			'link'         => isset( $_POST['link'] ) ? sanitize_text_field( wp_unslash( $_POST['link'] ) ) : '',
-			'body_font'    => isset( $_POST['body_font'] ) ? sanitize_text_field( wp_unslash( $_POST['body_font'] ) ) : 'system',
-			'heading_font' => isset( $_POST['heading_font'] ) ? sanitize_text_field( wp_unslash( $_POST['heading_font'] ) ) : 'system',
-		];
-
-		hmpro_update_preset( $preset_id, $data );
-
-		wp_safe_redirect( admin_url( 'admin.php?page=hmpro-preset-edit&preset=' . rawurlencode( $preset_id ) . '&hmpro_saved=1' ) );
-		exit;
-	}
-
 	$back_url = admin_url( 'admin.php?page=hmpro-presets' );
 	?>
 	<div class="wrap hmpro-admin">
 		<h1>Edit Preset</h1>
 
-		<?php if ( isset( $_GET['hmpro_saved'] ) ) : ?>
+		<?php if ( isset( $_GET['hmpro_saved'] ) && '1' === (string) $_GET['hmpro_saved'] ) : ?>
 			<div class="notice notice-success is-dismissible"><p>Preset saved.</p></div>
+		<?php elseif ( isset( $_GET['hmpro_saved'] ) && '0' === (string) $_GET['hmpro_saved'] ) : ?>
+			<div class="notice notice-error is-dismissible"><p>Save failed. Preset not found.</p></div>
 		<?php endif; ?>
 
 		<p><a class="button" href="<?php echo esc_url( $back_url ); ?>">← Back to Presets</a></p>

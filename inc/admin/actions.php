@@ -10,6 +10,30 @@ function hmpro_handle_admin_actions() {
 		return;
 	}
 
+	// Handle preset save (POST) early to allow redirects before admin output.
+	if ( isset( $_GET['page'] ) && 'hmpro-preset-edit' === sanitize_key( wp_unslash( $_GET['page'] ) ) && isset( $_POST['hmpro_save_preset'] ) ) {
+		$preset_id = isset( $_GET['preset'] ) ? sanitize_key( wp_unslash( $_GET['preset'] ) ) : '';
+
+		check_admin_referer( 'hmpro_save_preset_' . $preset_id );
+
+		$data = [
+			'name'         => isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '',
+			'primary'      => isset( $_POST['primary'] ) ? sanitize_text_field( wp_unslash( $_POST['primary'] ) ) : '',
+			'dark'         => isset( $_POST['dark'] ) ? sanitize_text_field( wp_unslash( $_POST['dark'] ) ) : '',
+			'bg'           => isset( $_POST['bg'] ) ? sanitize_text_field( wp_unslash( $_POST['bg'] ) ) : '',
+			'footer'       => isset( $_POST['footer'] ) ? sanitize_text_field( wp_unslash( $_POST['footer'] ) ) : '',
+			'link'         => isset( $_POST['link'] ) ? sanitize_text_field( wp_unslash( $_POST['link'] ) ) : '',
+			'body_font'    => isset( $_POST['body_font'] ) ? sanitize_text_field( wp_unslash( $_POST['body_font'] ) ) : 'system',
+			'heading_font' => isset( $_POST['heading_font'] ) ? sanitize_text_field( wp_unslash( $_POST['heading_font'] ) ) : 'system',
+		];
+
+		$ok = hmpro_update_preset( $preset_id, $data );
+
+		$redirect = admin_url( 'admin.php?page=hmpro-preset-edit&preset=' . rawurlencode( $preset_id ) . '&hmpro_saved=' . ( $ok ? '1' : '0' ) );
+		wp_safe_redirect( $redirect );
+		exit;
+	}
+
 	$action = '';
 	if ( ! empty( $_POST['hmpro_action'] ) ) {
 		$action = sanitize_key( wp_unslash( $_POST['hmpro_action'] ) );
