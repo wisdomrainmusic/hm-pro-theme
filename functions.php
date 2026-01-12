@@ -1,0 +1,14 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+define( 'HMPRO_VERSION', '0.1.0' );
+define( 'HMPRO_PATH', get_template_directory() );
+define( 'HMPRO_URL', get_template_directory_uri() );
+
+/**
+ * Core includes
+ */
+require_once HMPRO_PATH . '/inc/core/setup.php';
+require_once HMPRO_PATH . '/inc/core/enqueue.php';
