@@ -1,6 +1,44 @@
 # HM Pro Theme
 
+## Checkpoint — Presets + Typography Engine (Phase 1)
+
+Status: Completed ✅
+
+What’s working:
+- Preset system (CRUD): create/edit/delete (active preset protected)
+- Active preset switch (Set Active) with notice feedback
+- CSV import + template download (robust delimiter + admin routing fix)
+- Palette preview dots in preset list (premium UI)
+- CSS variable engine (base + WooCommerce friendly, no !important)
+- Typography engine:
+  - Font tokens → Google Fonts loader (loads only selected fonts)
+  - :root font variables (body + heading)
+  - Typography Presets (1-click apply):
+    - Modern Store (inter / poppins)
+    - Editorial / Fashion (inter / playfair_display)
+    - Soft Elegant (lato / poppins)
+    - Signature Brand (inter / dancing_script)
+  - “Aa” mini preview on preset buttons
+
+Screens:
+- Admin presets UI: assets/img/admin-presets-ui.png
+- Frontend signature typography: assets/img/frontend-signature-typography.png
+
+Next planned:
+- Phase 2: Header/Footer Builder expansion + WooCommerce components styling pack
+- Phase 3: Demo Engine integration into theme (category/menu importer, starter demos)
+
 Premium WooCommerce-focused WordPress theme with built-in preset & palette engine.
+
+## Theme Screenshot
+
+The WordPress theme preview image (`screenshot.png`) is intentionally excluded
+from version control.
+
+Please add `screenshot.png` manually to the theme root directory before
+uploading the theme to WordPress.
+
+Recommended size: 1200x900px (PNG)
 
 ## Status
 - Commit 002: base theme + token-ready CSS
