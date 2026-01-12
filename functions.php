@@ -10,5 +10,7 @@ define( 'HMPRO_URL', get_template_directory_uri() );
 require_once HMPRO_PATH . '/inc/core/setup.php';
 require_once HMPRO_PATH . '/inc/core/enqueue.php';
 
+require_once HMPRO_PATH . '/inc/engine/presets.php';
+
 require_once HMPRO_PATH . '/inc/admin/admin-menu.php';
 require_once HMPRO_PATH . '/inc/admin/presets-page.php';
