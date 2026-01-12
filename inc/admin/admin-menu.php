@@ -25,4 +25,14 @@ function hmpro_register_admin_menu() {
 		'hmpro-presets',
 		'hmpro_render_presets_page'
 	);
+
+	// Hidden page for editing presets (not shown in menu).
+	add_submenu_page(
+		null,
+		__( 'Edit Preset', 'hmpro' ),
+		__( 'Edit Preset', 'hmpro' ),
+		'manage_options',
+		'hmpro-preset-edit',
+		'hmpro_render_preset_edit_page'
+	);
 }

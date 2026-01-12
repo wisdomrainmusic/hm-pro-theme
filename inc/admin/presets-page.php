@@ -67,10 +67,14 @@ function hmpro_render_presets_page() {
 						<td><?php echo $bg; ?></td>
 						<td><?php echo $fonts; ?></td>
 						<td>
-							<?php if ( $is_active ) : ?>
-								<span class="button button-primary" style="pointer-events:none;">Active</span>
-							<?php else : ?>
-								<?php
+							<?php
+							$edit_url = admin_url( 'admin.php?page=hmpro-preset-edit&preset=' . rawurlencode( sanitize_key( (string) ( $preset['id'] ?? '' ) ) ) );
+							?>
+							<a class="button" href="<?php echo esc_url( $edit_url ); ?>">Edit</a>
+						<?php if ( $is_active ) : ?>
+							<span class="button button-primary" style="pointer-events:none;">Active</span>
+						<?php else : ?>
+							<?php
 								$url = wp_nonce_url(
 				admin_url( 'admin.php?page=hmpro-presets&hmpro_action=set_active&preset=' . rawurlencode( sanitize_key( (string) ( $preset['id'] ?? '' ) ) ) ),
 									'hmpro_set_active_preset'

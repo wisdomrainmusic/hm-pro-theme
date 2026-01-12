@@ -42,12 +42,14 @@ function hmpro_output_runtime_css() {
 function hmpro_preset_to_css_vars( array $preset ) {
 	$map = [
 		'primary' => '--hm-primary',
+		'dark'    => '--hm-dark',
 		'bg'      => '--hm-bg',
 		'surface' => '--hm-surface',
 		'text'    => '--hm-text',
 		'muted'   => '--hm-muted',
 		'link'    => '--hm-link',
 		'border'  => '--hm-border',
+		'footer'  => '--hm-footer',
 	];
 
 	$out = [];

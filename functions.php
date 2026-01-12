@@ -16,3 +16,4 @@ require_once HMPRO_PATH . '/inc/engine/css-engine.php';
 require_once HMPRO_PATH . '/inc/admin/admin-menu.php';
 require_once HMPRO_PATH . '/inc/admin/actions.php';
 require_once HMPRO_PATH . '/inc/admin/presets-page.php';
+require_once HMPRO_PATH . '/inc/admin/preset-edit.php';
