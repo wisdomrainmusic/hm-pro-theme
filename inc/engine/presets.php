@@ -40,17 +40,51 @@ function hmpro_get_default_preset() {
  */
 function hmpro_get_presets() {
 	$presets = get_option( hmpro_presets_option_key(), [] );
+	$changed = false;
 
 	if ( ! is_array( $presets ) || empty( $presets ) ) {
 		$presets = [ hmpro_get_default_preset() ];
 		update_option( hmpro_presets_option_key(), $presets, false );
 	}
 
-	// Normalize: ensure each preset has an id.
+	// Normalize: ensure each preset has a sanitized id (and persist if needed).
+	$seen = [];
 	foreach ( $presets as $i => $p ) {
-		if ( empty( $p['id'] ) ) {
-			$presets[ $i ]['id'] = sanitize_key( $p['name'] ?? ( 'preset_' . $i ) );
+		$name = isset( $p['name'] ) ? (string) $p['name'] : ( 'Preset ' . ( $i + 1 ) );
+
+		$raw_id = isset( $p['id'] ) ? (string) $p['id'] : '';
+		$id     = sanitize_key( $raw_id );
+
+		if ( empty( $id ) ) {
+			$id = sanitize_key( $name );
 		}
+
+		if ( empty( $id ) ) {
+			$id = 'preset_' . $i;
+		}
+
+		// Ensure uniqueness.
+		$base = $id;
+		$n    = 2;
+		while ( isset( $seen[ $id ] ) ) {
+			$id = $base . '_' . $n;
+			$n++;
+		}
+		$seen[ $id ] = true;
+
+		if ( empty( $p['id'] ) || $p['id'] !== $id ) {
+			$presets[ $i ]['id'] = $id;
+			$changed = true;
+		}
+
+		if ( empty( $presets[ $i ]['name'] ) || $presets[ $i ]['name'] !== $name ) {
+			$presets[ $i ]['name'] = $name;
+			$changed = true;
+		}
+	}
+
+	if ( $changed ) {
+		update_option( hmpro_presets_option_key(), $presets, false );
 	}
 
 	return $presets;
@@ -64,7 +98,8 @@ function hmpro_get_preset_by_id( $preset_id ) {
 	$presets   = hmpro_get_presets();
 
 	foreach ( $presets as $preset ) {
-		if ( ! empty( $preset['id'] ) && $preset['id'] === $preset_id ) {
+		$pid = isset( $preset['id'] ) ? sanitize_key( (string) $preset['id'] ) : '';
+		if ( $pid && $pid === $preset_id ) {
 			return $preset;
 		}
 	}
