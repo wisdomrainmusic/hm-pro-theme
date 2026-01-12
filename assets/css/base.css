@@ -1,0 +1,27 @@
+:root {
+	--hm-primary: #111111;
+	--hm-bg: #ffffff;
+	--hm-surface: #f7f7f7;
+	--hm-text: #222222;
+	--hm-muted: #777777;
+	--hm-link: var(--hm-primary);
+	--hm-border: #e5e5e5;
+
+	--hm-body-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--hm-heading-font: inherit;
+}
+
+body {
+	background: var(--hm-bg);
+	color: var(--hm-text);
+	font-family: var(--hm-body-font);
+}
+
+a {
+	color: var(--hm-link);
+	text-decoration: none;
+}
+
+a:hover {
+	opacity: 0.85;
+}
