@@ -132,6 +132,29 @@ function hmpro_handle_admin_actions() {
 		hmpro_download_csv_template();
 	}
 
+	if ( 'delete_preset' === $action ) {
+		$preset_id = isset( $_GET['preset'] ) ? sanitize_key( wp_unslash( $_GET['preset'] ) ) : '';
+
+		if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'hmpro_delete_preset' ) ) {
+			$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
+			wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => 'nonce_failed' ], $back ) );
+			exit;
+		}
+
+		$active_id = hmpro_get_active_preset_id();
+		if ( $active_id === $preset_id ) {
+			$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
+			wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => 'preset_delete_active' ], $back ) );
+			exit;
+		}
+
+		$ok   = hmpro_delete_preset( $preset_id );
+		$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
+		$back = remove_query_arg( [ 'hmpro_action', 'preset', '_wpnonce' ], $back );
+		wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => ( $ok ? 'preset_deleted' : 'preset_delete_failed' ) ], $back ) );
+		exit;
+	}
+
 	if ( 'set_active' !== $action ) {
 		return;
 	}

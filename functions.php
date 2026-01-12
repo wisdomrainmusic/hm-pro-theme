@@ -18,3 +18,20 @@ require_once HMPRO_PATH . '/inc/admin/admin-menu.php';
 require_once HMPRO_PATH . '/inc/admin/actions.php';
 require_once HMPRO_PATH . '/inc/admin/presets-page.php';
 require_once HMPRO_PATH . '/inc/admin/preset-edit.php';
+
+add_action( 'admin_enqueue_scripts', function () {
+	wp_enqueue_style(
+		'hmpro-admin',
+		HMPRO_URL . '/assets/admin.css',
+		[],
+		HMPRO_VERSION
+	);
+
+	wp_enqueue_script(
+		'hmpro-admin',
+		HMPRO_URL . '/assets/admin.js',
+		[],
+		HMPRO_VERSION,
+		true
+	);
+} );

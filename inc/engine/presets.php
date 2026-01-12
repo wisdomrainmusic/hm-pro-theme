@@ -256,3 +256,30 @@ function hmpro_update_preset( $preset_id, array $data ) {
 	update_option( hmpro_presets_option_key(), $presets, false );
 	return true;
 }
+
+/**
+ * Delete a preset by id.
+ */
+function hmpro_delete_preset( $preset_id ) {
+	$preset_id = sanitize_key( (string) $preset_id );
+	$presets   = hmpro_get_presets();
+	$updated   = [];
+	$found     = false;
+
+	foreach ( $presets as $preset ) {
+		$pid = isset( $preset['id'] ) ? sanitize_key( (string) $preset['id'] ) : '';
+		if ( $pid && $pid === $preset_id ) {
+			$found = true;
+			continue;
+		}
+
+		$updated[] = $preset;
+	}
+
+	if ( ! $found ) {
+		return false;
+	}
+
+	update_option( hmpro_presets_option_key(), $updated, false );
+	return true;
+}
