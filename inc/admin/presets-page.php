@@ -31,6 +31,12 @@ function hmpro_render_presets_page() {
 			$c = isset( $_GET['c'] ) ? (int) $_GET['c'] : 0;
 			$s = isset( $_GET['s'] ) ? (int) $_GET['s'] : 0;
 			echo '<div class="notice notice-success is-dismissible"><p>CSV imported. Imported: ' . esc_html( $i ) . ', Updated: ' . esc_html( $u ) . ', Created: ' . esc_html( $c ) . ', Skipped: ' . esc_html( $s ) . '.</p></div>';
+		} elseif ( 'typo_applied' === $notice ) {
+			echo '<div class="notice notice-success is-dismissible"><p>Typography preset applied to the active preset.</p></div>';
+		} elseif ( 'typo_failed' === $notice ) {
+			echo '<div class="notice notice-error is-dismissible"><p>Typography preset could not be applied.</p></div>';
+		} elseif ( 'typo_invalid' === $notice ) {
+			echo '<div class="notice notice-error is-dismissible"><p>Invalid typography preset.</p></div>';
 		} elseif ( 'preset_not_found' === $notice ) {
 			echo '<div class="notice notice-error is-dismissible"><p>Preset not found.</p></div>';
 		} elseif ( 'nonce_failed' === $notice ) {
@@ -60,6 +66,35 @@ function hmpro_render_presets_page() {
 			'hmpro_csv_template'
 		);
 		?>
+
+		<h2>Typography Presets</h2>
+		<p>Apply a curated font combo to the currently active preset.</p>
+
+		<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 20px;">
+			<?php
+			$typos = function_exists( 'hmpro_typography_presets' ) ? hmpro_typography_presets() : [];
+			$nonce = wp_create_nonce( 'hmpro_apply_typography' );
+			foreach ( $typos as $key => $t ) :
+				$url = add_query_arg(
+					[
+						'hmpro_action' => 'apply_typography_preset',
+						'preset_key'   => $key,
+						'_wpnonce'     => $nonce,
+					],
+					admin_url( 'admin.php?page=hmpro-presets' )
+				);
+				$label = isset( $t['label'] ) ? $t['label'] : $key;
+				$body  = isset( $t['body_font'] ) ? $t['body_font'] : 'system';
+				$head  = isset( $t['heading_font'] ) ? $t['heading_font'] : 'system';
+				?>
+				<a class="button" href="<?php echo esc_url( $url ); ?>">
+					<?php echo esc_html( $label ); ?>
+					<span style="opacity:.7;">(<?php echo esc_html( $body ); ?> / <?php echo esc_html( $head ); ?>)</span>
+				</a>
+			<?php endforeach; ?>
+		</div>
+
+		<hr />
 
 		<h2>Import Presets from CSV</h2>
 		<p>

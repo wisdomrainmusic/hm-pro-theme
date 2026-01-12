@@ -113,3 +113,31 @@ function hmpro_font_token_to_stack( $token ) {
 
 	return $reg['system']['fallback'];
 }
+
+/**
+ * Typography combo presets (token keys).
+ */
+function hmpro_typography_presets() {
+	return [
+		'modern_store'      => [
+			'label'        => 'Modern Store',
+			'body_font'    => 'inter',
+			'heading_font' => 'poppins',
+		],
+		'editorial_fashion' => [
+			'label'        => 'Editorial / Fashion',
+			'body_font'    => 'inter',
+			'heading_font' => 'playfair_display',
+		],
+		'soft_elegant'      => [
+			'label'        => 'Soft Elegant',
+			'body_font'    => 'lato',
+			'heading_font' => 'poppins',
+		],
+		'signature_brand'   => [
+			'label'        => 'Signature Brand (Handwritten)',
+			'body_font'    => 'inter',
+			'heading_font' => 'dancing_script',
+		],
+	];
+}
