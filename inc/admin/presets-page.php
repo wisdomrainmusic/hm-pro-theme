@@ -13,6 +13,12 @@ function hmpro_render_presets_page() {
 		$notice = sanitize_key( wp_unslash( $_GET['hmpro_notice'] ) );
 		if ( 'preset_activated' === $notice ) {
 			echo '<div class="notice notice-success is-dismissible"><p>Preset activated.</p></div>';
+		} elseif ( 'preset_deleted' === $notice ) {
+			echo '<div class="notice notice-success is-dismissible"><p>Preset deleted.</p></div>';
+		} elseif ( 'preset_delete_failed' === $notice ) {
+			echo '<div class="notice notice-error is-dismissible"><p>Preset could not be deleted.</p></div>';
+		} elseif ( 'preset_delete_active' === $notice ) {
+			echo '<div class="notice notice-error is-dismissible"><p>Active preset cannot be deleted.</p></div>';
 		} elseif ( 'seeded' === $notice ) {
 			echo '<div class="notice notice-success is-dismissible"><p>Sample presets added.</p></div>';
 		} elseif ( 'already_seeded' === $notice ) {
@@ -99,6 +105,7 @@ function hmpro_render_presets_page() {
 			<thead>
 				<tr>
 					<th>Name</th>
+					<th>Palette</th>
 					<th>Primary</th>
 					<th>Background</th>
 					<th>Fonts</th>
@@ -117,24 +124,43 @@ function hmpro_render_presets_page() {
 					?>
 					<tr>
 						<td><strong><?php echo $name; ?></strong></td>
+						<td>
+							<div class="hmpro-palette">
+								<span style="background: <?php echo esc_attr( $preset['primary'] ?? '#000' ); ?>"></span>
+								<span style="background: <?php echo esc_attr( $preset['dark'] ?? '#333' ); ?>"></span>
+								<span style="background: <?php echo esc_attr( $preset['bg'] ?? '#fff' ); ?>"></span>
+								<span style="background: <?php echo esc_attr( $preset['footer'] ?? '#111' ); ?>"></span>
+								<span style="background: <?php echo esc_attr( $preset['link'] ?? '#0073aa' ); ?>"></span>
+							</div>
+						</td>
 						<td><?php echo $primary; ?></td>
 						<td><?php echo $bg; ?></td>
 						<td><?php echo $fonts; ?></td>
 						<td>
 							<?php
-							$edit_url = admin_url( 'admin.php?page=hmpro-preset-edit&preset=' . rawurlencode( sanitize_key( (string) ( $preset['id'] ?? '' ) ) ) );
+							$preset_key  = sanitize_key( (string) ( $preset['id'] ?? '' ) );
+							$edit_url    = admin_url( 'admin.php?page=hmpro-preset-edit&preset=' . rawurlencode( $preset_key ) );
+							$activate_url = wp_nonce_url(
+								admin_url( 'admin.php?page=hmpro-presets&hmpro_action=set_active&preset=' . rawurlencode( $preset_key ) ),
+								'hmpro_set_active_preset'
+							);
+							$delete_url  = wp_nonce_url(
+								admin_url( 'admin.php?page=hmpro-presets&hmpro_action=delete_preset&preset=' . rawurlencode( $preset_key ) ),
+								'hmpro_delete_preset'
+							);
 							?>
 							<a class="button" href="<?php echo esc_url( $edit_url ); ?>">Edit</a>
-						<?php if ( $is_active ) : ?>
-							<span class="button button-primary" style="pointer-events:none;">Active</span>
-						<?php else : ?>
-							<?php
-								$url = wp_nonce_url(
-				admin_url( 'admin.php?page=hmpro-presets&hmpro_action=set_active&preset=' . rawurlencode( sanitize_key( (string) ( $preset['id'] ?? '' ) ) ) ),
-									'hmpro_set_active_preset'
-								);
-								?>
-								<a class="button" href="<?php echo esc_url( $url ); ?>">Set Active</a>
+							<?php if ( $active_id === ( $preset['id'] ?? '' ) ) : ?>
+								<span class="hmpro-badge-active">Active</span>
+							<?php else : ?>
+								<a class="button" href="<?php echo esc_url( $activate_url ); ?>">Set Active</a>
+							<?php endif; ?>
+							<?php if ( $active_id !== ( $preset['id'] ?? '' ) ) : ?>
+								<a class="button button-danger hmpro-delete-preset"
+								   href="<?php echo esc_url( $delete_url ); ?>"
+								   data-name="<?php echo esc_attr( $preset['name'] ); ?>">
+								   Delete
+								</a>
 							<?php endif; ?>
 						</td>
 					</tr>
