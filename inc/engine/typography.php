@@ -89,13 +89,9 @@ function hmpro_enqueue_active_preset_fonts() {
 		return;
 	}
 
-	// Build Google Fonts URL (v2).
-	$query = [
-		'family'  => implode( '&family=', $families ),
-		'display' => 'swap',
-	];
-
-	$url = 'https://fonts.googleapis.com/css2?' . http_build_query( $query, '', '&', PHP_QUERY_RFC3986 );
+	// Build Google Fonts URL (v2) WITHOUT encoding "&family=" separators.
+	// Example: https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Dancing+Script:wght@400;700&display=swap
+	$url = 'https://fonts.googleapis.com/css2?family=' . implode( '&family=', $families ) . '&display=swap';
 
 	wp_enqueue_style( 'hmpro-fonts', $url, [], HMPRO_VERSION );
 }
@@ -141,3 +137,7 @@ function hmpro_typography_presets() {
 		],
 	];
 }
+
+// Ensure fonts are also enqueued inside Elementor editor/preview iframe.
+add_action( 'elementor/frontend/after_enqueue_styles', 'hmpro_enqueue_active_preset_fonts', 5 );
+add_action( 'elementor/editor/after_enqueue_styles', 'hmpro_enqueue_active_preset_fonts', 5 );
