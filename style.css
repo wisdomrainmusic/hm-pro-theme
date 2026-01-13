@@ -18,12 +18,10 @@ Tags: e-commerce, woocommerce, elementor, custom-colors, custom-logo, theme-opti
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 32px;
-	height: 32px;
-	border-radius: 999px;
-	border: 1px solid rgba(0, 0, 0, 0.12);
-	background: rgba(255, 255, 255, 0.8);
-	color: inherit;
+	width: 34px;
+	height: 34px;
+	border-radius: 10px;
+	color: #111;
 	text-decoration: none;
 	transition: transform 0.15s ease, opacity 0.15s ease;
 }
@@ -34,23 +32,18 @@ Tags: e-commerce, woocommerce, elementor, custom-colors, custom-logo, theme-opti
 	transform: translateY(-1px);
 }
 
-.hmpro-socialicon__inner {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	height: 100%;
-}
-
-.hmpro-socialicon__inner svg {
-	width: 16px;
-	height: 16px;
+.hmpro-socialicon__svg svg {
+	width: 18px;
+	height: 18px;
 	display: block;
 }
 
-.hmpro-socialicon__text {
+.hmpro-socialicon__badge {
+	width: 18px;
+	height: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	font-size: 12px;
-	font-weight: 600;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
+	font-weight: 700;
 }
