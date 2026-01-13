@@ -35,12 +35,16 @@ add_action( 'admin_init', function () {
 	$json = isset( $_POST['hmpro_builder_layout'] ) ? wp_unslash( $_POST['hmpro_builder_layout'] ) : '';
 	$decoded = json_decode( (string) $json, true );
 
-	$clean = function_exists( 'hmpro_builder_sanitize_layout' )
-		? hmpro_builder_sanitize_layout( $area, $decoded )
-		: array();
+	$clean = null;
+	if ( is_array( $decoded ) && isset( $decoded['regions'] ) && is_array( $decoded['regions'] ) && ! empty( $decoded['regions'] ) ) {
+		$clean = function_exists( 'hmpro_builder_sanitize_layout' )
+			? hmpro_builder_sanitize_layout( $area, $decoded )
+			: array();
+	}
 
-	if ( function_exists( 'hmpro_builder_update_layout' ) ) {
-		hmpro_builder_update_layout( $area, $clean );
+	$did_update = false;
+	if ( null !== $clean && function_exists( 'hmpro_builder_update_layout' ) ) {
+		$did_update = (bool) hmpro_builder_update_layout( $area, $clean );
 	}
 
 	$redirect = ( 'footer' === $area ) ? 'hmpro-footer-builder' : 'hmpro-header-builder';
@@ -48,7 +52,7 @@ add_action( 'admin_init', function () {
 		add_query_arg(
 			array(
 				'page'   => $redirect,
-				'saved'  => '1',
+				'saved'  => $did_update ? '1' : '0',
 			),
 			admin_url( 'admin.php' )
 		)
