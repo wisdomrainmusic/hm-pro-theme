@@ -102,7 +102,7 @@ function hmpro_builder_render_component( $comp ) {
 			hmpro_builder_comp_menu( $set );
 			break;
 		case 'search':
-			hmpro_builder_comp_search( $set );
+			hmpro_builder_comp_search( $set, $id );
 			break;
 		case 'cart':
 			if ( class_exists( 'WooCommerce' ) ) {
@@ -128,15 +128,47 @@ function hmpro_builder_render_component( $comp ) {
 
 function hmpro_builder_comp_logo() {
 	$home = home_url( '/' );
+
+	// IMPORTANT: the_custom_logo() already outputs a linked <a class="custom-logo-link">.
+	// Wrapping it with another <a> creates invalid nested anchors and breaks styling.
 	if ( function_exists( 'the_custom_logo' ) && has_custom_logo() ) {
-		echo '<a class="hmpro-logo" href="' . esc_url( $home ) . '" rel="home">';
+		echo '<div class="hmpro-logo" role="banner">';
 		the_custom_logo();
-		echo '</a>';
+		echo '</div>';
 		return;
 	}
+
 	echo '<a class="hmpro-logo hmpro-logo-text" href="' . esc_url( $home ) . '" rel="home">';
 	echo esc_html( get_bloginfo( 'name' ) );
 	echo '</a>';
+}
+
+/**
+ * Pick a menu location that actually has a menu assigned.
+ * Prefer builder-friendly locations first, but support legacy keys too.
+ */
+function hmpro_builder_pick_menu_location( array $preferred_keys ) {
+	$locations = (array) get_nav_menu_locations(); // [ location_key => menu_id ]
+	if ( empty( $locations ) ) {
+		return '';
+	}
+
+	// 1) Preferred keys that have a menu_id.
+	foreach ( $preferred_keys as $key ) {
+		$key = sanitize_key( (string) $key );
+		if ( isset( $locations[ $key ] ) && absint( $locations[ $key ] ) > 0 ) {
+			return $key;
+		}
+	}
+
+	// 2) Any assigned location.
+	foreach ( $locations as $key => $menu_id ) {
+		if ( absint( $menu_id ) > 0 ) {
+			return sanitize_key( (string) $key );
+		}
+	}
+
+	return '';
 }
 
 function hmpro_builder_comp_menu( array $set ) {
@@ -147,14 +179,18 @@ function hmpro_builder_comp_menu( array $set ) {
 		$depth = 2;
 	}
 
-	$locations = get_nav_menu_locations();
-	if ( '' === $location ) {
-		if ( isset( $locations['primary'] ) ) {
-			$location = 'primary';
-		} else {
-			$keys     = array_keys( (array) $locations );
-			$location = $keys[0] ?? '';
+	$locations = (array) get_nav_menu_locations();
+
+	// If a location was set explicitly, but no menu is assigned to it, ignore and auto-pick.
+	if ( '' !== $location ) {
+		if ( ! isset( $locations[ $location ] ) || absint( $locations[ $location ] ) <= 0 ) {
+			$location = '';
 		}
+	}
+
+	// Smart pick: support both new builder keys and legacy theme keys.
+	if ( '' === $location ) {
+		$location = hmpro_builder_pick_menu_location( array( 'primary', 'hm_primary', 'topbar', 'footer', 'hm_footer' ) );
 	}
 
 	$location = sanitize_key( (string) $location );
@@ -174,11 +210,12 @@ function hmpro_builder_comp_menu( array $set ) {
 	);
 }
 
-function hmpro_builder_comp_search( array $set ) {
+function hmpro_builder_comp_search( array $set, $comp_id = '' ) {
 	$ph = isset( $set['placeholder'] ) ? sanitize_text_field( (string) $set['placeholder'] ) : __( 'Search…', 'hmpro' );
+	$field_id = 'hmpro-search-field-' . ( $comp_id ? sanitize_key( (string) $comp_id ) : wp_rand( 1000, 9999 ) );
 	echo '<form class="hmpro-search" role="search" method="get" action="' . esc_url( home_url( '/' ) ) . '">';
-	echo '<label class="screen-reader-text" for="hmpro-search-field">' . esc_html__( 'Search for:', 'hmpro' ) . '</label>';
-	echo '<input id="hmpro-search-field" class="hmpro-search-field" type="search" name="s" value="' . esc_attr( get_search_query() ) . '" placeholder="' . esc_attr( $ph ) . '" />';
+	echo '<label class="screen-reader-text" for="' . esc_attr( $field_id ) . '">' . esc_html__( 'Search for:', 'hmpro' ) . '</label>';
+	echo '<input id="' . esc_attr( $field_id ) . '" class="hmpro-search-field" type="search" name="s" value="' . esc_attr( get_search_query() ) . '" placeholder="' . esc_attr( $ph ) . '" required />';
 	echo '<button class="hmpro-search-submit" type="submit">' . esc_html__( 'Search', 'hmpro' ) . '</button>';
 	echo '</form>';
 }
