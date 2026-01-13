@@ -115,11 +115,13 @@ footer,
 .hmpro-align-right{justify-content:flex-end;}
 
 .hmpro-logo img,
-.hmpro-logo .custom-logo{
-	max-height: var(--hmpro-logo-max-height);
-	width:auto !important;
-	height:auto !important;
-	display:block;
+.hmpro-logo img.custom-logo,
+.hmpro-logo .custom-logo,
+.hmpro-logo .custom-logo-link img{
+  max-height: var(--hmpro-logo-max-height);
+  width:auto !important;
+  height:auto !important;
+  display:block;
 	object-fit:contain;
 }
 .hmpro-logo-text{

@@ -92,8 +92,11 @@ add_action( 'after_setup_theme', function () {
 	add_theme_support( 'woocommerce' );
 
 	register_nav_menus( [
-		'hm_primary' => __( 'Primary Menu', 'hmpro' ),
-		'hm_footer'  => __( 'Footer Menu', 'hmpro' ),
+		// Legacy keys (older header fallback expects these).
+		// Keep for backward compatibility, but builder renderer will prefer 'primary/topbar/footer'
+		// and fall back to these if assigned.
+		'hm_primary' => __( 'Primary Menu (Legacy)', 'hmpro' ),
+		'hm_footer'  => __( 'Footer Menu (Legacy)', 'hmpro' ),
 	] );
 
 } );
