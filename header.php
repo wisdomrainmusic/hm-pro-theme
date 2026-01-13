@@ -2,6 +2,31 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+if ( ! function_exists( 'hmpro_render_legacy_header' ) ) {
+	function hmpro_render_legacy_header() {
+		?>
+		<header class="site-header">
+			<div class="hmpro-container">
+				<a class="site-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+					<?php bloginfo( 'name' ); ?>
+				</a>
+
+				<nav class="site-nav" aria-label="<?php esc_attr_e( 'Primary Menu', 'hmpro' ); ?>">
+					<?php
+					wp_nav_menu( [
+						'theme_location' => 'hm_primary',
+						'container'      => false,
+						'fallback_cb'    => '__return_false',
+					] );
+					?>
+				</nav>
+			</div>
+		</header>
+		<?php
+	}
+}
+
 do_action( 'hmpro/header/before' );
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
@@ -14,7 +39,7 @@ do_action( 'hmpro/header/before' );
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
-<?php if ( function_exists( 'hmpro_has_builder_layout' ) && hmpro_has_builder_layout( 'header' ) ) : ?>
+<?php if ( function_exists( 'hmpro_header_builder_has_layout' ) && hmpro_header_builder_has_layout() ) : ?>
 
 	<?php do_action( 'hmpro/header/builder/before' ); ?>
 
@@ -26,26 +51,12 @@ do_action( 'hmpro/header/before' );
 
 	<?php do_action( 'hmpro/header/builder/after' ); ?>
 
-<?php else : ?>
-
-	<header class="site-header">
-		<div class="hmpro-container">
-			<a class="site-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-				<?php bloginfo( 'name' ); ?>
-			</a>
-
-			<nav class="site-nav" aria-label="<?php esc_attr_e( 'Primary Menu', 'hmpro' ); ?>">
-				<?php
-				wp_nav_menu( [
-					'theme_location' => 'hm_primary',
-					'container'      => false,
-					'fallback_cb'    => '__return_false',
-				] );
-				?>
-			</nav>
-		</div>
-	</header>
-
 <?php endif; ?>
+
+<?php
+if ( ! function_exists( 'hmpro_header_builder_has_layout' ) || ! hmpro_header_builder_has_layout() ) {
+	hmpro_render_legacy_header();
+}
+?>
 
 <?php do_action( 'hmpro/header/after' ); ?>

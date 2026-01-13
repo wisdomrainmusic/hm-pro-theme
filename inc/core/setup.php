@@ -70,6 +70,10 @@ function hmpro_has_builder_layout( $area ) {
 	return (bool) apply_filters( 'hmpro/has_builder_layout', false, $area );
 }
 
+function hmpro_header_builder_has_layout() {
+	return function_exists( 'hmpro_has_builder_layout' ) && hmpro_has_builder_layout( 'header' );
+}
+
 /**
  * Render a builder region
  * Renderer will be attached in Commit 018
