@@ -110,6 +110,22 @@
 		row.columns[idx].components = comps;
 	}
 
+	function findComponentById(sectionKey, compId) {
+		if (!compId) return null;
+		ensureSingleRow3Cols(sectionKey);
+		var row = layout.regions[sectionKey][0];
+		if (!row || !Array.isArray(row.columns)) return null;
+		for (var i = 0; i < row.columns.length; i++) {
+			var comps = row.columns[i].components || [];
+			for (var j = 0; j < comps.length; j++) {
+				if (comps[j] && comps[j].id === compId) {
+					return { zone: ZONES[i], index: j, comp: comps[j] };
+				}
+			}
+		}
+		return null;
+	}
+
 	function sync() {
 		layoutField.value = JSON.stringify(layout);
 	}
@@ -347,7 +363,12 @@
 		var comp = comps[idx];
 		if (!comp) return;
 
-		activeEditing = { zone: zone, index: idx, compId: comp.id };
+		activeEditing = {
+			section: activeSection,
+			zone: zone,
+			index: idx,
+			compId: comp.id
+		};
 		while (modalBody.firstChild) modalBody.removeChild(modalBody.firstChild);
 
 		var type = (comp.type || '').toLowerCase();
@@ -541,11 +562,21 @@
 	if (modalSave) {
 		modalSave.addEventListener('click', function () {
 			if (!activeEditing) return;
-			var zone = activeEditing.zone;
-			var index = activeEditing.index;
-			var comps = getComponents(activeSection, zone).slice();
-			var comp = comps[index];
-			if (!comp) return;
+			var sectionKey = activeEditing.section || activeSection;
+			var match = findComponentById(sectionKey, activeEditing.compId);
+			if (!match && sectionKey !== activeSection) {
+				match = findComponentById(activeSection, activeEditing.compId);
+				sectionKey = activeSection;
+			}
+			if (!match) {
+				closeModal();
+				return;
+			}
+
+			var zone = match.zone;
+			var index = match.index;
+			var comps = getComponents(sectionKey, zone).slice();
+			var comp = match.comp;
 			comp.settings = comp.settings || {};
 
 			var type = (comp.type || '').toLowerCase();
@@ -595,7 +626,7 @@
 			}
 
 			comps[index] = comp;
-			setComponents(activeSection, zone, comps);
+			setComponents(sectionKey, zone, comps);
 			sync();
 			render();
 			closeModal();
