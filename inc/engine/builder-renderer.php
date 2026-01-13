@@ -134,6 +134,9 @@ function hmpro_builder_render_component( $comp ) {
 		case 'social':
 			hmpro_builder_comp_social( $set );
 			break;
+		case 'social_icon_button':
+			hmpro_builder_comp_social_icon_button( $set );
+			break;
 		default:
 			do_action( 'hmpro/builder/render_component', $type, $set );
 			break;
@@ -282,6 +285,83 @@ function hmpro_builder_comp_spacer( array $set ) {
 		$style .= 'height:' . $h . 'px;';
 	}
 	echo '<span class="hmpro-spacer" style="' . esc_attr( $style ) . '"></span>';
+}
+
+/**
+ * Social icon button component.
+ */
+function hmpro_builder_comp_social_icon_button( array $set ) {
+	$url = isset( $set['url'] ) ? esc_url( (string) $set['url'] ) : '';
+	if ( '' === $url ) {
+		return;
+	}
+
+	$new_tab = ! empty( $set['new_tab'] );
+	$icon_mode = isset( $set['icon_mode'] ) ? sanitize_key( (string) $set['icon_mode'] ) : 'preset';
+	$icon_preset = isset( $set['icon_preset'] ) ? sanitize_key( (string) $set['icon_preset'] ) : 'facebook';
+	$custom_icon = isset( $set['custom_icon'] ) ? (string) $set['custom_icon'] : '';
+
+	$allowed_presets = array( 'facebook', 'instagram', 'linkedin', 'x', 'youtube', 'tiktok', 'whatsapp', 'telegram' );
+	if ( ! in_array( $icon_preset, $allowed_presets, true ) ) {
+		$icon_preset = 'facebook';
+	}
+
+	$label_map = array(
+		'facebook' => 'Facebook',
+		'instagram' => 'Instagram',
+		'linkedin' => 'LinkedIn',
+		'x' => 'X',
+		'youtube' => 'YouTube',
+		'tiktok' => 'TikTok',
+		'whatsapp' => 'WhatsApp',
+		'telegram' => 'Telegram',
+	);
+	$label = isset( $label_map[ $icon_preset ] ) ? $label_map[ $icon_preset ] : __( 'Social link', 'hmpro' );
+
+	$attrs = $new_tab ? ' target="_blank" rel="noopener noreferrer"' : '';
+	echo '<a class="hmpro-socialicon" href="' . esc_url( $url ) . '" aria-label="' . esc_attr( $label ) . '"' . $attrs . '>';
+	echo '<span class="hmpro-socialicon__inner">';
+
+	if ( 'custom' === $icon_mode && '' !== trim( $custom_icon ) ) {
+		$allowed_svg_tags = array(
+			'svg'      => array(
+				'viewBox'    => true,
+				'xmlns'      => true,
+				'width'      => true,
+				'height'     => true,
+				'fill'       => true,
+				'stroke'     => true,
+				'aria-hidden'=> true,
+				'role'       => true,
+				'focusable'  => true,
+			),
+			'g'        => array( 'fill' => true, 'stroke' => true ),
+			'path'     => array( 'd' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+			'circle'   => array( 'cx' => true, 'cy' => true, 'r' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+			'rect'     => array( 'x' => true, 'y' => true, 'width' => true, 'height' => true, 'rx' => true, 'ry' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+			'line'     => array( 'x1' => true, 'y1' => true, 'x2' => true, 'y2' => true, 'stroke' => true, 'stroke-width' => true ),
+			'polyline' => array( 'points' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+			'polygon'  => array( 'points' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+			'use'      => array( 'href' => true, 'xlink:href' => true ),
+		);
+		echo wp_kses( $custom_icon, $allowed_svg_tags );
+	} else {
+		$fallback = array(
+			'facebook' => 'F',
+			'instagram' => 'IG',
+			'linkedin' => 'in',
+			'x' => 'X',
+			'youtube' => 'Y',
+			'tiktok' => 'T',
+			'whatsapp' => 'W',
+			'telegram' => 'TG',
+		);
+		$text = isset( $fallback[ $icon_preset ] ) ? $fallback[ $icon_preset ] : 'S';
+		echo '<span class="hmpro-socialicon__text">' . esc_html( $text ) . '</span>';
+	}
+
+	echo '</span>';
+	echo '</a>';
 }
 
 

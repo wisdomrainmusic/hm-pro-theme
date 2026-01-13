@@ -76,7 +76,30 @@ function hmpro_builder_update_layout( $area, array $layout ) {
 function hmpro_builder_sanitize_layout( $area, $payload ) {
 	$area = ( 'footer' === $area ) ? 'footer' : 'header';
 
-	$allowed_types = array( 'logo', 'menu', 'search', 'social', 'cart', 'button', 'html', 'spacer' );
+	$allowed_types = array( 'logo', 'menu', 'search', 'social', 'social_icon_button', 'cart', 'button', 'html', 'spacer' );
+	$allowed_icon_modes = array( 'preset', 'custom' );
+	$allowed_icon_presets = array( 'facebook', 'instagram', 'linkedin', 'x', 'youtube', 'tiktok', 'whatsapp', 'telegram' );
+	$allowed_svg_tags = array(
+		'svg'      => array(
+			'viewBox'    => true,
+			'xmlns'      => true,
+			'width'      => true,
+			'height'     => true,
+			'fill'       => true,
+			'stroke'     => true,
+			'aria-hidden'=> true,
+			'role'       => true,
+			'focusable'  => true,
+		),
+		'g'        => array( 'fill' => true, 'stroke' => true ),
+		'path'     => array( 'd' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+		'circle'   => array( 'cx' => true, 'cy' => true, 'r' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+		'rect'     => array( 'x' => true, 'y' => true, 'width' => true, 'height' => true, 'rx' => true, 'ry' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+		'line'     => array( 'x1' => true, 'y1' => true, 'x2' => true, 'y2' => true, 'stroke' => true, 'stroke-width' => true ),
+		'polyline' => array( 'points' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+		'polygon'  => array( 'points' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+		'use'      => array( 'href' => true, 'xlink:href' => true ),
+	);
 
 	// Settings allowlist per component type (can expand in Commit 019).
 	$allowed_settings = array(
@@ -93,6 +116,16 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 			'gap',
 			'new_tab',
 			'urls',
+		),
+		'social_icon_button' => array(
+			'alignment',
+			'visibility',
+			'spacing',
+			'url',
+			'new_tab',
+			'icon_mode',
+			'icon_preset',
+			'custom_icon',
 		),
 		'cart'   => array( 'alignment', 'visibility', 'spacing' ),
 		'button' => array( 'alignment', 'visibility', 'spacing', 'text', 'url', 'rel', 'target' ),
@@ -174,6 +207,15 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 							$clean_settings[ $k ] = ! empty( $v ) ? 1 : 0;
 						} elseif ( 'url' === $k ) {
 							$clean_settings[ $k ] = is_scalar( $v ) ? esc_url_raw( (string) $v ) : '';
+						} elseif ( 'icon_mode' === $k ) {
+							$mode = is_scalar( $v ) ? sanitize_key( (string) $v ) : '';
+							$clean_settings[ $k ] = in_array( $mode, $allowed_icon_modes, true ) ? $mode : 'preset';
+						} elseif ( 'icon_preset' === $k ) {
+							$preset = is_scalar( $v ) ? sanitize_key( (string) $v ) : '';
+							$clean_settings[ $k ] = in_array( $preset, $allowed_icon_presets, true ) ? $preset : '';
+						} elseif ( 'custom_icon' === $k ) {
+							$raw_icon = is_scalar( $v ) ? (string) $v : '';
+							$clean_settings[ $k ] = '' !== $raw_icon ? wp_kses( $raw_icon, $allowed_svg_tags ) : '';
 						} elseif ( 'urls' === $k ) {
 							$clean_urls = array();
 							if ( is_array( $v ) ) {

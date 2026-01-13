@@ -557,6 +557,91 @@
 			fTab.appendChild(cTab);
 			modalBody.appendChild(fTab);
 
+		} else if (type === 'social_icon_button') {
+			var urlField = document.createElement('div');
+			urlField.className = 'hmpro-field';
+			var urlLabel = document.createElement('label');
+			urlLabel.textContent = 'URL';
+			var urlInput = document.createElement('input');
+			urlInput.type = 'url';
+			urlInput.id = 'hmproSettingSocialIconUrl';
+			urlInput.placeholder = 'https://';
+			urlInput.value = settings.url || '';
+			urlField.appendChild(urlLabel);
+			urlField.appendChild(urlInput);
+			modalBody.appendChild(urlField);
+
+			var tabField = document.createElement('div');
+			tabField.className = 'hmpro-field';
+			var tabLabel = document.createElement('label');
+			tabLabel.textContent = 'Open in new tab';
+			var tabInput = document.createElement('input');
+			tabInput.type = 'checkbox';
+			tabInput.id = 'hmproSettingSocialIconNewTab';
+			tabInput.checked = !!settings.new_tab;
+			tabField.appendChild(tabLabel);
+			tabField.appendChild(tabInput);
+			modalBody.appendChild(tabField);
+
+			var modeField = document.createElement('div');
+			modeField.className = 'hmpro-field';
+			var modeLabel = document.createElement('label');
+			modeLabel.textContent = 'Icon mode';
+			var modeSelect = document.createElement('select');
+			modeSelect.id = 'hmproSettingSocialIconMode';
+			['preset', 'custom'].forEach(function (mode) {
+				var opt = document.createElement('option');
+				opt.value = mode;
+				opt.textContent = mode;
+				modeSelect.appendChild(opt);
+			});
+			modeSelect.value = settings.icon_mode || 'preset';
+			modeField.appendChild(modeLabel);
+			modeField.appendChild(modeSelect);
+			modalBody.appendChild(modeField);
+
+			var presetField = document.createElement('div');
+			presetField.className = 'hmpro-field';
+			var presetLabel = document.createElement('label');
+			presetLabel.textContent = 'Preset icon';
+			var presetSelect = document.createElement('select');
+			presetSelect.id = 'hmproSettingSocialIconPreset';
+			['facebook', 'instagram', 'linkedin', 'x', 'youtube', 'tiktok', 'whatsapp', 'telegram'].forEach(function (preset) {
+				var optPreset = document.createElement('option');
+				optPreset.value = preset;
+				optPreset.textContent = preset;
+				presetSelect.appendChild(optPreset);
+			});
+			presetSelect.value = settings.icon_preset || 'facebook';
+			presetField.appendChild(presetLabel);
+			presetField.appendChild(presetSelect);
+			modalBody.appendChild(presetField);
+
+			var customField = document.createElement('div');
+			customField.className = 'hmpro-field';
+			var customLabel = document.createElement('label');
+			customLabel.textContent = 'Custom icon (SVG)';
+			var customTextarea = document.createElement('textarea');
+			customTextarea.id = 'hmproSettingSocialIconCustom';
+			customTextarea.rows = 6;
+			customTextarea.value = settings.custom_icon || '';
+			customField.appendChild(customLabel);
+			customField.appendChild(customTextarea);
+			modalBody.appendChild(customField);
+
+			var toggleIconInputs = function () {
+				var mode = modeSelect.value || 'preset';
+				if (mode === 'custom') {
+					customField.style.display = '';
+					presetField.style.display = 'none';
+				} else {
+					customField.style.display = 'none';
+					presetField.style.display = '';
+				}
+			};
+			modeSelect.addEventListener('change', toggleIconInputs);
+			toggleIconInputs();
+
 		} else {
 			var p = document.createElement('p');
 			p.textContent = 'No settings for this component yet.';
@@ -635,6 +720,19 @@
 				comp.settings.size = sz ? sz.value : (comp.settings.size || 'normal');
 				comp.settings.gap = gp ? gp.value : (comp.settings.gap || 'normal');
 				comp.settings.new_tab = nt ? !!nt.checked : !!comp.settings.new_tab;
+			}
+			if (type === 'social_icon_button') {
+				var urlEl = document.getElementById('hmproSettingSocialIconUrl');
+				var ntEl = document.getElementById('hmproSettingSocialIconNewTab');
+				var modeEl = document.getElementById('hmproSettingSocialIconMode');
+				var preEl = document.getElementById('hmproSettingSocialIconPreset');
+				var cuEl = document.getElementById('hmproSettingSocialIconCustom');
+
+				comp.settings.url = urlEl ? urlEl.value.trim() : '';
+				comp.settings.new_tab = ntEl ? !!ntEl.checked : false;
+				comp.settings.icon_mode = modeEl ? modeEl.value : 'preset';
+				comp.settings.icon_preset = preEl ? preEl.value : 'facebook';
+				comp.settings.custom_icon = cuEl ? cuEl.value : '';
 			}
 
 			syncLayoutToField();

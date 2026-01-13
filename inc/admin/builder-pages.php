@@ -54,7 +54,7 @@ function hmpro_render_builder_shell( $area ) {
 		'logo'   => __( 'Logo', 'hmpro' ),
 		'menu'   => __( 'Menu', 'hmpro' ),
 		'search' => __( 'Search', 'hmpro' ),
-		'social' => __( 'Social', 'hmpro' ),
+		'social_icon_button' => __( 'Social Icon Button', 'hmpro' ),
 		'cart'   => __( 'Cart', 'hmpro' ),
 		'button' => __( 'Button', 'hmpro' ),
 		'html'   => __( 'HTML', 'hmpro' ),
@@ -64,25 +64,6 @@ function hmpro_render_builder_shell( $area ) {
 	?>
 	<div class="wrap hmpro-builder-wrap" data-area="<?php echo esc_attr( $area ); ?>">
 		<h1><?php echo esc_html( $title ); ?></h1>
-
-		<?php
-		$debug_enabled = isset( $_GET['hmpro_dbg'] ) && '1' === (string) $_GET['hmpro_dbg'];
-		if ( $debug_enabled ) :
-			$raw_len = isset( $_GET['hmpro_raw_len'] ) ? absint( $_GET['hmpro_raw_len'] ) : 0;
-			$has_social = isset( $_GET['hmpro_has_social'] ) ? absint( $_GET['hmpro_has_social'] ) : 0;
-			$social_count = isset( $_GET['hmpro_social_count'] ) ? absint( $_GET['hmpro_social_count'] ) : 0;
-			$updated = isset( $_GET['saved'] ) ? ( '1' === (string) $_GET['saved'] ) : false;
-			?>
-			<div class="notice notice-info">
-				<p><strong><?php esc_html_e( 'Builder Debug', 'hmpro' ); ?></strong></p>
-				<ul>
-					<li><?php echo esc_html( 'RAW LEN: ' . $raw_len ); ?></li>
-					<li><?php echo esc_html( 'HAS SOCIAL?: ' . ( $has_social ? '1' : '0' ) ); ?></li>
-					<li><?php echo esc_html( 'SOCIAL URL COUNT: ' . $social_count ); ?></li>
-					<li><?php echo esc_html( 'UPDATED?: ' . ( $updated ? '1' : '0' ) ); ?></li>
-				</ul>
-			</div>
-		<?php endif; ?>
 
 		<?php if ( isset( $_GET['saved'] ) && '1' === (string) $_GET['saved'] ) : ?>
 			<div class="notice notice-success is-dismissible">
