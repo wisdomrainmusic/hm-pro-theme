@@ -31,6 +31,9 @@ function hmpro_render_footer_builder_page() {
 function hmpro_render_builder_shell( $area ) {
 	$area = ( 'footer' === $area ) ? 'footer' : 'header';
 
+	$layout = function_exists( 'hmpro_builder_get_layout' ) ? hmpro_builder_get_layout( $area ) : array();
+	$layout_json = ! empty( $layout ) ? wp_json_encode( $layout ) : wp_json_encode( array() );
+
 	$title = ( 'footer' === $area )
 		? __( 'Footer Builder', 'hmpro' )
 		: __( 'Header Builder', 'hmpro' );
@@ -55,9 +58,17 @@ function hmpro_render_builder_shell( $area ) {
 	<div class="wrap hmpro-builder-wrap" data-area="<?php echo esc_attr( $area ); ?>">
 		<h1><?php echo esc_html( $title ); ?></h1>
 
+		<?php if ( isset( $_GET['saved'] ) && '1' === (string) $_GET['saved'] ) : ?>
+			<div class="notice notice-success is-dismissible">
+				<p><?php esc_html_e( 'Builder layout saved.', 'hmpro' ); ?></p>
+			</div>
+		<?php endif; ?>
+
 		<form method="post" action="">
 			<?php wp_nonce_field( 'hmpro_builder_' . $area, 'hmpro_builder_nonce' ); ?>
-			<input type="hidden" name="hmpro_action" value="builder_placeholder" />
+			<input type="hidden" name="hmpro_action" value="hmpro_save_builder" />
+			<input type="hidden" name="hmpro_builder_area" value="<?php echo esc_attr( $area ); ?>" />
+			<input type="hidden" id="hmpro_builder_layout" name="hmpro_builder_layout" value="<?php echo esc_attr( $layout_json ); ?>" />
 
 			<div class="hmpro-builder-layout">
 
@@ -108,6 +119,12 @@ function hmpro_render_builder_shell( $area ) {
 				</aside>
 
 			</div>
+
+			<p style="margin-top:12px;">
+				<button type="submit" class="button button-primary">
+					<?php esc_html_e( 'Save Layout', 'hmpro' ); ?>
+				</button>
+			</p>
 		</form>
 	</div>
 	<?php
