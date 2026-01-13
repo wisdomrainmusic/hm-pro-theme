@@ -26,6 +26,24 @@ function hmpro_register_admin_menu() {
 		'hmpro_render_presets_page'
 	);
 
+	add_submenu_page(
+		'hmpro-theme',
+		__( 'Header Builder', 'hmpro' ),
+		__( 'Header Builder', 'hmpro' ),
+		'manage_options',
+		'hmpro-header-builder',
+		'hmpro_render_header_builder_page'
+	);
+
+	add_submenu_page(
+		'hmpro-theme',
+		__( 'Footer Builder', 'hmpro' ),
+		__( 'Footer Builder', 'hmpro' ),
+		'manage_options',
+		'hmpro-footer-builder',
+		'hmpro_render_footer_builder_page'
+	);
+
 	// Hidden page for editing presets (not shown in menu).
 	add_submenu_page(
 		null,

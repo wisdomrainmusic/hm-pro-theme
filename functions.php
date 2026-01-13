@@ -19,6 +19,7 @@ require_once HMPRO_PATH . '/inc/admin/admin-menu.php';
 require_once HMPRO_PATH . '/inc/admin/actions.php';
 require_once HMPRO_PATH . '/inc/admin/presets-page.php';
 require_once HMPRO_PATH . '/inc/admin/preset-edit.php';
+require_once HMPRO_PATH . '/inc/admin/builder-pages.php';
 
 add_action( 'admin_enqueue_scripts', function () {
 	wp_enqueue_style(
@@ -35,6 +36,25 @@ add_action( 'admin_enqueue_scripts', function () {
 		HMPRO_VERSION,
 		true
 	);
+
+	// Builder-specific assets (only on builder screens).
+	$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+	if ( in_array( $page, [ 'hmpro-header-builder', 'hmpro-footer-builder' ], true ) ) {
+		wp_enqueue_style(
+			'hmpro-admin-builder',
+			HMPRO_URL . '/assets/admin-builder.css',
+			[ 'hmpro-admin' ],
+			HMPRO_VERSION
+		);
+
+		wp_enqueue_script(
+			'hmpro-admin-builder',
+			HMPRO_URL . '/assets/admin-builder.js',
+			[ 'hmpro-admin' ],
+			HMPRO_VERSION,
+			true
+		);
+	}
 } );
 
 add_action( 'wp_enqueue_scripts', function () {
