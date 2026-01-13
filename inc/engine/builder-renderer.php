@@ -312,10 +312,21 @@ function hmpro_load_social_svg_preset( string $preset ): string {
 		return '';
 	}
 
-	$rel  = 'assets/icons/social/' . $map[ $preset ];
-	$path = trailingslashit( get_stylesheet_directory() ) . $rel;
+	$rel_candidates = array(
+		'assets/icon/social/' . $map[ $preset ],
+		'assets/icons/social/' . $map[ $preset ],
+	);
 
-	if ( ! file_exists( $path ) ) {
+	$path = '';
+	foreach ( $rel_candidates as $rel ) {
+		$p = trailingslashit( get_stylesheet_directory() ) . $rel;
+		if ( file_exists( $p ) ) {
+			$path = $p;
+			break;
+		}
+	}
+
+	if ( '' === $path ) {
 		$cache[ $preset ] = '';
 		return '';
 	}
@@ -427,16 +438,18 @@ function hmpro_builder_comp_social_icon_button( array $set ) {
 	}
 
 	if ( '' === $icon_html ) {
-		$badge = strtoupper( $icon_preset );
-		if ( 'facebook' === $icon_preset ) {
-			$badge = 'f';
-		}
-		if ( 'linkedin' === $icon_preset ) {
-			$badge = 'in';
-		}
-		if ( 'x' === $icon_preset || 'twitter' === $icon_preset ) {
-			$badge = 'X';
-		}
+		$badge_map = array(
+			'facebook'  => 'f',
+			'instagram' => 'IG',
+			'linkedin'  => 'in',
+			'x'         => 'X',
+			'twitter'   => 'X',
+			'youtube'   => 'YT',
+			'tiktok'    => 'TT',
+			'whatsapp'  => 'WA',
+			'telegram'  => 'TG',
+		);
+		$badge = isset( $badge_map[ $icon_preset ] ) ? $badge_map[ $icon_preset ] : strtoupper( substr( $icon_preset, 0, 2 ) );
 		$icon_html = '<span class="hmpro-socialicon__badge">' . esc_html( $badge ) . '</span>';
 	} else {
 		$icon_html = '<span class="hmpro-socialicon__svg" aria-hidden="true">' . $icon_html . '</span>';

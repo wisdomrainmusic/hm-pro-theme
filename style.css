@@ -20,16 +20,19 @@ Tags: e-commerce, woocommerce, elementor, custom-colors, custom-logo, theme-opti
 	justify-content: center;
 	width: 34px;
 	height: 34px;
-	border-radius: 10px;
+	border-radius: 999px;
 	color: #111;
 	text-decoration: none;
-	transition: transform 0.15s ease, opacity 0.15s ease;
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
 }
 
 .hmpro-socialicon:hover,
 .hmpro-socialicon:focus {
-	opacity: 0.85;
+	opacity: 0.92;
 	transform: translateY(-1px);
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
 .hmpro-socialicon__svg svg {
@@ -39,11 +42,7 @@ Tags: e-commerce, woocommerce, elementor, custom-colors, custom-logo, theme-opti
 }
 
 .hmpro-socialicon__badge {
-	width: 18px;
-	height: 18px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 12px;
 	font-weight: 700;
+	font-size: 12px;
+	letter-spacing: 0.2px;
 }
