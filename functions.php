@@ -15,6 +15,7 @@ require_once HMPRO_PATH . '/inc/engine/css-engine.php';
 require_once HMPRO_PATH . '/inc/engine/import-export.php';
 require_once HMPRO_PATH . '/inc/engine/typography.php';
 require_once HMPRO_PATH . '/inc/engine/builder-storage.php';
+require_once HMPRO_PATH . '/inc/engine/builder-renderer.php';
 
 require_once HMPRO_PATH . '/inc/admin/admin-menu.php';
 require_once HMPRO_PATH . '/inc/admin/actions.php';
