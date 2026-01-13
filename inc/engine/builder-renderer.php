@@ -55,6 +55,7 @@ function hmpro_builder_render_region( $area, $region_key ) {
 		$row_id = isset( $row['id'] ) ? sanitize_key( $row['id'] ) : '';
 		echo '<div class="hmpro-builder-row" data-row="' . esc_attr( $row_id ) . '">';
 
+		$col_index = 0;
 		foreach ( $row['columns'] as $col ) {
 			if ( ! is_array( $col ) ) {
 				continue;
@@ -65,8 +66,14 @@ function hmpro_builder_render_region( $area, $region_key ) {
 			if ( $width < 1 || $width > 12 ) {
 				$width = 12;
 			}
+			$align_class = 'hmpro-align-left';
+			if ( 1 === $col_index ) {
+				$align_class = 'hmpro-align-center';
+			} elseif ( 2 === $col_index ) {
+				$align_class = 'hmpro-align-right';
+			}
 
-			echo '<div class="hmpro-builder-col hmpro-col-' . esc_attr( (string) $width ) . '" data-col="' . esc_attr( $col_id ) . '">';
+			echo '<div class="hmpro-builder-col hmpro-col-' . esc_attr( (string) $width ) . ' ' . esc_attr( $align_class ) . '" data-col="' . esc_attr( $col_id ) . '">';
 
 			$components = isset( $col['components'] ) && is_array( $col['components'] ) ? $col['components'] : array();
 			foreach ( $components as $comp ) {
@@ -74,6 +81,7 @@ function hmpro_builder_render_region( $area, $region_key ) {
 			}
 
 			echo '</div>';
+			$col_index++;
 		}
 
 		echo '</div>';
@@ -129,12 +137,15 @@ function hmpro_builder_render_component( $comp ) {
 function hmpro_builder_comp_logo() {
 	$home = home_url( '/' );
 
-	// IMPORTANT: the_custom_logo() already outputs a linked <a class="custom-logo-link">.
-	// Wrapping it with another <a> creates invalid nested anchors and breaks styling.
-	if ( function_exists( 'the_custom_logo' ) && has_custom_logo() ) {
-		echo '<div class="hmpro-logo" role="banner">';
-		the_custom_logo();
-		echo '</div>';
+	if ( function_exists( 'get_custom_logo' ) && has_custom_logo() ) {
+		$logo = get_custom_logo(); // returns <a class="custom-logo-link"><img class="custom-logo"></a>
+		if ( is_string( $logo ) && '' !== $logo ) {
+			if ( false === strpos( $logo, 'hmpro-logo' ) ) {
+				$logo = preg_replace( '/class=("|\')custom-logo-link(.*?)("|\')/i', 'class=$1custom-logo-link hmpro-logo$2$3', $logo );
+			}
+			echo $logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			return;
+		}
 		return;
 	}
 
@@ -212,7 +223,11 @@ function hmpro_builder_comp_menu( array $set ) {
 
 function hmpro_builder_comp_search( array $set, $comp_id = '' ) {
 	$ph = isset( $set['placeholder'] ) ? sanitize_text_field( (string) $set['placeholder'] ) : __( 'Search…', 'hmpro' );
-	$field_id = 'hmpro-search-field-' . ( $comp_id ? sanitize_key( (string) $comp_id ) : wp_rand( 1000, 9999 ) );
+	$comp_id  = sanitize_key( (string) $comp_id );
+	$field_id = 'hmpro-search-field';
+	if ( '' !== $comp_id ) {
+		$field_id = 'hmpro-search-field-' . $comp_id;
+	}
 	echo '<form class="hmpro-search" role="search" method="get" action="' . esc_url( home_url( '/' ) ) . '">';
 	echo '<label class="screen-reader-text" for="' . esc_attr( $field_id ) . '">' . esc_html__( 'Search for:', 'hmpro' ) . '</label>';
 	echo '<input id="' . esc_attr( $field_id ) . '" class="hmpro-search-field" type="search" name="s" value="' . esc_attr( get_search_query() ) . '" placeholder="' . esc_attr( $ph ) . '" required />';
