@@ -585,14 +585,14 @@
 
 			var zone = match.zone;
 			var index = match.index;
-			var comps = getComponents(sectionKey, zone).slice();
-			if (!comps[index]) {
+			var comps = getComponents(sectionKey, zone);
+			if (!comps || !comps[index]) {
 				closeModal();
 				return;
 			}
 
-			comps[index].settings = comps[index].settings || {};
 			var comp = comps[index];
+			comp.settings = comp.settings || {};
 
 			var type = (comp.type || '').toLowerCase();
 			if (type === 'menu') {
@@ -624,10 +624,7 @@
 				var keys = ['facebook', 'instagram', 'x', 'youtube', 'tiktok', 'linkedin', 'whatsapp', 'telegram'];
 				keys.forEach(function (k) {
 					var el = document.getElementById('hmproSettingSocial_' + k);
-					if (!el) {
-						console.warn('[HMPRO] Missing social input:', k);
-						return;
-					}
+					if (!el) return;
 					var val = (el.value || '').trim();
 					if (val) comp.settings.urls[k] = val;
 					else delete comp.settings.urls[k];
@@ -640,14 +637,10 @@
 				comp.settings.new_tab = nt ? !!nt.checked : !!comp.settings.new_tab;
 			}
 
-			comps[index] = comp;
-			setComponents(sectionKey, zone, comps);
+			syncLayoutToField();
 			sync();
 			render();
 			closeModal();
-			// FORCE layout sync after modal save
-			syncLayoutToField();
-			window.__hmproLayoutDirty = true;
 		});
 	}
 
