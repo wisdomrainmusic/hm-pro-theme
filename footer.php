@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 do_action( 'hmpro/footer/before' );
 ?>
 
-<?php if ( hmpro_has_builder_layout( 'footer' ) ) : ?>
+<?php if ( function_exists( 'hmpro_has_builder_layout' ) && hmpro_has_builder_layout( 'footer' ) ) : ?>
 
 	<?php do_action( 'hmpro/footer/builder/before' ); ?>
 

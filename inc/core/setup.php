@@ -1,7 +1,19 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+    exit;
 }
+
+add_action( 'after_setup_theme', function () {
+	add_theme_support(
+		'custom-logo',
+		array(
+			'height'      => 80,
+			'width'       => 240,
+			'flex-height' => true,
+			'flex-width'  => true,
+		)
+	);
+}, 5 );
 
 /**
  * Ensure menu locations include slots needed for builder menus.

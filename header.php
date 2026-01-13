@@ -14,7 +14,7 @@ do_action( 'hmpro/header/before' );
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
-<?php if ( hmpro_has_builder_layout( 'header' ) ) : ?>
+<?php if ( function_exists( 'hmpro_has_builder_layout' ) && hmpro_has_builder_layout( 'header' ) ) : ?>
 
 	<?php do_action( 'hmpro/header/builder/before' ); ?>
 
