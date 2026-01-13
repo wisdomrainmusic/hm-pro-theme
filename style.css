@@ -17,8 +17,8 @@ Tags: e-commerce, woocommerce, elementor, custom-colors, custom-logo, theme-opti
 :root {
 	--hmpro-accent: #111;
 	--hmpro-accent-contrast: #fff;
-	--hmpro-icon-bg: rgba(0, 0, 0, 0.06);
-	--hmpro-icon-border: rgba(0, 0, 0, 0.12);
+	--hmpro-icon-bg: rgba(0, 0, 0, 0.04);
+	--hmpro-icon-border: rgba(0, 0, 0, 0.08);
 }
 
 .hmpro-socialicon {
