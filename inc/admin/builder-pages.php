@@ -38,11 +38,17 @@ function hmpro_render_builder_shell( $area ) {
 		? __( 'Footer Builder', 'hmpro' )
 		: __( 'Header Builder', 'hmpro' );
 
-	$sections = [
-		'top'    => __( 'Top', 'hmpro' ),
-		'main'   => __( 'Main', 'hmpro' ),
-		'bottom' => __( 'Bottom', 'hmpro' ),
-	];
+	$sections = ( 'footer' === $area )
+		? [
+			'footer_top'    => __( 'Top', 'hmpro' ),
+			'footer_main'   => __( 'Main', 'hmpro' ),
+			'footer_bottom' => __( 'Bottom', 'hmpro' ),
+		]
+		: [
+			'header_top'    => __( 'Top', 'hmpro' ),
+			'header_main'   => __( 'Main', 'hmpro' ),
+			'header_bottom' => __( 'Bottom', 'hmpro' ),
+		];
 
 	$elements = [
 		'logo'   => __( 'Logo', 'hmpro' ),
@@ -68,7 +74,7 @@ function hmpro_render_builder_shell( $area ) {
 			<?php wp_nonce_field( 'hmpro_builder_' . $area, 'hmpro_builder_nonce' ); ?>
 			<input type="hidden" name="hmpro_action" value="hmpro_save_builder" />
 			<input type="hidden" name="hmpro_builder_area" value="<?php echo esc_attr( $area ); ?>" />
-			<input type="hidden" id="hmpro_builder_layout" name="hmpro_builder_layout" value="<?php echo esc_attr( $layout_json ); ?>" />
+			<input type="hidden" id="hmproBuilderLayoutField" name="hmpro_builder_layout" value="<?php echo esc_attr( $layout_json ); ?>" />
 
 			<div class="hmpro-builder-layout">
 
@@ -84,30 +90,37 @@ function hmpro_render_builder_shell( $area ) {
 						<?php endforeach; ?>
 					</ul>
 					<p class="description">
-						<?php esc_html_e( 'Select a section to edit, then add components from the Elements panel. Save Layout writes to wp_options.', 'hmpro' ); ?>
+						<?php esc_html_e( 'Select a section, then add components from the Elements panel. Save Layout writes to wp_options.', 'hmpro' ); ?>
 					</p>
 				</aside>
 
-				<main class="hmpro-builder-canvas" aria-label="<?php esc_attr_e( 'Builder Canvas', 'hmpro' ); ?>">
+				<main class="hmpro-builder-panel hmpro-builder-canvas" aria-label="<?php esc_attr_e( 'Builder Canvas', 'hmpro' ); ?>">
 					<div class="hmpro-builder-canvas-inner">
 						<div class="hmpro-builder-canvas-head">
 							<h2 class="hmpro-builder-canvas-title"><?php esc_html_e( 'Canvas', 'hmpro' ); ?></h2>
 							<div class="hmpro-builder-canvas-meta">
 								<span class="hmpro-builder-editing">
 									<?php esc_html_e( 'Editing:', 'hmpro' ); ?>
-									<strong class="hmpro-builder-editing-key">header_top</strong>
+									<strong class="hmpro-builder-editing-key"><?php echo esc_html( ( 'footer' === $area ) ? 'footer_top' : 'header_top' ); ?></strong>
 								</span>
-								<button type="button" class="button button-primary hmpro-builder-add-first">
-									<?php esc_html_e( 'Add a component', 'hmpro' ); ?>
-								</button>
+								<span class="hmpro-zone-hint"><?php esc_html_e( 'Drag components between zones.', 'hmpro' ); ?></span>
 							</div>
 						</div>
 
-						<div class="hmpro-builder-empty" hidden>
-							<p><?php esc_html_e( 'No components yet. Add items from the Elements panel.', 'hmpro' ); ?></p>
+						<div class="hmpro-zones" id="hmproZones">
+							<div class="hmpro-zone" data-zone="left">
+								<div class="hmpro-zone-title"><?php esc_html_e( 'Left', 'hmpro' ); ?></div>
+								<ul class="hmpro-canvas-list" id="hmproZoneLeft"></ul>
+							</div>
+							<div class="hmpro-zone" data-zone="center">
+								<div class="hmpro-zone-title"><?php esc_html_e( 'Center', 'hmpro' ); ?></div>
+								<ul class="hmpro-canvas-list" id="hmproZoneCenter"></ul>
+							</div>
+							<div class="hmpro-zone" data-zone="right">
+								<div class="hmpro-zone-title"><?php esc_html_e( 'Right', 'hmpro' ); ?></div>
+								<ul class="hmpro-canvas-list" id="hmproZoneRight"></ul>
+							</div>
 						</div>
-
-						<div id="hmpro-builder-canvas-list" class="hmpro-builder-canvas-list" aria-live="polite"></div>
 					</div>
 				</main>
 
@@ -123,7 +136,7 @@ function hmpro_render_builder_shell( $area ) {
 						<?php endforeach; ?>
 					</ul>
 					<p class="description">
-						<?php esc_html_e( 'Click an element to add it to the selected section. Drag & drop and settings will be expanded later.', 'hmpro' ); ?>
+						<?php esc_html_e( 'Click to add. Drag & drop between zones. Click a component to edit settings.', 'hmpro' ); ?>
 					</p>
 				</aside>
 
@@ -135,6 +148,44 @@ function hmpro_render_builder_shell( $area ) {
 				</button>
 			</p>
 		</form>
+
+		<div class="hmpro-modal" id="hmproCompModal" aria-hidden="true">
+			<div class="hmpro-modal__overlay" data-modal-close="1"></div>
+			<div class="hmpro-modal__panel" role="dialog" aria-modal="true" aria-labelledby="hmproModalTitle">
+				<div class="hmpro-modal__head">
+					<strong id="hmproModalTitle"><?php esc_html_e( 'Settings', 'hmpro' ); ?></strong>
+					<button type="button" class="button" data-modal-close="1">×</button>
+				</div>
+				<div class="hmpro-modal__body" id="hmproModalBody"></div>
+				<div class="hmpro-modal__foot">
+					<button type="button" class="button button-primary" id="hmproModalSave"><?php esc_html_e( 'Save', 'hmpro' ); ?></button>
+					<button type="button" class="button" data-modal-close="1"><?php esc_html_e( 'Cancel', 'hmpro' ); ?></button>
+				</div>
+			</div>
+		</div>
 	</div>
 	<?php
+
+	$menu_locations = get_registered_nav_menus();
+	if ( ! is_array( $menu_locations ) ) {
+		$menu_locations = [];
+	}
+
+	wp_localize_script(
+		'hmpro-admin-builder',
+		'hmproBuilderData',
+		[
+			'area'          => $area,
+			'layout'        => $layout,
+			'menuLocations' => $menu_locations,
+			'i18n'          => [
+				'editing'      => __( 'Editing:', 'hmpro' ),
+				'empty'        => __( 'Drop components here.', 'hmpro' ),
+				'settings'     => __( 'Settings', 'hmpro' ),
+				'save'         => __( 'Save', 'hmpro' ),
+				'cancel'       => __( 'Cancel', 'hmpro' ),
+				'menuLocation' => __( 'Menu location', 'hmpro' ),
+			],
+		]
+	);
 }
