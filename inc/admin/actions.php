@@ -34,6 +34,41 @@ add_action( 'admin_init', function () {
 
 	$json = isset( $_POST['hmpro_builder_layout'] ) ? wp_unslash( $_POST['hmpro_builder_layout'] ) : '';
 	$decoded = json_decode( (string) $json, true );
+	$raw_len = is_string( $json ) ? strlen( $json ) : 0;
+	$has_social = 0;
+	$social_url_count = 0;
+
+	if ( is_array( $decoded ) && isset( $decoded['regions'] ) && is_array( $decoded['regions'] ) ) {
+		foreach ( $decoded['regions'] as $rows ) {
+			if ( ! is_array( $rows ) ) {
+				continue;
+			}
+			foreach ( $rows as $row ) {
+				if ( empty( $row['columns'] ) || ! is_array( $row['columns'] ) ) {
+					continue;
+				}
+				foreach ( $row['columns'] as $column ) {
+					if ( empty( $column['components'] ) || ! is_array( $column['components'] ) ) {
+						continue;
+					}
+					foreach ( $column['components'] as $component ) {
+						if ( empty( $component['type'] ) || 'social' !== $component['type'] ) {
+							continue;
+						}
+						$has_social = 1;
+						if ( empty( $component['settings']['urls'] ) || ! is_array( $component['settings']['urls'] ) ) {
+							continue;
+						}
+						foreach ( $component['settings']['urls'] as $url ) {
+							if ( '' !== trim( (string) $url ) ) {
+								$social_url_count++;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	$clean = null;
 	if ( is_array( $decoded ) && isset( $decoded['regions'] ) && is_array( $decoded['regions'] ) && ! empty( $decoded['regions'] ) ) {
@@ -48,15 +83,20 @@ add_action( 'admin_init', function () {
 	}
 
 	$redirect = ( 'footer' === $area ) ? 'hmpro-footer-builder' : 'hmpro-header-builder';
-	wp_safe_redirect(
-		add_query_arg(
-			array(
-				'page'   => $redirect,
-				'saved'  => $did_update ? '1' : '0',
-			),
-			admin_url( 'admin.php' )
-		)
+	$redirect_args = array(
+		'page'  => $redirect,
+		'saved' => $did_update ? '1' : '0',
 	);
+
+	$debug_enabled = ( defined( 'HMPRO_DEBUG' ) && HMPRO_DEBUG ) || ( defined( 'WP_DEBUG' ) && WP_DEBUG );
+	if ( $debug_enabled ) {
+		$redirect_args['hmpro_dbg']          = '1';
+		$redirect_args['hmpro_raw_len']      = $raw_len;
+		$redirect_args['hmpro_has_social']   = $has_social;
+		$redirect_args['hmpro_social_count'] = $social_url_count;
+	}
+
+	wp_safe_redirect( add_query_arg( $redirect_args, admin_url( 'admin.php' ) ) );
 	exit;
 } );
 add_action( 'admin_init', 'hmpro_handle_admin_actions' );
