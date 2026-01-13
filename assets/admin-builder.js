@@ -14,6 +14,8 @@
 	var modal = document.getElementById('hmproCompModal');
 	var modalBody = document.getElementById('hmproModalBody');
 	var modalSave = document.getElementById('hmproModalSave');
+	var builderForm = layoutField ? layoutField.form : null;
+	var isAutoSubmit = false;
 
 	if (!layoutField || !zoneLeft || !zoneCenter || !zoneRight) return;
 
@@ -597,6 +599,29 @@
 			sync();
 			render();
 			closeModal();
+		});
+	}
+
+	if (builderForm) {
+		builderForm.addEventListener('submit', function (event) {
+			if (isAutoSubmit) return;
+			if (!modal || !modalSave || !activeEditing) return;
+			var isOpen = modal.classList.contains('is-open') || modal.getAttribute('aria-hidden') === 'false';
+			if (!isOpen) return;
+
+			event.preventDefault();
+			isAutoSubmit = true;
+			modalSave.click();
+			window.setTimeout(function () {
+				if (builderForm.requestSubmit) {
+					builderForm.requestSubmit();
+				} else {
+					builderForm.submit();
+				}
+				window.setTimeout(function () {
+					isAutoSubmit = false;
+				}, 0);
+			}, 0);
 		});
 	}
 

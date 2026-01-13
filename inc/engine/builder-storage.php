@@ -63,6 +63,9 @@ function hmpro_builder_get_layout( $area ) {
 }
 
 function hmpro_builder_update_layout( $area, array $layout ) {
+	if ( empty( $layout['regions'] ) || ! is_array( $layout['regions'] ) ) {
+		return false;
+	}
 	$key = hmpro_builder_option_key( $area );
 	return update_option( $key, $layout, false );
 }
