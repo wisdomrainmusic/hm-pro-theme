@@ -388,6 +388,7 @@ function hmpro_builder_comp_social_icon_button( array $set ) {
 	$icon_mode = isset( $set['icon_mode'] ) ? sanitize_key( (string) $set['icon_mode'] ) : 'preset';
 	$icon_preset = isset( $set['icon_preset'] ) ? sanitize_key( (string) $set['icon_preset'] ) : 'facebook';
 	$custom_icon = isset( $set['custom_icon'] ) ? (string) $set['custom_icon'] : '';
+	$transparent = ! empty( $set['transparent'] );
 
 	$allowed_presets = array( 'facebook', 'instagram', 'linkedin', 'x', 'twitter', 'youtube', 'tiktok', 'whatsapp', 'telegram' );
 	if ( ! in_array( $icon_preset, $allowed_presets, true ) ) {
@@ -408,7 +409,11 @@ function hmpro_builder_comp_social_icon_button( array $set ) {
 	$label = isset( $label_map[ $icon_preset ] ) ? $label_map[ $icon_preset ] : __( 'Social link', 'hmpro' );
 
 	$attrs = $new_tab ? ' target="_blank" rel="noopener noreferrer"' : '';
-	echo '<a class="hmpro-socialicon hmpro-socialicon--' . esc_attr( $icon_preset ) . '" href="' . esc_url( $url ) . '" aria-label="' . esc_attr( $label ) . '"' . $attrs . '>';
+	$cls = 'hmpro-socialicon hmpro-socialicon--' . esc_attr( $icon_preset );
+	if ( $transparent ) {
+		$cls .= ' is-transparent';
+	}
+	echo '<a class="' . esc_attr( $cls ) . '" href="' . esc_url( $url ) . '" aria-label="' . esc_attr( $label ) . '"' . $attrs . '>';
 	$icon_html = '';
 	if ( 'custom' === $icon_mode && '' !== trim( $custom_icon ) ) {
 		$allowed_svg_tags = array(
