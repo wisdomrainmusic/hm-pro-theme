@@ -90,15 +90,24 @@ function hmpro_render_builder_shell( $area ) {
 
 				<main class="hmpro-builder-canvas" aria-label="<?php esc_attr_e( 'Builder Canvas', 'hmpro' ); ?>">
 					<div class="hmpro-builder-canvas-inner">
-						<div class="hmpro-builder-empty">
-							<h2><?php esc_html_e( 'Canvas', 'hmpro' ); ?></h2>
-							<p><?php esc_html_e( 'No components yet. Add items from the Elements panel.', 'hmpro' ); ?></p>
-							<p>
+						<div class="hmpro-builder-canvas-head">
+							<h2 class="hmpro-builder-canvas-title"><?php esc_html_e( 'Canvas', 'hmpro' ); ?></h2>
+							<div class="hmpro-builder-canvas-meta">
+								<span class="hmpro-builder-editing">
+									<?php esc_html_e( 'Editing:', 'hmpro' ); ?>
+									<strong class="hmpro-builder-editing-key">header_top</strong>
+								</span>
 								<button type="button" class="button button-primary hmpro-builder-add-first">
 									<?php esc_html_e( 'Add a component', 'hmpro' ); ?>
 								</button>
-							</p>
+							</div>
 						</div>
+
+						<div class="hmpro-builder-empty" hidden>
+							<p><?php esc_html_e( 'No components yet. Add items from the Elements panel.', 'hmpro' ); ?></p>
+						</div>
+
+						<div id="hmpro-builder-canvas-list" class="hmpro-builder-canvas-list" aria-live="polite"></div>
 					</div>
 				</main>
 
@@ -114,7 +123,7 @@ function hmpro_render_builder_shell( $area ) {
 						<?php endforeach; ?>
 					</ul>
 					<p class="description">
-						<?php esc_html_e( 'Click an element to add it to the selected section. Drag & drop and settings will be added in a later commit.', 'hmpro' ); ?>
+						<?php esc_html_e( 'Click an element to add it to the selected section. Drag & drop and settings will be expanded later.', 'hmpro' ); ?>
 					</p>
 				</aside>
 
