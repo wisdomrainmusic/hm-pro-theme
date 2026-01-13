@@ -25,6 +25,7 @@
 	} catch (e) {
 		layout = data.layout || { schema_version: 1, regions: {} };
 	}
+	var currentLayout = layout;
 
 	var activeSection = (data.area === 'footer') ? 'footer_top' : 'header_top';
 	var activeEditing = null;
@@ -126,8 +127,14 @@
 		return null;
 	}
 
+	function syncLayoutToField() {
+		var field = document.getElementById('hmpro_builder_layout') || layoutField;
+		if (!field) return;
+		field.value = JSON.stringify(currentLayout);
+	}
+
 	function sync() {
-		layoutField.value = JSON.stringify(layout);
+		syncLayoutToField();
 	}
 
 	function titleize(type) {
@@ -614,10 +621,13 @@
 			}
 			if (type === 'social') {
 				comp.settings.urls = comp.settings.urls || {};
-				var keys = ['facebook','instagram','x','youtube','tiktok','linkedin','whatsapp','telegram'];
-				keys.forEach(function(k){
+				var keys = ['facebook', 'instagram', 'x', 'youtube', 'tiktok', 'linkedin', 'whatsapp', 'telegram'];
+				keys.forEach(function (k) {
 					var el = document.getElementById('hmproSettingSocial_' + k);
-					if (!el) return;
+					if (!el) {
+						console.warn('[HMPRO] Missing social input:', k);
+						return;
+					}
 					var val = (el.value || '').trim();
 					if (val) comp.settings.urls[k] = val;
 					else delete comp.settings.urls[k];
@@ -635,10 +645,20 @@
 			sync();
 			render();
 			closeModal();
+			// FORCE layout sync after modal save
+			syncLayoutToField();
+			window.__hmproLayoutDirty = true;
 		});
 	}
 
 	if (builderForm) {
+		builderForm.addEventListener('submit', function () {
+			if (window.__hmproLayoutDirty) {
+				syncLayoutToField();
+				window.__hmproLayoutDirty = false;
+			}
+		});
+
 		builderForm.addEventListener('submit', function (event) {
 			if (isAutoSubmit) return;
 			if (!modal || !modalSave || !activeEditing) return;
