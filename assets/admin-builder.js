@@ -562,12 +562,15 @@
 	if (modalSave) {
 		modalSave.addEventListener('click', function () {
 			if (!activeEditing) return;
+
 			var sectionKey = activeEditing.section || activeSection;
+
 			var match = findComponentById(sectionKey, activeEditing.compId);
 			if (!match && sectionKey !== activeSection) {
 				match = findComponentById(activeSection, activeEditing.compId);
 				sectionKey = activeSection;
 			}
+
 			if (!match) {
 				closeModal();
 				return;
@@ -576,8 +579,13 @@
 			var zone = match.zone;
 			var index = match.index;
 			var comps = getComponents(sectionKey, zone).slice();
-			var comp = match.comp;
-			comp.settings = comp.settings || {};
+			if (!comps[index]) {
+				closeModal();
+				return;
+			}
+
+			comps[index].settings = comps[index].settings || {};
+			var comp = comps[index];
 
 			var type = (comp.type || '').toLowerCase();
 			if (type === 'menu') {
@@ -611,11 +619,8 @@
 					var el = document.getElementById('hmproSettingSocial_' + k);
 					if (!el) return;
 					var val = (el.value || '').trim();
-					if (val) {
-						comp.settings.urls[k] = val;
-					} else {
-						delete comp.settings.urls[k];
-					}
+					if (val) comp.settings.urls[k] = val;
+					else delete comp.settings.urls[k];
 				});
 				var sz = document.getElementById('hmproSettingSocialSize');
 				var gp = document.getElementById('hmproSettingSocialGap');
