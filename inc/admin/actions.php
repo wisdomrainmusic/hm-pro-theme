@@ -3,6 +3,58 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Builder Save Handler (Commit 017)
+ */
+add_action( 'admin_init', function () {
+	if ( ! is_admin() ) {
+		return;
+	}
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	if ( empty( $_POST['hmpro_action'] ) ) {
+		return;
+	}
+
+	$action = sanitize_key( wp_unslash( $_POST['hmpro_action'] ) );
+	if ( 'hmpro_save_builder' !== $action ) {
+		return;
+	}
+
+	$area = isset( $_POST['hmpro_builder_area'] ) ? sanitize_key( wp_unslash( $_POST['hmpro_builder_area'] ) ) : '';
+	$area = ( 'footer' === $area ) ? 'footer' : 'header';
+
+	$nonce = isset( $_POST['hmpro_builder_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['hmpro_builder_nonce'] ) ) : '';
+	if ( ! wp_verify_nonce( $nonce, 'hmpro_builder_' . $area ) ) {
+		wp_die( esc_html__( 'Security check failed.', 'hmpro' ) );
+	}
+
+	$json = isset( $_POST['hmpro_builder_layout'] ) ? wp_unslash( $_POST['hmpro_builder_layout'] ) : '';
+	$decoded = json_decode( (string) $json, true );
+
+	$clean = function_exists( 'hmpro_builder_sanitize_layout' )
+		? hmpro_builder_sanitize_layout( $area, $decoded )
+		: array();
+
+	if ( function_exists( 'hmpro_builder_update_layout' ) ) {
+		hmpro_builder_update_layout( $area, $clean );
+	}
+
+	$redirect = ( 'footer' === $area ) ? 'hmpro-footer-builder' : 'hmpro-header-builder';
+	wp_safe_redirect(
+		add_query_arg(
+			array(
+				'page'   => $redirect,
+				'saved'  => '1',
+			),
+			admin_url( 'admin.php' )
+		)
+	);
+	exit;
+} );
 add_action( 'admin_init', 'hmpro_handle_admin_actions' );
 
 function hmpro_handle_admin_actions() {

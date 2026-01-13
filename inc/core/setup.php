@@ -4,6 +4,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Ensure menu locations include slots needed for builder menus.
+ * (Keeps existing locations; adds topbar/footer if missing.)
+ */
+add_action( 'after_setup_theme', function () {
+	// If theme already registers nav menus elsewhere, this won't hurt;
+	// WordPress merges locations by key.
+	register_nav_menus(
+		array(
+			'primary' => __( 'Primary Menu', 'hmpro' ),
+			'topbar'  => __( 'Top Bar Menu', 'hmpro' ),
+			'footer'  => __( 'Footer Menu', 'hmpro' ),
+		)
+	);
+}, 20 );
+
+/**
  * Register Header/Footer Builder Regions
  */
 function hmpro_get_builder_regions() {
@@ -22,13 +38,24 @@ function hmpro_get_builder_regions() {
 }
 
 /**
- * Check if builder layout exists (placeholder – real logic in Commit 017)
+ * Check if builder layout exists
  */
 function hmpro_has_builder_layout( $area ) {
-	/**
-	 * Filter: allow forcing builder on/off
-	 */
-	return apply_filters( 'hmpro/has_builder_layout', false, $area );
+	$area = ( 'footer' === $area ) ? 'footer' : 'header';
+
+	// Commit 017: layout stored in wp_options
+	if ( function_exists( 'hmpro_builder_get_layout' ) ) {
+		$layout = hmpro_builder_get_layout( $area );
+		$regions = isset( $layout['regions'] ) && is_array( $layout['regions'] ) ? $layout['regions'] : array();
+
+		foreach ( $regions as $region_rows ) {
+			if ( ! empty( $region_rows ) && is_array( $region_rows ) ) {
+				return (bool) apply_filters( 'hmpro/has_builder_layout', true, $area );
+			}
+		}
+	}
+
+	return (bool) apply_filters( 'hmpro/has_builder_layout', false, $area );
 }
 
 /**
