@@ -14,25 +14,57 @@ Text Domain: hm-pro-theme
 Tags: e-commerce, woocommerce, elementor, custom-colors, custom-logo, theme-options
 */
 
+:root {
+	--hmpro-accent: #111;
+	--hmpro-accent-contrast: #fff;
+	--hmpro-icon-bg: rgba(0, 0, 0, 0.06);
+	--hmpro-icon-border: rgba(0, 0, 0, 0.12);
+}
+
 .hmpro-socialicon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	line-height: 1;
 	width: 34px;
 	height: 34px;
 	border-radius: 999px;
-	color: #111;
+	color: var(--hmpro-accent);
 	text-decoration: none;
-	background: #fff;
-	border: 1px solid rgba(0, 0, 0, 0.12);
-	transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+	background: var(--hmpro-icon-bg);
+	border: 1px solid var(--hmpro-icon-border);
+	transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .hmpro-socialicon:hover,
 .hmpro-socialicon:focus {
-	opacity: 0.92;
 	transform: translateY(-1px);
+	opacity: 0.95;
 	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.hmpro-socialicon:focus {
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12), 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.hmpro-socialicon.is-transparent {
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+}
+
+.hmpro-socialicon.is-transparent:hover,
+.hmpro-socialicon.is-transparent:focus {
+	background: transparent;
+	box-shadow: none;
+}
+
+.hmpro-socialicon__svg {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 0;
 }
 
 .hmpro-socialicon__svg svg {

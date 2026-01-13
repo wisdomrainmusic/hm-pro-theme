@@ -123,6 +123,7 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 			'spacing',
 			'url',
 			'new_tab',
+			'transparent',
 			'icon_mode',
 			'icon_preset',
 			'custom_icon',
@@ -204,6 +205,8 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 						if ( in_array( $k, array( 'text', 'placeholder', 'alignment', 'visibility', 'spacing', 'rel', 'target', 'source', 'location', 'size', 'gap' ), true ) ) {
 							$clean_settings[ $k ] = is_scalar( $v ) ? sanitize_text_field( (string) $v ) : '';
 						} elseif ( 'new_tab' === $k ) {
+							$clean_settings[ $k ] = ! empty( $v ) ? 1 : 0;
+						} elseif ( 'transparent' === $k ) {
 							$clean_settings[ $k ] = ! empty( $v ) ? 1 : 0;
 						} elseif ( 'url' === $k ) {
 							$clean_settings[ $k ] = is_scalar( $v ) ? esc_url_raw( (string) $v ) : '';

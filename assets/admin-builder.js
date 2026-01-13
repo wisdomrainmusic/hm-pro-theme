@@ -583,6 +583,18 @@
 			tabField.appendChild(tabInput);
 			modalBody.appendChild(tabField);
 
+			var transparentField = document.createElement('div');
+			transparentField.className = 'hmpro-field';
+			var transparentLabel = document.createElement('label');
+			transparentLabel.textContent = 'Transparent icon style';
+			var transparentInput = document.createElement('input');
+			transparentInput.type = 'checkbox';
+			transparentInput.id = 'hmproSettingSocialIconTransparent';
+			transparentInput.checked = !!settings.transparent;
+			transparentField.appendChild(transparentLabel);
+			transparentField.appendChild(transparentInput);
+			modalBody.appendChild(transparentField);
+
 			var modeField = document.createElement('div');
 			modeField.className = 'hmpro-field';
 			var modeLabel = document.createElement('label');
@@ -724,12 +736,14 @@
 			if (type === 'social_icon_button') {
 				var urlEl = document.getElementById('hmproSettingSocialIconUrl');
 				var ntEl = document.getElementById('hmproSettingSocialIconNewTab');
+				var trEl = document.getElementById('hmproSettingSocialIconTransparent');
 				var modeEl = document.getElementById('hmproSettingSocialIconMode');
 				var preEl = document.getElementById('hmproSettingSocialIconPreset');
 				var cuEl = document.getElementById('hmproSettingSocialIconCustom');
 
 				comp.settings.url = urlEl ? urlEl.value.trim() : '';
 				comp.settings.new_tab = ntEl ? !!ntEl.checked : false;
+				comp.settings.transparent = trEl ? !!trEl.checked : false;
 				comp.settings.icon_mode = modeEl ? modeEl.value : 'preset';
 				comp.settings.icon_preset = preEl ? preEl.value : 'facebook';
 				comp.settings.custom_icon = cuEl ? cuEl.value : '';
