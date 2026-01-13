@@ -12,9 +12,18 @@ function hmpro_register_admin_menu() {
 		'HM Pro Theme',
 		'manage_options',
 		'hmpro-theme',
-		'hmpro_render_presets_page',
-		'dashicons-art',
-		58
+		'hmpro_theme_dashboard_page_render',
+		'dashicons-admin-customizer',
+		59
+	);
+
+	add_submenu_page(
+		'hmpro-theme',
+		__( 'Dashboard', 'hmpro' ),
+		__( 'Dashboard', 'hmpro' ),
+		'manage_options',
+		'hmpro-theme',
+		'hmpro_theme_dashboard_page_render'
 	);
 
 	add_submenu_page(
@@ -53,4 +62,11 @@ function hmpro_register_admin_menu() {
 		'hmpro-preset-edit',
 		'hmpro_render_preset_edit_page'
 	);
+}
+
+function hmpro_theme_dashboard_page_render() {
+	echo '<div class="wrap">';
+	echo '<h1>' . esc_html__( 'HM Pro Theme', 'hmpro' ) . '</h1>';
+	echo '<p>' . esc_html__( 'Welcome. Use the left menu to manage Presets, Header Builder, and Footer Builder.', 'hmpro' ) . '</p>';
+	echo '</div>';
 }
