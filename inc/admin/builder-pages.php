@@ -84,7 +84,7 @@ function hmpro_render_builder_shell( $area ) {
 						<?php endforeach; ?>
 					</ul>
 					<p class="description">
-						<?php esc_html_e( 'Select a section to edit. Layout saving will be enabled in the next commit.', 'hmpro' ); ?>
+						<?php esc_html_e( 'Select a section to edit, then add components from the Elements panel. Save Layout writes to wp_options.', 'hmpro' ); ?>
 					</p>
 				</aside>
 
@@ -114,7 +114,7 @@ function hmpro_render_builder_shell( $area ) {
 						<?php endforeach; ?>
 					</ul>
 					<p class="description">
-						<?php esc_html_e( 'Drag & drop and component settings will be added in a later commit.', 'hmpro' ); ?>
+						<?php esc_html_e( 'Click an element to add it to the selected section. Drag & drop and settings will be added in a later commit.', 'hmpro' ); ?>
 					</p>
 				</aside>
 

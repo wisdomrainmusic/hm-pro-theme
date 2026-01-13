@@ -43,6 +43,44 @@
 	align-items:center;
 	justify-content:center;
 }
+.hmpro-builder-stage{
+	width:100%;
+	max-width:820px;
+}
+.hmpro-builder-stage-title{
+	font-size:13px;
+	font-weight:600;
+	margin:0 0 10px 0;
+}
+.hmpro-builder-comp-list{
+	display:flex;
+	flex-direction:column;
+	gap:10px;
+}
+.hmpro-builder-comp-card{
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+	gap:12px;
+	padding:10px 12px;
+	border:1px solid #dcdcde;
+	border-radius:10px;
+	background:#fff;
+}
+.hmpro-builder-comp-label{
+	font-weight:600;
+	text-transform:capitalize;
+}
+.hmpro-builder-comp-meta{
+	opacity:.65;
+	font-size:12px;
+	flex:1;
+	text-align:center;
+}
+.hmpro-builder-comp-actions{
+	display:flex;
+	gap:8px;
+}
 .hmpro-builder-empty{
 	max-width:520px;
 	text-align:center;
