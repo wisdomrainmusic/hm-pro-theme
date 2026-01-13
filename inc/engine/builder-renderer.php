@@ -26,6 +26,11 @@ add_action(
 	1
 );
 
+add_action( 'wp_head', function () {
+	$height = absint( get_theme_mod( 'hmpro_logo_max_height', 56 ) );
+	echo '<style>:root{--hmpro-logo-max-height:' . $height . 'px;}</style>';
+}, 20 );
+
 function hmpro_builder_render_region( $area, $region_key ) {
 	$area = ( 'footer' === $area ) ? 'footer' : 'header';
 	if ( ! function_exists( 'hmpro_builder_get_layout' ) ) {
@@ -136,10 +141,25 @@ function hmpro_builder_comp_logo() {
 
 function hmpro_builder_comp_menu( array $set ) {
 	// Defaults: primary (later we add settings modal)
-	$location = isset( $set['location'] ) ? sanitize_key( (string) $set['location'] ) : 'primary';
+	$location = isset( $set['location'] ) ? sanitize_key( (string) $set['location'] ) : '';
 	$depth    = isset( $set['depth'] ) ? absint( $set['depth'] ) : 2;
 	if ( $depth < 1 || $depth > 5 ) {
 		$depth = 2;
+	}
+
+	$locations = get_nav_menu_locations();
+	if ( '' === $location ) {
+		if ( isset( $locations['primary'] ) ) {
+			$location = 'primary';
+		} else {
+			$keys     = array_keys( (array) $locations );
+			$location = $keys[0] ?? '';
+		}
+	}
+
+	$location = sanitize_key( (string) $location );
+	if ( '' === $location ) {
+		return;
 	}
 
 	wp_nav_menu(

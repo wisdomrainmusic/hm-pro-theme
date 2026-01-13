@@ -8,6 +8,7 @@
 	--hm-link: var(--hm-primary);
 	--hm-border: #e5e5e5;
 	--hm-footer: #111111;
+	--hmpro-logo-max-height: 56px;
 
 	--hm-body-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 	--hm-heading-font: inherit;
@@ -113,9 +114,13 @@ footer,
 .hmpro-align-center{justify-content:center;}
 .hmpro-align-right{justify-content:flex-end;}
 
-.hmpro-logo img{
-	max-height:48px;
-	width:auto;
+.hmpro-logo img,
+.hmpro-logo .custom-logo{
+	max-height: var(--hmpro-logo-max-height);
+	width:auto !important;
+	height:auto !important;
+	display:block;
+	object-fit:contain;
 }
 .hmpro-logo-text{
 	font-weight:600;
