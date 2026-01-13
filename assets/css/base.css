@@ -176,3 +176,14 @@ footer,
 	.hmpro-builder-col{justify-content:space-between;}
 	.hmpro-nav .hmpro-menu{flex-wrap:wrap;gap:14px;}
 }
+
+
+/* Social component (Commit 020) */
+.hmpro-social{display:inline-flex;align-items:center;}
+.hmpro-social__link{display:inline-flex;align-items:center;text-decoration:none;line-height:1;}
+.hmpro-social__icon{width:20px;height:20px;display:block;fill:currentColor;}
+.hmpro-social--small .hmpro-social__icon{width:16px;height:16px;}
+.hmpro-social--large .hmpro-social__icon{width:24px;height:24px;}
+.hmpro-social--gap-small{gap:8px;}
+.hmpro-social--gap-normal{gap:12px;}
+.hmpro-social--gap-large{gap:16px;}

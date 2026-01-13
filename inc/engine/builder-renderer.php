@@ -31,6 +31,11 @@ add_action( 'wp_head', function () {
 	echo '<style>:root{--hmpro-logo-max-height:' . $height . 'px;}</style>';
 }, 20 );
 
+
+add_action( 'wp_footer', function () {
+	hmpro_builder_output_social_sprite();
+}, 20 );
+
 function hmpro_builder_render_region( $area, $region_key ) {
 	$area = ( 'footer' === $area ) ? 'footer' : 'header';
 	if ( ! function_exists( 'hmpro_builder_get_layout' ) ) {
@@ -125,6 +130,9 @@ function hmpro_builder_render_component( $comp ) {
 			break;
 		case 'spacer':
 			hmpro_builder_comp_spacer( $set );
+			break;
+		case 'social':
+			hmpro_builder_comp_social( $set );
 			break;
 		default:
 			do_action( 'hmpro/builder/render_component', $type, $set );
@@ -274,4 +282,94 @@ function hmpro_builder_comp_spacer( array $set ) {
 		$style .= 'height:' . $h . 'px;';
 	}
 	echo '<span class="hmpro-spacer" style="' . esc_attr( $style ) . '"></span>';
+}
+
+
+/**
+ * Social Media Icons component (Commit 020)
+ */
+function hmpro_builder_comp_social( array $set ) {
+	$urls    = isset( $set['urls'] ) && is_array( $set['urls'] ) ? $set['urls'] : array();
+	$size    = isset( $set['size'] ) ? sanitize_key( (string) $set['size'] ) : 'normal';
+	$gap     = isset( $set['gap'] ) ? sanitize_key( (string) $set['gap'] ) : 'normal';
+	$new_tab = ! empty( $set['new_tab'] );
+
+	$allowed_sizes = array( 'small', 'normal', 'large' );
+	$allowed_gaps  = array( 'small', 'normal', 'large' );
+	if ( ! in_array( $size, $allowed_sizes, true ) ) {
+		$size = 'normal';
+	}
+	if ( ! in_array( $gap, $allowed_gaps, true ) ) {
+		$gap = 'normal';
+	}
+
+	$map = array(
+		'facebook'  => array( 'label' => 'Facebook', 'icon' => 'facebook' ),
+		'instagram' => array( 'label' => 'Instagram', 'icon' => 'instagram' ),
+		'x'         => array( 'label' => 'X', 'icon' => 'x' ),
+		'youtube'   => array( 'label' => 'YouTube', 'icon' => 'youtube' ),
+		'tiktok'    => array( 'label' => 'TikTok', 'icon' => 'tiktok' ),
+		'linkedin'  => array( 'label' => 'LinkedIn', 'icon' => 'linkedin' ),
+		'whatsapp'  => array( 'label' => 'WhatsApp', 'icon' => 'whatsapp' ),
+		'telegram'  => array( 'label' => 'Telegram', 'icon' => 'telegram' ),
+	);
+
+	$items = array();
+	foreach ( $map as $key => $meta ) {
+		if ( empty( $urls[ $key ] ) ) {
+			continue;
+		}
+		$url = esc_url( (string) $urls[ $key ] );
+		if ( '' === $url ) {
+			continue;
+		}
+		$items[] = array(
+			'url'   => $url,
+			'label' => $meta['label'],
+			'icon'  => $meta['icon'],
+		);
+	}
+
+	if ( empty( $items ) ) {
+		return;
+	}
+
+	$classes = array( 'hmpro-social', 'hmpro-social--' . $size, 'hmpro-social--gap-' . $gap );
+	echo '<nav class="' . esc_attr( implode( ' ', $classes ) ) . '" aria-label="' . esc_attr__( 'Social links', 'hmpro' ) . '">';
+
+	foreach ( $items as $item ) {
+		$attrs = '';
+		if ( $new_tab ) {
+			$attrs = ' target="_blank" rel="noopener noreferrer"';
+		}
+		echo '<a class="hmpro-social__link hmpro-social__' . esc_attr( $item['icon'] ) . '" href="' . esc_url( $item['url'] ) . '" aria-label="' . esc_attr( $item['label'] ) . '"' . $attrs . '>';
+		echo '<svg class="hmpro-social__icon" aria-hidden="true" focusable="false"><use href="#hmpro-icon-' . esc_attr( $item['icon'] ) . '"></use></svg>';
+		echo '<span class="screen-reader-text">' . esc_html( $item['label'] ) . '</span>';
+		echo '</a>';
+	}
+
+	echo '</nav>';
+}
+
+/**
+ * Outputs an inline SVG sprite (lightweight, no external dependencies).
+ * For now: simple letter icons; can be replaced with full brand SVG paths later.
+ */
+function hmpro_builder_output_social_sprite() {
+	static $done = false;
+	if ( $done ) {
+		return;
+	}
+	$done = true;
+
+	echo '<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">';
+	echo '<symbol id="hmpro-icon-facebook" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="12" font-family="Arial" fill="currentColor">f</text></symbol>';
+	echo '<symbol id="hmpro-icon-instagram" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="11" font-family="Arial" fill="currentColor">i</text></symbol>';
+	echo '<symbol id="hmpro-icon-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="11" font-family="Arial" fill="currentColor">x</text></symbol>';
+	echo '<symbol id="hmpro-icon-youtube" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="11" font-family="Arial" fill="currentColor">></text></symbol>';
+	echo '<symbol id="hmpro-icon-tiktok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="11" font-family="Arial" fill="currentColor">t</text></symbol>';
+	echo '<symbol id="hmpro-icon-linkedin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="10" font-family="Arial" fill="currentColor">in</text></symbol>';
+	echo '<symbol id="hmpro-icon-whatsapp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="10" font-family="Arial" fill="currentColor">w</text></symbol>';
+	echo '<symbol id="hmpro-icon-telegram" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="10" font-family="Arial" fill="currentColor">tg</text></symbol>';
+	echo '</svg>';
 }

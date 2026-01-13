@@ -54,6 +54,7 @@ function hmpro_render_builder_shell( $area ) {
 		'logo'   => __( 'Logo', 'hmpro' ),
 		'menu'   => __( 'Menu', 'hmpro' ),
 		'search' => __( 'Search', 'hmpro' ),
+		'social' => __( 'Social', 'hmpro' ),
 		'cart'   => __( 'Cart', 'hmpro' ),
 		'button' => __( 'Button', 'hmpro' ),
 		'html'   => __( 'HTML', 'hmpro' ),
@@ -159,7 +160,7 @@ function hmpro_render_builder_shell( $area ) {
 				<div class="hmpro-modal__body" id="hmproModalBody"></div>
 				<div class="hmpro-modal__foot">
 					<button type="button" class="button button-primary" id="hmproModalSave"><?php esc_html_e( 'Save', 'hmpro' ); ?></button>
-					<button type="button" class="button" data-modal-close="1"><?php esc_html_e( 'Cancel', 'hmpro' ); ?></button>
+					<button type="button" class="button" data-modal-close="1" data-modal-cancel="1"><?php esc_html_e( 'Cancel', 'hmpro' ); ?></button>
 				</div>
 			</div>
 		</div>

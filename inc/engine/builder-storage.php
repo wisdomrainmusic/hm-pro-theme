@@ -73,13 +73,24 @@ function hmpro_builder_update_layout( $area, array $layout ) {
 function hmpro_builder_sanitize_layout( $area, $payload ) {
 	$area = ( 'footer' === $area ) ? 'footer' : 'header';
 
-	$allowed_types = array( 'logo', 'menu', 'search', 'cart', 'button', 'html', 'spacer' );
+	$allowed_types = array( 'logo', 'menu', 'search', 'social', 'cart', 'button', 'html', 'spacer' );
 
 	// Settings allowlist per component type (can expand in Commit 019).
 	$allowed_settings = array(
 		'logo'   => array( 'alignment', 'visibility', 'spacing' ),
 		'menu'   => array( 'alignment', 'visibility', 'spacing', 'location', 'menu_id', 'depth', 'source' ),
 		'search' => array( 'alignment', 'visibility', 'spacing', 'placeholder' ),
+		// Social stores URLs in a nested array: settings.urls[network] = url.
+		// Keep allowlist tight but compatible with admin UI + renderer.
+		'social' => array(
+			'alignment',
+			'visibility',
+			'spacing',
+			'size',
+			'gap',
+			'new_tab',
+			'urls',
+		),
 		'cart'   => array( 'alignment', 'visibility', 'spacing' ),
 		'button' => array( 'alignment', 'visibility', 'spacing', 'text', 'url', 'rel', 'target' ),
 		'html'   => array( 'visibility', 'spacing', 'content' ),
@@ -154,10 +165,34 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 						$v = $settings[ $k ];
 
 						// Basic sanitization by key.
-						if ( in_array( $k, array( 'text', 'placeholder', 'alignment', 'visibility', 'spacing', 'rel', 'target', 'source', 'location' ), true ) ) {
+						if ( in_array( $k, array( 'text', 'placeholder', 'alignment', 'visibility', 'spacing', 'rel', 'target', 'source', 'location', 'size', 'gap' ), true ) ) {
 							$clean_settings[ $k ] = is_scalar( $v ) ? sanitize_text_field( (string) $v ) : '';
+						} elseif ( 'new_tab' === $k ) {
+							$clean_settings[ $k ] = ! empty( $v ) ? 1 : 0;
 						} elseif ( 'url' === $k ) {
 							$clean_settings[ $k ] = is_scalar( $v ) ? esc_url_raw( (string) $v ) : '';
+						} elseif ( 'urls' === $k ) {
+							$clean_urls = array();
+							if ( is_array( $v ) ) {
+								$allowed_social = array( 'facebook', 'instagram', 'x', 'youtube', 'tiktok', 'linkedin', 'whatsapp', 'telegram' );
+								foreach ( $allowed_social as $nk ) {
+									if ( empty( $v[ $nk ] ) ) {
+										continue;
+									}
+									$raw_u = trim( (string) $v[ $nk ] );
+									if ( '' !== $raw_u && ! preg_match( '~^https?://~i', $raw_u ) ) {
+										$raw_u = 'https://' . ltrim( $raw_u, '/ ' );
+									}
+									$u = esc_url_raw( $raw_u );
+									if ( '' === $u ) {
+										$u = sanitize_text_field( $raw_u );
+									}
+									if ( '' !== $u ) {
+										$clean_urls[ $nk ] = $u;
+									}
+								}
+							}
+							$clean_settings[ $k ] = $clean_urls;
 						} elseif ( 'menu_id' === $k || 'depth' === $k || 'width' === $k || 'height' === $k ) {
 							$clean_settings[ $k ] = absint( $v );
 						} elseif ( 'content' === $k ) {

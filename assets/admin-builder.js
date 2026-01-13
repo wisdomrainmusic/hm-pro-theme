@@ -326,8 +326,18 @@
 		activeEditing = null;
 	}
 
+	// Modal close behavior:
+	// - Cancel button (data-modal-cancel="1") closes without saving.
+	// - Overlay/X close will auto-save the current settings to avoid user confusion.
 	document.querySelectorAll('[data-modal-close="1"]').forEach(function (el) {
-		el.addEventListener('click', closeModal);
+		el.addEventListener('click', function () {
+			if (!el.hasAttribute('data-modal-cancel') && modalSave && activeEditing) {
+				// Triggers the same logic as clicking the Save button.
+				modalSave.click();
+				return;
+			}
+			closeModal();
+		});
 	});
 
 	function openSettings(zone, idx) {
@@ -444,6 +454,79 @@
 
 			modalBody.appendChild(sp1);
 			modalBody.appendChild(sp2);
+		} else if (type === 'social') {
+			var networks = [
+				{ key: 'facebook', label: 'Facebook URL' },
+				{ key: 'instagram', label: 'Instagram URL' },
+				{ key: 'x', label: 'X (Twitter) URL' },
+				{ key: 'youtube', label: 'YouTube URL' },
+				{ key: 'tiktok', label: 'TikTok URL' },
+				{ key: 'linkedin', label: 'LinkedIn URL' },
+				{ key: 'whatsapp', label: 'WhatsApp URL' },
+				{ key: 'telegram', label: 'Telegram URL' }
+			];
+
+			networks.forEach(function(n){
+				var f = document.createElement('div');
+				f.className = 'hmpro-field';
+				var l = document.createElement('label');
+				l.textContent = n.label;
+				var i = document.createElement('input');
+				i.type = 'url';
+				i.id = 'hmproSettingSocial_' + n.key;
+				i.placeholder = 'https://';
+				i.value = (settings.urls && settings.urls[n.key]) ? settings.urls[n.key] : '';
+				f.appendChild(l);
+				f.appendChild(i);
+				modalBody.appendChild(f);
+			});
+
+			var fSize = document.createElement('div');
+			fSize.className = 'hmpro-field';
+			var lSize = document.createElement('label');
+			lSize.textContent = 'Size';
+			var sSize = document.createElement('select');
+			sSize.id = 'hmproSettingSocialSize';
+			['small','normal','large'].forEach(function(v){
+				var o=document.createElement('option');
+				o.value=v;
+				o.textContent=v;
+				sSize.appendChild(o);
+			});
+			sSize.value = settings.size || 'normal';
+			fSize.appendChild(lSize);
+			fSize.appendChild(sSize);
+			modalBody.appendChild(fSize);
+
+			var fGap = document.createElement('div');
+			fGap.className = 'hmpro-field';
+			var lGap = document.createElement('label');
+			lGap.textContent = 'Gap';
+			var sGap = document.createElement('select');
+			sGap.id = 'hmproSettingSocialGap';
+			['small','normal','large'].forEach(function(v){
+				var o=document.createElement('option');
+				o.value=v;
+				o.textContent=v;
+				sGap.appendChild(o);
+			});
+			sGap.value = settings.gap || 'normal';
+			fGap.appendChild(lGap);
+			fGap.appendChild(sGap);
+			modalBody.appendChild(fGap);
+
+			var fTab = document.createElement('div');
+			fTab.className = 'hmpro-field';
+			var lTab = document.createElement('label');
+			lTab.textContent = 'Open in new tab';
+			var cTab = document.createElement('input');
+			cTab.type = 'checkbox';
+			cTab.id = 'hmproSettingSocialNewTab';
+			cTab.checked = !!settings.new_tab;
+			fTab.appendChild(lTab);
+			fTab.appendChild(cTab);
+			modalBody.appendChild(fTab);
+
 		} else {
 			var p = document.createElement('p');
 			p.textContent = 'No settings for this component yet.';
@@ -487,6 +570,26 @@
 				var h = document.getElementById('hmproSettingSpacerHeight');
 				if (w) comp.settings.width = w.value;
 				if (h) comp.settings.height = h.value;
+			}
+			if (type === 'social') {
+				comp.settings.urls = comp.settings.urls || {};
+				var keys = ['facebook','instagram','x','youtube','tiktok','linkedin','whatsapp','telegram'];
+				keys.forEach(function(k){
+					var el = document.getElementById('hmproSettingSocial_' + k);
+					if (!el) return;
+					var val = (el.value || '').trim();
+					if (val) {
+						comp.settings.urls[k] = val;
+					} else {
+						delete comp.settings.urls[k];
+					}
+				});
+				var sz = document.getElementById('hmproSettingSocialSize');
+				var gp = document.getElementById('hmproSettingSocialGap');
+				var nt = document.getElementById('hmproSettingSocialNewTab');
+				comp.settings.size = sz ? sz.value : (comp.settings.size || 'normal');
+				comp.settings.gap = gp ? gp.value : (comp.settings.gap || 'normal');
+				comp.settings.new_tab = nt ? !!nt.checked : !!comp.settings.new_tab;
 			}
 
 			comps[index] = comp;
