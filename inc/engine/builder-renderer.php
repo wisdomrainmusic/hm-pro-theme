@@ -233,7 +233,7 @@ function hmpro_builder_comp_menu( array $set ) {
 }
 
 function hmpro_builder_comp_search( array $set, $comp_id = '' ) {
-	$ph = isset( $set['placeholder'] ) ? sanitize_text_field( (string) $set['placeholder'] ) : __( 'Search…', 'hmpro' );
+	$ph = isset( $set['placeholder'] ) ? sanitize_text_field( (string) $set['placeholder'] ) : __( 'Ara…', 'hmpro' );
 	$comp_id  = sanitize_key( (string) $comp_id );
 	$field_id = 'hmpro-search-field';
 	if ( '' !== $comp_id ) {
@@ -242,7 +242,7 @@ function hmpro_builder_comp_search( array $set, $comp_id = '' ) {
 	echo '<form class="hmpro-search" role="search" method="get" action="' . esc_url( home_url( '/' ) ) . '">';
 	echo '<label class="screen-reader-text" for="' . esc_attr( $field_id ) . '">' . esc_html__( 'Search for:', 'hmpro' ) . '</label>';
 	echo '<input id="' . esc_attr( $field_id ) . '" class="hmpro-search-field" type="search" name="s" value="' . esc_attr( get_search_query() ) . '" placeholder="' . esc_attr( $ph ) . '" required />';
-	echo '<button class="hmpro-search-submit" type="submit">' . esc_html__( 'Search', 'hmpro' ) . '</button>';
+	echo '<button class="hmpro-search-submit" type="submit">' . esc_html__( 'Ara', 'hmpro' ) . '</button>';
 	echo '</form>';
 }
 

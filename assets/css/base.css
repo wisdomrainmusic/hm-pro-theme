@@ -152,13 +152,35 @@ footer,
 	padding:8px 10px;
 	border:1px solid rgba(0,0,0,.2);
 	border-radius:8px;
+	color: var(--hmpro-text, #111);
+	background: transparent;
+}
+.hmpro-search-field::placeholder{
+	opacity:.75;
 }
 .hmpro-search-submit{
 	padding:8px 12px;
-	border:1px solid rgba(0,0,0,.2);
 	border-radius:8px;
-	background:transparent;
 	cursor:pointer;
+
+	/* chameleon: theme accent by default */
+	background: var(--hmpro-accent, #6b4a50);
+	border: 1px solid var(--hmpro-accent, #6b4a50);
+	color: var(--hmpro-accent-contrast, #fff);
+
+	transition: opacity .15s ease, transform .15s ease, filter .15s ease;
+}
+.hmpro-search-submit:hover,
+.hmpro-search-submit:focus{
+	opacity:.95;
+	transform: translateY(-1px);
+	filter: brightness(.95);
+}
+.hmpro-search-submit:disabled{
+	opacity:.55;
+	cursor:not-allowed;
+	transform:none;
+	filter:none;
 }
 .hmpro-btn{
 	display:inline-flex;
