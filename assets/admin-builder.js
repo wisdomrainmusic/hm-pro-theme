@@ -9,243 +9,309 @@
 		}
 	}
 
-	function uid(prefix) {
-		return (prefix || 'id') + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
-	}
-
-	function ensureBaseSchema(area, obj) {
-		var a = area === 'footer' ? 'footer' : 'header';
-		var regions = a === 'footer'
-			? ['footer_top', 'footer_main', 'footer_bottom']
-			: ['header_top', 'header_main', 'header_bottom'];
-
-		var out = obj && typeof obj === 'object' ? obj : {};
-		if (!out.schema_version) out.schema_version = 1;
-		if (!out.regions || typeof out.regions !== 'object') out.regions = {};
-		regions.forEach(function (k) {
-			if (!Array.isArray(out.regions[k])) out.regions[k] = [];
-		});
-		return out;
-	}
-
-	function regionKeyFromSection(area, section) {
-		var a = area === 'footer' ? 'footer' : 'header';
-		var s = section || 'main';
-		if (s !== 'top' && s !== 'main' && s !== 'bottom') s = 'main';
-		return a + '_' + s;
-	}
-
-	function defaultSettingsFor(type, area, regionKey) {
-		switch (type) {
-			case 'menu':
-				// Smart default: top region -> topbar, footer -> footer, otherwise primary
-				var loc = 'primary';
-				if (String(regionKey).indexOf('top') !== -1 && area === 'header') loc = 'topbar';
-				if (area === 'footer') loc = 'footer';
-				return { source: 'location', location: loc, depth: 2, alignment: 'left' };
-			case 'button':
-				return { text: 'Button', url: '#', alignment: 'left' };
-			case 'html':
-				return { content: '<span>Custom HTML</span>' };
-			case 'spacer':
-				return { width: 16, height: 16 };
-			case 'search':
-				return { placeholder: 'Search…' };
-			default:
-				return {};
-		}
-	}
-
 	ready(function () {
 		var wrap = document.querySelector('.hmpro-builder-wrap');
 		if (!wrap) return;
 
 		var layoutField = document.getElementById('hmpro_builder_layout');
 		var area = wrap.getAttribute('data-area') || 'header';
-		area = area === 'footer' ? 'footer' : 'header';
+		var canvasList = document.getElementById('hmpro-builder-canvas-list');
+		var emptyEl = wrap.querySelector('.hmpro-builder-empty');
+		var editingKeyEl = wrap.querySelector('.hmpro-builder-editing-key');
+
+		function getLayout() {
+			try { return JSON.parse(layoutField.value || '{}'); } catch(e) { return {}; }
+		}
+		function setLayout(obj) {
+			layoutField.value = JSON.stringify(obj || {});
+		}
 
 		var sectionBtns = wrap.querySelectorAll('.hmpro-builder-section-btn');
 		var elementBtns = wrap.querySelectorAll('.hmpro-builder-element-btn');
 		var addFirst = wrap.querySelector('.hmpro-builder-add-first');
-		var canvasInner = wrap.querySelector('.hmpro-builder-canvas-inner');
-		var emptyState = wrap.querySelector('.hmpro-builder-empty');
-		var stage = wrap.querySelector('.hmpro-builder-stage');
-		if (!stage && canvasInner) {
-			stage = document.createElement('div');
-			stage.className = 'hmpro-builder-stage';
-			canvasInner.appendChild(stage);
-		}
 
 		function toast(msg) {
+			// Lightweight placeholder feedback.
 			if (window.console && console.log) console.log('[HMPro Builder]', msg);
 		}
 
-		function getLayout() {
-			try {
-				return ensureBaseSchema(area, JSON.parse(layoutField.value || '{}'));
-			} catch (e) {
-				return ensureBaseSchema(area, {});
-			}
+		function ensureSchema(layout) {
+			layout = layout && typeof layout === 'object' ? layout : {};
+			if (!layout.schema_version) layout.schema_version = 1;
+			if (!layout.regions || typeof layout.regions !== 'object') layout.regions = {};
+
+			var regionKeys = (area === 'footer')
+				? ['footer_top','footer_main','footer_bottom']
+				: ['header_top','header_main','header_bottom'];
+
+			regionKeys.forEach(function (k) {
+				if (!Array.isArray(layout.regions[k])) layout.regions[k] = [];
+			});
+
+			return layout;
 		}
 
-		function setLayout(obj) {
-			layoutField.value = JSON.stringify(ensureBaseSchema(area, obj || {}));
+		function regionKeyFromSection(section) {
+			section = section || 'top';
+			if (section !== 'main' && section !== 'bottom') section = 'top';
+			return (area === 'footer' ? 'footer_' : 'header_') + section;
+		}
+
+		function uid(prefix) {
+			prefix = prefix || 'c';
+			return prefix + '_' + Math.random().toString(36).slice(2, 8) + '_' + Date.now().toString(36).slice(2, 6);
+		}
+
+		// Commit 019: Single-row/single-col per section by default
+		function ensureSingleRowColumn(layout, regionKey) {
+			layout = ensureSchema(layout);
+			var rows = layout.regions[regionKey];
+			if (!rows.length) {
+				rows.push({
+					id: uid('row'),
+					columns: [{
+						id: uid('col'),
+						width: 12,
+						components: []
+					}]
+				});
+			}
+			// Ensure first row/col shape exists
+			if (!rows[0].columns || !Array.isArray(rows[0].columns) || !rows[0].columns.length) {
+				rows[0].columns = [{ id: uid('col'), width: 12, components: [] }];
+			}
+			if (!rows[0].columns[0].components || !Array.isArray(rows[0].columns[0].components)) {
+				rows[0].columns[0].components = [];
+			}
+			return layout;
 		}
 
 		var currentSection = 'top';
-		function setSection(section) {
+		var currentRegionKey = regionKeyFromSection(currentSection);
+
+		function setCurrentSection(section) {
 			currentSection = section;
-			sectionBtns.forEach(function (b) { b.classList.remove('button-primary'); });
-			var active = wrap.querySelector('.hmpro-builder-section-btn[data-section="' + section + '"]');
-			if (active) active.classList.add('button-primary');
-			render();
+			currentRegionKey = regionKeyFromSection(section);
+			if (editingKeyEl) editingKeyEl.textContent = currentRegionKey;
+			renderCanvas();
 		}
 
-		function ensureRowAndCol(layout, regionKey) {
-			if (!layout.regions[regionKey].length) {
-				layout.regions[regionKey].push({
-					id: uid('row'),
-					columns: [
-						{
-							id: uid('col'),
-							width: 12,
-							components: []
-						}
-					]
-				});
+		function getComponentsForCurrentSection(layout) {
+			layout = ensureSchema(layout);
+			var rows = layout.regions[currentRegionKey] || [];
+			if (!rows.length || !rows[0].columns || !rows[0].columns.length) return [];
+			return rows[0].columns[0].components || [];
+		}
+
+		function setComponentsForCurrentSection(layout, comps) {
+			layout = ensureSingleRowColumn(layout, currentRegionKey);
+			layout.regions[currentRegionKey][0].columns[0].components = comps;
+			return layout;
+		}
+
+		function humanLabel(type) {
+			switch (type) {
+				case 'logo': return 'Logo';
+				case 'menu': return 'Menu';
+				case 'search': return 'Search';
+				case 'cart': return 'Cart';
+				case 'button': return 'Button';
+				case 'html': return 'HTML';
+				case 'spacer': return 'Spacer';
+				default: return type;
 			}
-			var row = layout.regions[regionKey][0];
-			if (!row.columns || !row.columns.length) {
-				row.columns = [{ id: uid('col'), width: 12, components: [] }];
-			}
-			if (!row.columns[0].components) row.columns[0].components = [];
-			return row.columns[0];
 		}
 
 		function addComponent(type) {
-			var t = String(type || '').trim();
-			if (!t) return;
+			type = type || 'menu';
+			var layout = ensureSchema(getLayout());
+			layout = ensureSingleRowColumn(layout, currentRegionKey);
 
-			var layout = getLayout();
-			var regionKey = regionKeyFromSection(area, currentSection);
-			var col = ensureRowAndCol(layout, regionKey);
-
-			col.components.push({
-				id: uid(t),
-				type: t,
-				settings: defaultSettingsFor(t, area, regionKey)
+			var comps = getComponentsForCurrentSection(layout);
+			comps.push({
+				id: uid(type),
+				type: type,
+				settings: {}
 			});
 
+			layout = setComponentsForCurrentSection(layout, comps);
 			setLayout(layout);
-			render();
-			toast('Added: ' + t + ' → ' + regionKey);
+			renderCanvas();
 		}
 
-		function removeComponent(compId) {
-			var layout = getLayout();
-			var regionKey = regionKeyFromSection(area, currentSection);
-			var rows = layout.regions[regionKey] || [];
-			rows.forEach(function (row) {
-				(row.columns || []).forEach(function (col) {
-					col.components = (col.components || []).filter(function (c) {
-						return c && c.id !== compId;
-					});
-				});
-			});
+		function removeComponentById(id) {
+			var layout = ensureSchema(getLayout());
+			var comps = getComponentsForCurrentSection(layout);
+			comps = comps.filter(function (c) { return c && c.id !== id; });
+			layout = setComponentsForCurrentSection(layout, comps);
 			setLayout(layout);
-			render();
+			renderCanvas();
 		}
 
-		function render() {
-			if (!stage) return;
-			var layout = getLayout();
-			var regionKey = regionKeyFromSection(area, currentSection);
-			var rows = layout.regions[regionKey] || [];
+		function moveComponent(id, dir) {
+			var layout = ensureSchema(getLayout());
+			var comps = getComponentsForCurrentSection(layout);
+			var idx = comps.findIndex(function (c) { return c && c.id === id; });
+			if (idx < 0) return;
+			var to = idx + (dir === 'up' ? -1 : 1);
+			if (to < 0 || to >= comps.length) return;
+			var tmp = comps[idx];
+			comps[idx] = comps[to];
+			comps[to] = tmp;
+			layout = setComponentsForCurrentSection(layout, comps);
+			setLayout(layout);
+			renderCanvas();
+		}
 
-			// Build flat list of components for now (first row/first col focus).
-			var comps = [];
-			rows.forEach(function (row) {
-				(row.columns || []).forEach(function (col) {
-					(col.components || []).forEach(function (c) {
-						if (c && c.type) comps.push(c);
-					});
-				});
-			});
+		// Drag & drop reorder (lightweight)
+		var dragId = null;
+		function onDragStart(e) {
+			var item = e.currentTarget;
+			dragId = item.getAttribute('data-id');
+			item.classList.add('is-dragging');
+			try { e.dataTransfer.setData('text/plain', dragId); } catch (err) {}
+		}
+		function onDragEnd(e) {
+			var item = e.currentTarget;
+			item.classList.remove('is-dragging');
+			dragId = null;
+		}
+		function onDragOver(e) {
+			e.preventDefault();
+		}
+		function onDrop(e) {
+			e.preventDefault();
+			var target = e.currentTarget;
+			var targetId = target.getAttribute('data-id');
+			if (!dragId || !targetId || dragId === targetId) return;
 
-			stage.innerHTML = '';
+			var layout = ensureSchema(getLayout());
+			var comps = getComponentsForCurrentSection(layout);
+			var from = comps.findIndex(function (c) { return c && c.id === dragId; });
+			var to = comps.findIndex(function (c) { return c && c.id === targetId; });
+			if (from < 0 || to < 0) return;
 
-			if (!comps.length) {
-				if (emptyState) emptyState.style.display = '';
-				stage.style.display = 'none';
-				return;
-			}
+			var moved = comps.splice(from, 1)[0];
+			comps.splice(to, 0, moved);
+			layout = setComponentsForCurrentSection(layout, comps);
+			setLayout(layout);
+			renderCanvas();
+		}
 
-			if (emptyState) emptyState.style.display = 'none';
-			stage.style.display = '';
+		function renderCanvas() {
+			if (!canvasList) return;
+			var layout = ensureSchema(getLayout());
+			layout = ensureSingleRowColumn(layout, currentRegionKey);
+			setLayout(layout); // keep schema normalized
 
-			var title = document.createElement('div');
-			title.className = 'hmpro-builder-stage-title';
-			title.textContent = 'Editing: ' + regionKey;
-			stage.appendChild(title);
+			var comps = getComponentsForCurrentSection(layout);
+			canvasList.innerHTML = '';
 
-			var list = document.createElement('div');
-			list.className = 'hmpro-builder-comp-list';
-			stage.appendChild(list);
+			if (emptyEl) emptyEl.hidden = comps.length > 0;
 
 			comps.forEach(function (c) {
-				var card = document.createElement('div');
-				card.className = 'hmpro-builder-comp-card';
+				if (!c || !c.id) return;
 
-				var label = document.createElement('div');
-				label.className = 'hmpro-builder-comp-label';
-				label.textContent = c.type;
+				var item = document.createElement('div');
+				item.className = 'hmpro-canvas-item';
+				item.setAttribute('data-id', c.id);
+				item.setAttribute('draggable', 'true');
+
+				var left = document.createElement('div');
+				left.className = 'hmpro-canvas-left';
+
+				var badge = document.createElement('span');
+				badge.className = 'hmpro-canvas-badge';
+				badge.textContent = humanLabel(c.type);
+
+				var text = document.createElement('div');
+				text.className = 'hmpro-canvas-text';
+
+				var name = document.createElement('div');
+				name.className = 'hmpro-canvas-name';
+				name.textContent = humanLabel(c.type);
 
 				var meta = document.createElement('div');
-				meta.className = 'hmpro-builder-comp-meta';
+				meta.className = 'hmpro-canvas-id';
 				meta.textContent = c.id;
 
+				text.appendChild(name);
+				text.appendChild(meta);
+
+				left.appendChild(badge);
+				left.appendChild(text);
+
 				var actions = document.createElement('div');
-				actions.className = 'hmpro-builder-comp-actions';
+				actions.className = 'hmpro-canvas-actions';
 
-				var del = document.createElement('button');
-				del.type = 'button';
-				del.className = 'button hmpro-builder-comp-remove';
-				del.textContent = 'Remove';
-				del.addEventListener('click', function () {
-					removeComponent(c.id);
-				});
+				var up = document.createElement('button');
+				up.type = 'button';
+				up.className = 'button';
+				up.textContent = '↑';
+				up.addEventListener('click', function () { moveComponent(c.id, 'up'); });
 
-				actions.appendChild(del);
-				card.appendChild(label);
-				card.appendChild(meta);
-				card.appendChild(actions);
-				list.appendChild(card);
+				var down = document.createElement('button');
+				down.type = 'button';
+				down.className = 'button';
+				down.textContent = '↓';
+				down.addEventListener('click', function () { moveComponent(c.id, 'down'); });
+
+				var remove = document.createElement('button');
+				remove.type = 'button';
+				remove.className = 'button';
+				remove.textContent = 'Remove';
+				remove.addEventListener('click', function () { removeComponentById(c.id); });
+
+				actions.appendChild(up);
+				actions.appendChild(down);
+				actions.appendChild(remove);
+
+				item.appendChild(left);
+				item.appendChild(actions);
+
+				item.addEventListener('dragstart', onDragStart);
+				item.addEventListener('dragend', onDragEnd);
+				item.addEventListener('dragover', onDragOver);
+				item.addEventListener('drop', onDrop);
+
+				canvasList.appendChild(item);
 			});
 		}
 
-		// Wire section buttons
+		// Section selection
 		sectionBtns.forEach(function (btn) {
 			btn.addEventListener('click', function () {
-				setSection(btn.getAttribute('data-section'));
+				sectionBtns.forEach(function (b) { b.classList.remove('button-primary'); });
+				btn.classList.add('button-primary');
+				setCurrentSection(btn.getAttribute('data-section'));
+				toast('Section selected: ' + btn.getAttribute('data-section'));
 			});
 		});
 
-		// Wire element buttons
 		elementBtns.forEach(function (btn) {
 			btn.addEventListener('click', function () {
-				addComponent(btn.getAttribute('data-type'));
+				var type = btn.getAttribute('data-type');
+				addComponent(type);
+				toast('Added: ' + type + ' to ' + currentRegionKey);
 			});
 		});
 
-		// Add-first: add a Menu by default
 		if (addFirst) {
 			addFirst.addEventListener('click', function () {
 				addComponent('menu');
+				toast('Added: menu to ' + currentRegionKey);
 			});
 		}
 
-		// Init base schema + default section selection
-		setLayout(getLayout());
-		setSection('top');
+		// Ensure hidden layout field always has a valid base schema.
+		var current = ensureSchema(getLayout());
+		setLayout(current);
+
+		// Default select "Top" section on load
+		var firstBtn = wrap.querySelector('.hmpro-builder-section-btn[data-section="top"]');
+		if (firstBtn) {
+			firstBtn.classList.add('button-primary');
+		}
+		setCurrentSection('top');
 	});
 })();

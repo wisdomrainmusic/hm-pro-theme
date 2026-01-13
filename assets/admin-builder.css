@@ -37,56 +37,99 @@
 	padding:12px;
 	box-sizing:border-box;
 }
-.hmpro-builder-canvas-inner{
-	height:100%;
-	display:flex;
-	align-items:center;
-	justify-content:center;
-}
-.hmpro-builder-stage{
-	width:100%;
-	max-width:820px;
-}
-.hmpro-builder-stage-title{
-	font-size:13px;
-	font-weight:600;
-	margin:0 0 10px 0;
-}
-.hmpro-builder-comp-list{
-	display:flex;
-	flex-direction:column;
-	gap:10px;
-}
-.hmpro-builder-comp-card{
+.hmpro-builder-canvas-inner{height:100%;}
+.hmpro-builder-canvas-head{
 	display:flex;
 	align-items:center;
 	justify-content:space-between;
 	gap:12px;
-	padding:10px 12px;
-	border:1px solid #dcdcde;
-	border-radius:10px;
-	background:#fff;
+	padding:2px 2px 12px 2px;
+	border-bottom:1px solid #dcdcde;
+	margin-bottom:12px;
 }
-.hmpro-builder-comp-label{
-	font-weight:600;
-	text-transform:capitalize;
+.hmpro-builder-canvas-title{
+	margin:0;
+	font-size:14px;
 }
-.hmpro-builder-comp-meta{
-	opacity:.65;
-	font-size:12px;
-	flex:1;
-	text-align:center;
-}
-.hmpro-builder-comp-actions{
+.hmpro-builder-canvas-meta{
 	display:flex;
-	gap:8px;
+	align-items:center;
+	gap:10px;
+}
+.hmpro-builder-editing{
+	color:#646970;
+	font-size:12px;
 }
 .hmpro-builder-empty{
-	max-width:520px;
-	text-align:center;
+	color:#646970;
+	font-size:13px;
+	margin:14px 0;
 }
-.hmpro-builder-empty h2{
-	margin-top:0;
+.hmpro-builder-canvas-list{
+	display:flex;
+	flex-direction:column;
+	gap:10px;
+}
+.hmpro-canvas-item{
+	border:1px solid #dcdcde;
+	border-radius:10px;
+	padding:10px;
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+	gap:12px;
+	background:#fff;
+}
+.hmpro-canvas-item[draggable="true"]{
+	cursor:grab;
+}
+.hmpro-canvas-item.is-dragging{
+	opacity:.6;
+}
+.hmpro-canvas-left{
+	display:flex;
+	align-items:center;
+	gap:10px;
+	min-width:0;
+}
+.hmpro-canvas-badge{
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+	min-width:44px;
+	height:28px;
+	padding:0 10px;
+	border-radius:999px;
+	background:#f6f7f7;
+	border:1px solid #dcdcde;
+	font-size:12px;
+	font-weight:600;
+}
+.hmpro-canvas-text{
+	display:flex;
+	flex-direction:column;
+	min-width:0;
+}
+.hmpro-canvas-name{
+	font-weight:600;
+	font-size:13px;
+	line-height:1.2;
+}
+.hmpro-canvas-id{
+	color:#646970;
+	font-size:12px;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	max-width:360px;
+}
+.hmpro-canvas-actions{
+	display:flex;
+	align-items:center;
+	gap:8px;
+}
+.hmpro-canvas-actions .button{
+	min-height:30px;
 }
 @media (max-width: 960px){
 	.hmpro-builder-wrap .hmpro-builder-layout{
@@ -95,4 +138,6 @@
 	.hmpro-builder-panel{
 		width:100%;
 	}
+	.hmpro-builder-canvas-meta{flex-wrap:wrap;justify-content:flex-end;}
+	.hmpro-canvas-id{max-width:220px;}
 }
