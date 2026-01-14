@@ -243,10 +243,13 @@ footer.site-footer .hmpro-footer-inner {
 .hmpro-context-mega .hmpro-builder-row {
 	display: flex;
 	gap: 18px;
+	align-items: flex-start;
 }
 .hmpro-context-mega .hmpro-builder-col {
 	flex: 1;
 	min-width: 0;
+	flex-direction: column;
+	align-items: flex-start;
 }
 
 .hmpro-mega-column-menu .hmpro-mega-root-title {
@@ -395,6 +398,28 @@ footer,
 .hmpro-align-left{justify-content:flex-start;}
 .hmpro-align-center{justify-content:center;}
 .hmpro-align-right{justify-content:flex-end;}
+
+/* ---------------------------------------------------------
+   Header Builder
+   The builder renderer assigns left/center/right classes by column index.
+   Using flex:1 on all columns makes them equal width, which can squeeze
+   the center navigation and cause top-level items to wrap (e.g. one item
+   drops to a new line). Keep footer builder behavior unchanged by scoping
+   these overrides to the header builder only.
+   --------------------------------------------------------- */
+.hmpro-header-builder .hmpro-builder-col{
+	flex:0 0 auto;
+}
+.hmpro-header-builder .hmpro-builder-col.hmpro-align-center{
+	flex:1 1 auto;
+	min-width:0;
+}
+
+/* Make top-level header menus a single horizontal line when space allows */
+.hmpro-header-builder .hmpro-primary-nav > ul,
+.hmpro-header-builder .hmpro-primary-nav .menu{
+	white-space:nowrap;
+}
 
 .hmpro-logo img,
 .hmpro-logo img.custom-logo,
