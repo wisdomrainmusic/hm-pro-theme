@@ -201,6 +201,7 @@ function hmpro_builder_comp_image( array $set ) {
 function hmpro_builder_comp_mega_column_menu( array $set ) {
 	$menu_id      = isset( $set['menu_id'] ) ? absint( $set['menu_id'] ) : 0;
 	$root_item_id = isset( $set['root_item_id'] ) ? absint( $set['root_item_id'] ) : 0;
+	$extra_title  = isset( $set['extra_title'] ) ? sanitize_text_field( (string) $set['extra_title'] ) : '';
 	$max_depth    = isset( $set['max_depth'] ) ? max( 1, min( 3, absint( $set['max_depth'] ) ) ) : 2;
 	$show_root    = ! empty( $set['show_root_title'] );
 
@@ -247,6 +248,9 @@ function hmpro_builder_comp_mega_column_menu( array $set ) {
 	};
 
 	echo '<div class="hmpro-mega-column-menu" data-menu-id="' . esc_attr( (string) $menu_id ) . '" data-root-item="' . esc_attr( (string) $root_item_id ) . '">';
+	if ( '' !== $extra_title ) {
+		echo '<div class="hmpro-mega-extra-title">' . esc_html( $extra_title ) . '</div>';
+	}
 	if ( $show_root && '' !== $root_title ) {
 		echo '<div class="hmpro-mega-root-title">' . esc_html( $root_title ) . '</div>';
 	}

@@ -188,6 +188,7 @@ function hmpro_mega_sanitize_layout( $payload ) {
 
 				if ( 'mega_column_menu' === $type ) {
 					$clean_settings['source']          = 'wp_menu';
+					$clean_settings['extra_title']     = isset( $settings['extra_title'] ) ? sanitize_text_field( (string) $settings['extra_title'] ) : '';
 					$clean_settings['menu_id']         = isset( $settings['menu_id'] ) ? absint( $settings['menu_id'] ) : 0;
 					$clean_settings['root_item_id']    = isset( $settings['root_item_id'] ) ? absint( $settings['root_item_id'] ) : 0;
 					$clean_settings['max_depth']       = isset( $settings['max_depth'] ) ? max( 1, min( 3, absint( $settings['max_depth'] ) ) ) : 2;
