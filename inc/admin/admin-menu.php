@@ -81,6 +81,26 @@ function hmpro_register_admin_menu() {
 		'hmpro_render_slug_menu_builder_page'
 	);
 
+
+	add_submenu_page(
+		'hmpro-theme',
+		__( 'Product Importer', 'hmpro' ),
+		__( 'Product Importer', 'hmpro' ),
+		'manage_woocommerce',
+		'hmpro-product-importer',
+		'hmpro_render_product_importer_page'
+	);
+
+
+	add_submenu_page(
+		'hmpro-theme',
+		__( 'Product Exporter', 'hmpro' ),
+		__( 'Product Exporter', 'hmpro' ),
+		'manage_woocommerce',
+		'hmpro-product-exporter',
+		'hmpro_render_product_exporter_page'
+	);
+
 	// Hidden page for editing presets (not shown in menu).
 	add_submenu_page(
 		null,
@@ -107,12 +127,20 @@ function hmpro_render_importers_page() {
 		hmpro_render_woocommerce_notice();
 	}
 
-	echo '<p>' . esc_html__( 'Access import tools for your store.', 'hmpro' ) . '</p>';
-	echo '<ul>';
-	echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=hmpro-category-importer' ) ) . '">' . esc_html__( 'Category Importer', 'hmpro' ) . '</a></li>';
-	echo '<li>' . esc_html__( 'Slug Builder (coming soon)', 'hmpro' ) . '</li>';
-	echo '<li>' . esc_html__( 'Product Importer (coming soon)', 'hmpro' ) . '</li>';
+	echo '<p>' . esc_html__( 'Access import and export tools for your store.', 'hmpro' ) . '</p>';
+
+	echo '<ul style="list-style:disc;padding-left:20px;max-width:780px;">';
+
+	echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=hmpro-category-importer' ) ) . '"><strong>' . esc_html__( 'Category Importer', 'hmpro' ) . '</strong></a> — ' . esc_html__( 'Import product category hierarchies from CSV.', 'hmpro' ) . '</li>';
+
+	echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=hmpro-slug-menu-builder' ) ) . '"><strong>' . esc_html__( 'Slug Menu Builder', 'hmpro' ) . '</strong></a> — ' . esc_html__( 'Build or sync navigation menus from taxonomy hierarchies.', 'hmpro' ) . '</li>';
+
+	echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=hmpro-product-importer' ) ) . '"><strong>' . esc_html__( 'Product Importer', 'hmpro' ) . '</strong></a> — ' . esc_html__( 'Import products from CSV using a queued workflow.', 'hmpro' ) . '</li>';
+
+	echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=hmpro-product-exporter' ) ) . '"><strong>' . esc_html__( 'Product Exporter', 'hmpro' ) . '</strong></a> — ' . esc_html__( 'Export products to CSV with filters.', 'hmpro' ) . '</li>';
+
 	echo '</ul>';
+
 	echo '</div>';
 }
 
