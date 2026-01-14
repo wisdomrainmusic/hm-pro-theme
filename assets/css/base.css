@@ -94,11 +94,17 @@ footer.site-footer .hmpro-footer-inner {
 
 /* Top-level horizontal */
 .hmpro-primary-nav > ul > li,
-.hmpro-primary-nav .menu > li,
-.hmpro-primary-nav ul > li {
+.hmpro-primary-nav > .menu > li,
+.hmpro-primary-nav > ul.menu > li {
 	display: inline-block;
 	position: relative;
 	vertical-align: middle;
+}
+
+/* Mega panel lists must remain vertical (avoid "crab" horizontal stacking) */
+.hmpro-context-mega .hmpro-mega-panel li,
+.hmpro-context-mega .hmpro-mega-col-list li {
+	display: block;
 }
 
 .hmpro-primary-nav a {
