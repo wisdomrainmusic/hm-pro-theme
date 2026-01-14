@@ -176,15 +176,22 @@ footer.site-footer .hmpro-footer-inner {
    Mega panel positioning + preventing normal dropdown overlap
    --------------------------------------------------------- */
 
+/* --- Mega Menu positioning: anchor to nav, not li --- */
+.hmpro-primary-nav {
+	position: relative; /* mega panel will be positioned against the nav width */
+}
+
+/* IMPORTANT: mega li must not be the positioned ancestor */
+.hmpro-primary-nav li.hmpro-li-has-mega {
+	position: static;
+}
+
 /* When mega is bound, do NOT show the normal submenu */
 .hmpro-primary-nav li.hmpro-li-has-mega:hover > ul.sub-menu {
 	display: none !important;
 }
 
 /* Full-width mega panel: position relative to nav (not to <li>) */
-.hmpro-primary-nav li.hmpro-li-has-mega {
-	position: static;
-}
 .hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel {
 	/* Left-align panel to nav container without viewport centering. */
 	left: 0;
