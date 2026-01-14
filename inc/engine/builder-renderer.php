@@ -28,12 +28,15 @@ add_action(
 
 add_action( 'wp_head', function () {
 	$height = absint( get_theme_mod( 'hmpro_logo_max_height', 56 ) );
-	echo '<style>:root{--hmpro-logo-max-height:' . $height . 'px;}</style>';
+	$footer_height = absint( get_theme_mod( 'hmpro_footer_logo_max_height', 96 ) );
+	echo '<style>:root{--hmpro-logo-max-height:' . $height . 'px;--hmpro-footer-logo-max-height:' . $footer_height . 'px;}</style>';
 }, 20 );
-
 
 add_action( 'wp_footer', function () {
 	hmpro_builder_output_social_sprite();
+	if ( function_exists( 'hmpro_builder_output_footer_accordion_script' ) ) {
+		hmpro_builder_output_footer_accordion_script();
+	}
 }, 20 );
 
 /**

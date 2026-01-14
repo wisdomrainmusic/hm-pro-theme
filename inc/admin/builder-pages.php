@@ -44,7 +44,25 @@ function hmpro_render_builder_shell( $area ) {
 	$area = ( 'footer' === $area ) ? 'footer' : 'header';
 
 	$layout = function_exists( 'hmpro_builder_get_layout' ) ? hmpro_builder_get_layout( $area ) : array();
-	$layout_json = ! empty( $layout ) ? wp_json_encode( $layout ) : wp_json_encode( array() );
+
+/**
+ * IMPORTANT:
+ * The admin builder JS expects an object like:
+ * { schema_version: 1, regions: { ... } }
+ *
+ * If we pass an empty array ("[]"), JSON.parse() yields an Array.
+ * JSON.stringify(Array) will ignore custom properties (like "regions"),
+ * causing "Save Layout" to silently submit "[]" and lose the layout.
+ */
+if ( empty( $layout ) || ! is_array( $layout ) || empty( $layout['regions'] ) ) {
+	$layout = [
+		'schema_version' => 1,
+		// Force JSON object: {} (not [])
+		'regions'        => new stdClass(),
+	];
+}
+
+$layout_json = wp_json_encode( $layout );
 
 	$title = ( 'footer' === $area )
 		? __( 'Footer Builder', 'hmpro' )
@@ -73,7 +91,8 @@ function hmpro_render_builder_shell( $area ) {
 		'spacer' => __( 'Spacer', 'hmpro' ),
 	];
 	if ( 'footer' === $area ) {
-		$elements['footer_menu'] = __( 'Footer Menu', 'hmpro' );
+		$elements['footer_menu'] = __( 'Footer Column Menu', 'hmpro' );
+		$elements['footer_info'] = __( 'Footer Info Text', 'hmpro' );
 	}
 
 	?>

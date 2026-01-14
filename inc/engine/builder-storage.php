@@ -76,7 +76,7 @@ function hmpro_builder_update_layout( $area, array $layout ) {
 function hmpro_builder_sanitize_layout( $area, $payload ) {
 	$area = ( 'footer' === $area ) ? 'footer' : 'header';
 
-	$allowed_types = array( 'logo', 'menu', 'search', 'social', 'social_icon_button', 'cart', 'button', 'html', 'spacer' );
+	$allowed_types = array( 'logo', 'menu', 'search', 'social', 'social_icon_button', 'cart', 'button', 'html', 'spacer', 'footer_menu', 'footer_info' );
 	$allowed_icon_modes = array( 'preset', 'custom' );
 	$allowed_icon_presets = array( 'facebook', 'instagram', 'linkedin', 'x', 'youtube', 'tiktok', 'whatsapp', 'telegram' );
 	$allowed_svg_tags = array(
@@ -132,6 +132,8 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 		'button' => array( 'alignment', 'visibility', 'spacing', 'text', 'url', 'rel', 'target' ),
 		'html'   => array( 'visibility', 'spacing', 'content' ),
 		'spacer' => array( 'visibility', 'spacing', 'width', 'height' ),
+		'footer_menu' => array( 'alignment', 'visibility', 'spacing', 'menu_id', 'title', 'show_title' ),
+		'footer_info' => array( 'alignment', 'visibility', 'spacing', 'title', 'lines' ),
 	);
 
 	$out = hmpro_builder_default_schema( $area );
@@ -202,9 +204,13 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 						$v = $settings[ $k ];
 
 						// Basic sanitization by key.
-						if ( in_array( $k, array( 'text', 'placeholder', 'alignment', 'visibility', 'spacing', 'rel', 'target', 'source', 'location', 'size', 'gap' ), true ) ) {
+						if ( in_array( $k, array( 'text', 'placeholder', 'title', 'lines', 'alignment', 'visibility', 'spacing', 'rel', 'target', 'source', 'location', 'size', 'gap' ), true ) ) {
 							$clean_settings[ $k ] = is_scalar( $v ) ? sanitize_text_field( (string) $v ) : '';
-						} elseif ( 'new_tab' === $k ) {
+						} elseif ( in_array( $k, array( 'menu_id', 'depth', 'width', 'height', 'root_item_id' ), true ) ) {
+						$clean_settings[ $k ] = absint( $v );
+					} elseif ( 'show_title' === $k ) {
+						$clean_settings[ $k ] = ! empty( $v ) ? 1 : 0;
+					} elseif ( 'new_tab' === $k ) {
 							$clean_settings[ $k ] = ! empty( $v ) ? 1 : 0;
 						} elseif ( 'transparent' === $k ) {
 							$clean_settings[ $k ] = ! empty( $v ) ? 1 : 0;
