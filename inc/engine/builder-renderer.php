@@ -318,16 +318,19 @@ function hmpro_builder_comp_menu( array $set ) {
 		return;
 	}
 
+	// Stable wrapper for theme CSS (avoids dependency on .menu/.primary-navigation etc).
+	echo '<nav class="hmpro-primary-nav" aria-label="Primary menu">';
+
 	wp_nav_menu(
 		array(
 			'theme_location' => $location,
-			'container'      => 'nav',
-			'container_class'=> 'hmpro-nav',
-			'menu_class'     => 'hmpro-menu',
-			'fallback_cb'    => false,
+			'container'      => false,
+			'fallback_cb'    => '__return_empty_string',
 			'depth'          => $depth,
 		)
 	);
+
+	echo '</nav>';
 }
 
 function hmpro_builder_comp_search( array $set, $comp_id = '' ) {
