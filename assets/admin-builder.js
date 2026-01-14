@@ -451,24 +451,10 @@
 			wrap.appendChild(sMenu);
 			modalBody.appendChild(wrap);
 
-			// Extra title (optional)
-			var wrapExtra = document.createElement('div');
-			wrapExtra.className = 'hmpro-field';
-			var lExtra = document.createElement('label');
-			lExtra.textContent = 'Extra title (optional)';
-			var iExtra = document.createElement('input');
-			iExtra.type = 'text';
-			iExtra.id = 'hmproSettingMegaExtraTitle';
-			iExtra.placeholder = 'e.g. Featured';
-			iExtra.value = settings.extra_title ? String(settings.extra_title) : '';
-			wrapExtra.appendChild(lExtra);
-			wrapExtra.appendChild(iExtra);
-			modalBody.appendChild(wrapExtra);
-
 			var wrapRoot = document.createElement('div');
 			wrapRoot.className = 'hmpro-field';
 			var lRoot = document.createElement('label');
-			lRoot.textContent = 'Root item (main + sub items)';
+			lRoot.textContent = 'Root item';
 			var sRoot = document.createElement('select');
 			sRoot.id = 'hmproSettingMegaRootItem';
 			wrapRoot.appendChild(lRoot);
@@ -946,12 +932,10 @@
 			if (type === 'mega_column_menu') {
 				comp.settings = comp.settings || {};
 				comp.settings.source = 'wp_menu';
-				var ex = document.getElementById('hmproSettingMegaExtraTitle');
 				var mId = document.getElementById('hmproSettingMegaMenuId');
 				var rId = document.getElementById('hmproSettingMegaRootItem');
 				var dId = document.getElementById('hmproSettingMegaDepth');
 				var sR = document.getElementById('hmproSettingMegaShowRoot');
-				comp.settings.extra_title = ex ? (ex.value || '') : (comp.settings.extra_title || '');
 				comp.settings.menu_id = mId ? parseInt(mId.value || '0', 10) : 0;
 				comp.settings.root_item_id = rId ? parseInt(rId.value || '0', 10) : 0;
 				comp.settings.max_depth = dId ? parseInt(dId.value || '2', 10) : 2;
