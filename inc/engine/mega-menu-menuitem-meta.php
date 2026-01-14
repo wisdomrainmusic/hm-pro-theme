@@ -10,6 +10,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Frontend: inject mega panel markup for top-level items with meta
  */
 
+/**
+ * Add a stable <li> class for items bound to a mega menu.
+ * We cannot rely on :has() CSS selectors; this makes hiding the normal submenu reliable.
+ */
+add_filter( 'nav_menu_css_class', function ( $classes, $item, $args, $depth ) {
+	if ( ! is_array( $classes ) ) {
+		$classes = [];
+	}
+	$mega_id = (int) get_post_meta( $item->ID, '_hmpro_mega_menu_id', true );
+	if ( $mega_id > 0 ) {
+		$classes[] = 'hmpro-li-has-mega';
+		$classes[] = 'hmpro-mega-id-' . $mega_id;
+	}
+	return $classes;
+}, 10, 4 );
+
 add_action( 'wp_nav_menu_item_custom_fields', function ( $item_id, $item ) {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
