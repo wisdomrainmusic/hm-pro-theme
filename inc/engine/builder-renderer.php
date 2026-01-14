@@ -295,11 +295,11 @@ function hmpro_builder_comp_menu( array $set ) {
 	// Defaults: primary (later we add settings modal)
 	$location = isset( $set['location'] ) ? sanitize_key( (string) $set['location'] ) : '';
 	// IMPORTANT:
-	// Default depth 3 so nested category trees (e.g. Kategoriler > Ambalaj > Kutular)
+	// Default depth 4 so nested category trees (e.g. Kategoriler > Ambalaj > Kutular)
 	// can render even before Mega Menu binding is applied.
-	$depth    = isset( $set['depth'] ) ? absint( $set['depth'] ) : 3;
+	$depth    = isset( $set['depth'] ) ? absint( $set['depth'] ) : 4;
 	if ( $depth < 1 || $depth > 5 ) {
-		$depth = 3;
+		$depth = 4;
 	}
 
 	$locations = (array) get_nav_menu_locations();
