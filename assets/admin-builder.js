@@ -3,14 +3,11 @@
 
 	/**
 	 * Backward compatibility:
-	 * Some older saved layouts used component types like "footer_menu".
-	 * Current system uses "menu". Normalize in admin UI so settings work.
+	 * NOTE: We are restoring a dedicated Footer Menu widget.
+	 * Do NOT normalize footer_menu -> menu anymore.
 	 */
 	function normalizeCompType(type) {
 		var normalized = (type || '').toLowerCase();
-		if (normalized === 'footer_menu' || normalized === 'header_menu' || normalized === 'primary_menu') {
-			return 'menu';
-		}
 		return normalized;
 	}
 
@@ -540,7 +537,48 @@
 			loadRootItems(sMenu.value, settings.root_item_id || '');
 		}
 
-		if (type === 'menu') {
+		if (type === 'footer_menu') {
+			var footerMenuField = document.createElement('div');
+			footerMenuField.className = 'hmpro-field';
+			var footerMenuLabel = document.createElement('label');
+			footerMenuLabel.textContent = 'Select menu';
+			var footerMenuSelect = document.createElement('select');
+			footerMenuSelect.id = 'hmproSettingFooterMenuId';
+			footerMenuSelect.className = 'widefat';
+
+			var menus = (data.wp_menus && Array.isArray(data.wp_menus)) ? data.wp_menus : [];
+			var footerMenuDefault = document.createElement('option');
+			footerMenuDefault.value = '';
+			footerMenuDefault.textContent = '— Select —';
+			footerMenuSelect.appendChild(footerMenuDefault);
+
+			menus.forEach(function (m) {
+				var optMenu = document.createElement('option');
+				optMenu.value = String(m.id);
+				optMenu.textContent = m.name;
+				footerMenuSelect.appendChild(optMenu);
+			});
+
+			footerMenuSelect.value = settings.menu_id ? String(settings.menu_id) : '';
+			footerMenuField.appendChild(footerMenuLabel);
+			footerMenuField.appendChild(footerMenuSelect);
+			modalBody.appendChild(footerMenuField);
+
+			var footerTitleField = document.createElement('div');
+			footerTitleField.className = 'hmpro-field';
+			var footerTitleLabel = document.createElement('label');
+			footerTitleLabel.textContent = 'Show title';
+			footerTitleLabel.style.display = 'flex';
+			footerTitleLabel.style.alignItems = 'center';
+			footerTitleLabel.style.gap = '8px';
+			var footerTitleInput = document.createElement('input');
+			footerTitleInput.type = 'checkbox';
+			footerTitleInput.id = 'hmproSettingFooterMenuShowTitle';
+			footerTitleInput.checked = !!settings.show_title;
+			footerTitleLabel.prepend(footerTitleInput);
+			footerTitleField.appendChild(footerTitleLabel);
+			modalBody.appendChild(footerTitleField);
+		} else if (type === 'menu' || type === 'header_menu' || type === 'primary_menu') {
 			var field = document.createElement('div');
 			field.className = 'hmpro-field';
 			var label = document.createElement('label');
@@ -864,7 +902,13 @@
 				comp.settings.max_depth = dId ? parseInt(dId.value || '2', 10) : 2;
 				comp.settings.show_root_title = sR && sR.checked ? 1 : 0;
 			}
-			if (type === 'menu') {
+			if (type === 'footer_menu') {
+				var fmId = document.getElementById('hmproSettingFooterMenuId');
+				var fmShow = document.getElementById('hmproSettingFooterMenuShowTitle');
+				comp.settings.menu_id = fmId ? parseInt(fmId.value || '0', 10) : 0;
+				comp.settings.show_title = fmShow && fmShow.checked ? 1 : 0;
+			}
+			if (type === 'menu' || type === 'header_menu' || type === 'primary_menu') {
 				var sel = document.getElementById('hmproSettingMenuLocation');
 				if (sel) comp.settings.location = sel.value;
 			}

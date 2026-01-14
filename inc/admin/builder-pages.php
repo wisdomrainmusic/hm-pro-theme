@@ -72,6 +72,9 @@ function hmpro_render_builder_shell( $area ) {
 		'html'   => __( 'HTML', 'hmpro' ),
 		'spacer' => __( 'Spacer', 'hmpro' ),
 	];
+	if ( 'footer' === $area ) {
+		$elements['footer_menu'] = __( 'Footer Menu', 'hmpro' );
+	}
 
 	?>
 	<div class="wrap hmpro-builder-wrap" data-area="<?php echo esc_attr( $area ); ?>">
@@ -184,6 +187,20 @@ function hmpro_render_builder_shell( $area ) {
 		$menu_locations = [];
 	}
 
+	$menus_data = [];
+	$menus      = wp_get_nav_menus();
+	if ( is_array( $menus ) ) {
+		foreach ( $menus as $menu ) {
+			if ( ! is_object( $menu ) ) {
+				continue;
+			}
+			$menus_data[] = [
+				'id'   => (int) $menu->term_id,
+				'name' => (string) $menu->name,
+			];
+		}
+	}
+
 	wp_localize_script(
 		'hmpro-admin-builder',
 		'hmproBuilderData',
@@ -191,6 +208,7 @@ function hmpro_render_builder_shell( $area ) {
 			'area'          => $area,
 			'layout'        => $layout,
 			'menuLocations' => $menu_locations,
+			'wp_menus'      => $menus_data,
 			'i18n'          => [
 				'editing'      => __( 'Editing:', 'hmpro' ),
 				'empty'        => __( 'Drop components here.', 'hmpro' ),
