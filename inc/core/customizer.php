@@ -40,4 +40,17 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		],
 	] );
 
+	// Mega Menu v2 kill switch (canvas frontend).
+	$wp_customize->add_setting( 'hmpro_enable_mega_menu_v2', [
+		'default'           => 0,
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+
+	$wp_customize->add_control( 'hmpro_enable_mega_menu_v2', [
+		'label'   => __( 'Enable Mega Menu v2 (Canvas Layout)', 'hm-pro-theme' ),
+		'section' => 'title_tagline',
+		'type'    => 'checkbox',
+	] );
+
 } );

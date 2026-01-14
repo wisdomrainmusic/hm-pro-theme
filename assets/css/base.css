@@ -15,6 +15,38 @@ footer.site-footer {
 	padding-bottom: 46px;
 }
 
+/* ==============================
+   Mega Menu v2 Canvas (frontend)
+   Deterministic 4-column grid
+   ============================== */
+
+.hmpro-primary-nav .hmpro-mega-panel .hmpro-mega-canvas {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 18px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.hmpro-primary-nav .hmpro-mega-panel .hmpro-mega-canvas .hmpro-mega-col {
+	min-width: 0;
+}
+
+.hmpro-primary-nav .hmpro-mega-panel .hmpro-mega-widget {
+	margin: 0 0 14px 0;
+}
+
+@media (max-width: 1024px) {
+	.hmpro-primary-nav .hmpro-mega-panel .hmpro-mega-canvas {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 640px) {
+	.hmpro-primary-nav .hmpro-mega-panel .hmpro-mega-canvas {
+		grid-template-columns: 1fr;
+	}
+}
 /* =========================================================
    Mega Menu – Final Column Layout (Excel-style)
    Scope: ONLY mega menu

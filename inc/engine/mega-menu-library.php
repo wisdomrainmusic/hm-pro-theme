@@ -241,13 +241,14 @@ add_shortcode( 'hm_mega_menu', function ( $atts ) {
 	$layout   = hmpro_mega_menu_get_layout( $post_id );
 	$settings = hmpro_mega_menu_get_settings( $post_id );
 
-	if ( ! function_exists( 'hmpro_builder_render_layout_rows' ) ) {
-		return '';
-	}
-
 	ob_start();
 	echo '<div class="hmpro-mega-layout hmpro-mega-height-' . esc_attr( $settings['height_mode'] ) . '" data-mega-id="' . esc_attr( (string) $post_id ) . '">';
-	hmpro_builder_render_layout_rows( $layout['regions']['mega_content'] ?? [], 'mega' );
+	$use_v2 = (int) get_theme_mod( 'hmpro_enable_mega_menu_v2', 0 );
+	if ( 1 === $use_v2 && function_exists( 'hmpro_render_mega_canvas' ) ) {
+		hmpro_render_mega_canvas( $post_id );
+	} elseif ( function_exists( 'hmpro_builder_render_layout_rows' ) ) {
+		hmpro_builder_render_layout_rows( $layout['regions']['mega_content'] ?? [], 'mega' );
+	}
 
 	if ( ! empty( $settings['secondary_menu'] ) ) {
 		$menu_id = absint( $settings['secondary_menu'] );
