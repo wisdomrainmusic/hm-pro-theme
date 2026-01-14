@@ -547,12 +547,14 @@
 			l1.textContent = 'Title (optional)';
 			var inTitle = document.createElement('input');
 			inTitle.type = 'text';
+			inTitle.id = 'hmproSettingFooterInfoTitle';
 			inTitle.className = 'widefat';
 			inTitle.value = (settings.title ? String(settings.title) : '');
 
 			var l2 = document.createElement('label');
 			l2.textContent = 'Lines (one per line)';
 			var ta = document.createElement('textarea');
+			ta.id = 'hmproSettingFooterInfoLines';
 			ta.className = 'widefat';
 			ta.rows = 6;
 			ta.value = (settings.lines ? String(settings.lines) : '');
@@ -571,14 +573,7 @@
 
 			modalBody.appendChild(fWrap);
 
-			modalSave.onclick = function () {
-				comp.settings = comp.settings || {};
-				comp.settings.title = inTitle.value || '';
-				comp.settings.lines = ta.value || '';
-				closeModal();
-				render();
-			};
-			return;
+			// Saved via the global modalSave handler.
 		}
 
 		if (type === 'footer_menu') {
@@ -951,6 +946,12 @@
 				var fmShow = document.getElementById('hmproSettingFooterMenuShowTitle');
 				comp.settings.menu_id = fmId ? parseInt(fmId.value || '0', 10) : 0;
 				comp.settings.show_title = fmShow && fmShow.checked ? 1 : 0;
+			}
+			if (type === 'footer_info' || type === 'footer-info') {
+				var fiTitle = document.getElementById('hmproSettingFooterInfoTitle');
+				var fiLines = document.getElementById('hmproSettingFooterInfoLines');
+				comp.settings.title = fiTitle ? (fiTitle.value || '') : (comp.settings.title || '');
+				comp.settings.lines = fiLines ? (fiLines.value || '') : (comp.settings.lines || '');
 			}
 			if (type === 'menu' || type === 'header_menu' || type === 'primary_menu') {
 				var sel = document.getElementById('hmproSettingMenuLocation');
