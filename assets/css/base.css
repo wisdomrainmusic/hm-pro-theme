@@ -839,6 +839,11 @@ footer,
 .hmpro-mega-column-menu .hmpro-mega-root-title{
 	margin: 0 0 14px;
 }
+.hmpro-mega-column-menu .hmpro-mega-extra-title{
+	font-weight: 700;
+	margin: 0 0 12px;
+	opacity: 0.9;
+}
 
 /* Desktop: force a stable 4-column grid so headings always line up */
 @media (min-width: 1100px){
