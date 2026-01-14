@@ -243,7 +243,11 @@ add_shortcode( 'hm_mega_menu', function ( $atts ) {
 
 	ob_start();
 	echo '<div class="hmpro-mega-layout hmpro-mega-height-' . esc_attr( $settings['height_mode'] ) . '" data-mega-id="' . esc_attr( (string) $post_id ) . '">';
-	$use_v2 = (int) get_theme_mod( 'hmpro_enable_mega_menu_v2', 0 );
+	/**
+	 * DEBUG: Force v2 ON by default so we can verify canvas output is being rendered.
+	 * Once confirmed, we can revert to the toggle-based behavior.
+	 */
+	$use_v2 = (int) get_theme_mod( 'hmpro_enable_mega_menu_v2', 1 );
 	if ( 1 === $use_v2 && function_exists( 'hmpro_render_mega_canvas' ) ) {
 		hmpro_render_mega_canvas( $post_id );
 	} elseif ( function_exists( 'hmpro_builder_render_layout_rows' ) ) {
