@@ -25,6 +25,18 @@ function hmpro_render_footer_builder_page() {
 	hmpro_render_builder_shell( 'footer' );
 }
 
+function hmpro_render_mega_menu_builder_page() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( esc_html__( 'You do not have permission to access this page.', 'hmpro' ) );
+	}
+
+	if ( ! function_exists( 'hmpro_render_mega_builder_shell' ) ) {
+		require_once HMPRO_PATH . '/inc/admin/mega-menu-builder-page.php';
+	}
+
+	hmpro_render_mega_builder_shell();
+}
+
 /**
  * Shared builder UI shell (no persistence in this commit).
  */

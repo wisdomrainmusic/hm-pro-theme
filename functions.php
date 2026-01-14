@@ -17,6 +17,7 @@ require_once HMPRO_PATH . '/inc/engine/import-export.php';
 require_once HMPRO_PATH . '/inc/engine/typography.php';
 require_once HMPRO_PATH . '/inc/engine/builder-storage.php';
 require_once HMPRO_PATH . '/inc/engine/builder-renderer.php';
+require_once HMPRO_PATH . '/inc/engine/mega-menu-library.php';
 
 require_once HMPRO_PATH . '/inc/tools/tools-loader.php';
 
@@ -44,7 +45,7 @@ add_action( 'admin_enqueue_scripts', function () {
 
 	// Builder-specific assets (only on builder screens).
 	$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
-	if ( in_array( $page, [ 'hmpro-header-builder', 'hmpro-footer-builder' ], true ) ) {
+	if ( in_array( $page, [ 'hmpro-header-builder', 'hmpro-footer-builder', 'hmpro-mega-menu-builder' ], true ) ) {
 		wp_enqueue_style(
 			'hmpro-admin-builder',
 			HMPRO_URL . '/assets/admin-builder.css',

@@ -55,6 +55,15 @@ function hmpro_register_admin_menu() {
 
 	add_submenu_page(
 		'hmpro-theme',
+		__( 'Mega Menu Builder', 'hmpro' ),
+		__( 'Mega Menu Builder', 'hmpro' ),
+		'manage_options',
+		'hmpro-mega-menu-builder',
+		'hmpro_render_mega_menu_builder_page'
+	);
+
+	add_submenu_page(
+		'hmpro-theme',
 		__( 'Importers', 'hmpro' ),
 		__( 'Importers', 'hmpro' ),
 		'manage_options',

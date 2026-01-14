@@ -20,6 +20,48 @@ add_action( 'admin_init', function () {
 	}
 
 	$action = sanitize_key( wp_unslash( $_POST['hmpro_action'] ) );
+
+	/**
+	 * Mega Menu Builder save
+	 */
+	if ( 'hmpro_save_mega_menu' === $action ) {
+		$mega_id = isset( $_POST['hmpro_mega_id'] ) ? absint( $_POST['hmpro_mega_id'] ) : 0;
+		if ( $mega_id < 1 ) {
+			wp_die( esc_html__( 'Invalid mega menu ID.', 'hmpro' ) );
+		}
+
+		$nonce = isset( $_POST['hmpro_mega_builder_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['hmpro_mega_builder_nonce'] ) ) : '';
+		if ( ! wp_verify_nonce( $nonce, 'hmpro_mega_builder_' . $mega_id ) ) {
+			wp_die( esc_html__( 'Security check failed.', 'hmpro' ) );
+		}
+
+		$json    = isset( $_POST['hmpro_mega_layout'] ) ? wp_unslash( $_POST['hmpro_mega_layout'] ) : '';
+		$decoded = json_decode( (string) $json, true );
+
+		$clean = function_exists( 'hmpro_mega_sanitize_layout' )
+			? hmpro_mega_sanitize_layout( is_array( $decoded ) ? $decoded : [] )
+			: hmpro_mega_default_layout_schema();
+
+		$did_update = false;
+		if ( function_exists( 'hmpro_mega_menu_update_layout' ) ) {
+			$did_update = (bool) hmpro_mega_menu_update_layout( $mega_id, $clean );
+		}
+
+		$height_mode = isset( $_POST['hmpro_mega_height_mode'] ) ? sanitize_key( wp_unslash( $_POST['hmpro_mega_height_mode'] ) ) : 'auto';
+		if ( function_exists( 'hmpro_mega_menu_update_settings' ) ) {
+			hmpro_mega_menu_update_settings( $mega_id, [ 'height_mode' => $height_mode ] );
+		}
+
+		$redirect_args = [
+			'page'    => 'hmpro-mega-menu-builder',
+			'mega_id' => $mega_id,
+			'saved'   => $did_update ? '1' : '0',
+		];
+
+		wp_safe_redirect( add_query_arg( $redirect_args, admin_url( 'admin.php' ) ) );
+		exit;
+	}
+
 	if ( 'hmpro_save_builder' !== $action ) {
 		return;
 	}
