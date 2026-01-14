@@ -2,6 +2,7 @@
    Primary Navigation (Base Fix)
    - Makes WP menu look normal (no bullets, horizontal)
    - Enables submenu dropdown hover for non-mega items
+   Multi-level dropdown improvements
    ========================================================= */
 
 /* Use our stable wrapper (works regardless of WP/theme classes) */
@@ -36,7 +37,7 @@
 	background: #fff;
 	border: 1px solid rgba(0, 0, 0, 0.08);
 	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
-	z-index: 9998;
+	z-index: 99999;
 }
 
 /* Open on hover */
@@ -50,6 +51,11 @@
 	position: relative;
 }
 
+/* Make submenu hover area stable (avoid accidental close) */
+.hmpro-primary-nav ul li ul {
+	margin-top: 0;
+}
+
 .hmpro-primary-nav ul li ul li a {
 	display: block;
 	padding: 10px 12px;
@@ -61,6 +67,19 @@
 .hmpro-primary-nav ul li ul li ul {
 	left: 100%;
 	top: 0;
+	margin-left: 0;
+}
+
+/* Optional: indicator for items that have children */
+.hmpro-primary-nav li.menu-item-has-children > a:after {
+	content: "▾";
+	font-size: 12px;
+	margin-left: 6px;
+}
+.hmpro-primary-nav li ul li.menu-item-has-children > a:after {
+	content: "▸";
+	float: right;
+	margin-left: 12px;
 }
 
 /* When mega panel exists under the item, prefer mega panel (keep submenu hidden) */
