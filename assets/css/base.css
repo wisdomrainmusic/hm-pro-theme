@@ -20,6 +20,16 @@ footer.site-footer {
    Deterministic 4-column grid
    ============================== */
 
+/* Anchor mega dropdown to the full header width, not the nav component width */
+#site-header,
+.site-header {
+	position: relative;
+}
+
+.hmpro-primary-nav {
+	position: static; /* IMPORTANT: remove width constraint for mega panel */
+}
+
 .hmpro-primary-nav .hmpro-mega-panel .hmpro-mega-canvas {
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -279,10 +289,7 @@ footer.site-footer .hmpro-footer-inner {
    Mega panel positioning + preventing normal dropdown overlap
    --------------------------------------------------------- */
 
-/* --- Mega Menu positioning: anchor to nav, not li --- */
-.hmpro-primary-nav {
-	position: relative; /* mega panel will be positioned against the nav width */
-}
+/* --- Mega Menu positioning: anchor to header, not to nav --- */
 
 /* IMPORTANT: mega li must not be the positioned ancestor */
 .hmpro-primary-nav li.hmpro-li-has-mega {
@@ -294,9 +301,8 @@ footer.site-footer .hmpro-footer-inner {
 	display: none !important;
 }
 
-/* Full-width mega panel: position relative to nav (not to <li>) */
+/* Full-width mega panel: position relative to header (not to nav, not to <li>) */
 .hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel {
-	/* Left-align panel to nav container without viewport centering. */
 	left: 0;
 	right: 0;
 	box-sizing: border-box;
@@ -323,7 +329,7 @@ footer.site-footer .hmpro-footer-inner {
    our hmpro-li-has-mega positioning above. */
 .hmpro-primary-nav .hmpro-mega-panel {
 	display: none;
-	position: absolute;
+	position: absolute; /* now anchored to #site-header */
 	left: 0;
 	right: 0;
 	top: 100%;
@@ -359,9 +365,17 @@ footer.site-footer .hmpro-footer-inner {
 
 /* Layout inner wrapper */
 .hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel .hmpro-mega-layout {
-	max-width: 1200px;
+	/* Wider canvas area (still controlled, not hero-wide) */
+	max-width: 1400px;
 	margin: 0 auto;
-	padding: 0 18px;
+	padding: 0 24px;
+}
+
+/* Optional: on very large screens allow a bit more width */
+@media (min-width: 1600px) {
+	.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel .hmpro-mega-layout {
+		max-width: 1520px;
+	}
 }
 
 /* Secondary menu row inside mega panel */
