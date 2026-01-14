@@ -18,6 +18,8 @@ require_once HMPRO_PATH . '/inc/engine/typography.php';
 require_once HMPRO_PATH . '/inc/engine/builder-storage.php';
 require_once HMPRO_PATH . '/inc/engine/builder-renderer.php';
 
+require_once HMPRO_PATH . '/inc/tools/tools-loader.php';
+
 require_once HMPRO_PATH . '/inc/admin/admin-menu.php';
 require_once HMPRO_PATH . '/inc/admin/actions.php';
 require_once HMPRO_PATH . '/inc/admin/presets-page.php';
