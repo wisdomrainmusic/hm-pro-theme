@@ -140,7 +140,7 @@ function hmpro_builder_render_component( $comp, $context = 'header' ) {
 		case 'footer_menu':
 		case 'header_menu':
 		case 'primary_menu':
-			hmpro_builder_comp_menu( $set );
+			hmpro_builder_comp_menu( $set, $context );
 			break;
 		case 'search':
 			hmpro_builder_comp_search( $set, $id );
@@ -294,15 +294,17 @@ function hmpro_builder_pick_menu_location( array $preferred_keys ) {
 	return '';
 }
 
-function hmpro_builder_comp_menu( array $set ) {
+function hmpro_builder_comp_menu( array $set, $context = 'header' ) {
 	// Defaults: primary (later we add settings modal)
 	$location = isset( $set['location'] ) ? sanitize_key( (string) $set['location'] ) : '';
 	// IMPORTANT:
 	// Default depth 4 so nested category trees (e.g. Kategoriler > Ambalaj > Kutular)
 	// can render even before Mega Menu binding is applied.
-	$depth    = isset( $set['depth'] ) ? absint( $set['depth'] ) : 4;
+	// For footer we keep it calmer by default (vertical lists). User can still override later.
+	$default_depth = ( 'footer' === $context ) ? 2 : 4;
+	$depth         = isset( $set['depth'] ) ? absint( $set['depth'] ) : $default_depth;
 	if ( $depth < 1 || $depth > 5 ) {
-		$depth = 4;
+		$depth = $default_depth;
 	}
 
 	$locations = (array) get_nav_menu_locations();
@@ -316,7 +318,13 @@ function hmpro_builder_comp_menu( array $set ) {
 
 	// Smart pick: support both new builder keys and legacy theme keys.
 	if ( '' === $location ) {
-		$location = hmpro_builder_pick_menu_location( array( 'primary', 'hm_primary', 'topbar', 'footer', 'hm_footer' ) );
+		// Footer should prefer footer locations first; header prefers primary/topbar first.
+		if ( 'footer' === $context ) {
+			$preferred = array( 'footer', 'hm_footer', 'primary', 'hm_primary', 'topbar' );
+		} else {
+			$preferred = array( 'primary', 'hm_primary', 'topbar', 'footer', 'hm_footer' );
+		}
+		$location = hmpro_builder_pick_menu_location( $preferred );
 	}
 
 	$location = sanitize_key( (string) $location );
@@ -324,9 +332,26 @@ function hmpro_builder_comp_menu( array $set ) {
 		return;
 	}
 
-	// Stable wrapper for theme CSS (avoids dependency on .menu/.primary-navigation etc).
-	echo '<nav class="hmpro-primary-nav" aria-label="Primary menu">';
+	// Context-aware wrappers:
+	// - Header: keep .hmpro-primary-nav (Mega Menu depends on this)
+	// - Footer: use .hmpro-footer-nav + vertical list class so footer stays “footer-like”
+	if ( 'footer' === $context ) {
+		echo '<nav class="hmpro-footer-nav" aria-label="Footer menu">';
+		wp_nav_menu(
+			array(
+				'theme_location' => $location,
+				'container'      => false,
+				'menu_class'     => 'hmpro-footer-menu',
+				'fallback_cb'    => '__return_empty_string',
+				'depth'          => $depth,
+			)
+		);
+		echo '</nav>';
+		return;
+	}
 
+	// Header / default:
+	echo '<nav class="hmpro-primary-nav" aria-label="Primary menu">';
 	wp_nav_menu(
 		array(
 			'theme_location' => $location,
@@ -335,7 +360,6 @@ function hmpro_builder_comp_menu( array $set ) {
 			'depth'          => $depth,
 		)
 	);
-
 	echo '</nav>';
 }
 

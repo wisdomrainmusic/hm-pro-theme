@@ -6,6 +6,24 @@
    Mega Menu integration fixes
    ========================================================= */
 
+/* Footer Menu widget (restore old “footer-like” vertical behavior) */
+.hmpro-footer-nav .hmpro-footer-menu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	align-items: flex-start;
+}
+.hmpro-footer-nav .hmpro-footer-menu li {
+	margin: 0;
+	padding: 0;
+}
+.hmpro-footer-nav .hmpro-footer-menu a {
+	text-decoration: none;
+}
+
 /* Use our stable wrapper (works regardless of WP/theme classes) */
 .hmpro-primary-nav ul {
 	list-style: none;
