@@ -6,6 +6,23 @@
    Mega Menu integration fixes
    ========================================================= */
 
+/* Footer layout polish (taller + tighter columns) */
+/* These selectors are intentionally conservative: they only affect the footer builder output wrapper. */
+.hmpro-site-footer,
+.hmpro-footer,
+footer.site-footer {
+	padding-top: 46px;
+	padding-bottom: 46px;
+}
+
+/* If footer uses a flex/grid inner wrapper, reduce gaps to bring menus closer */
+.hmpro-site-footer .hmpro-footer-inner,
+.hmpro-footer .hmpro-footer-inner,
+footer.site-footer .hmpro-footer-inner {
+	column-gap: 60px;
+	row-gap: 18px;
+}
+
 /* Footer Menu widget (restore old “footer-like” vertical behavior) */
 .hmpro-footer-nav .hmpro-footer-menu {
 	list-style: none;
@@ -38,7 +55,7 @@
 	padding: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 8px;
 	align-items: flex-start;
 }
 .hmpro-footer-menu-list li {
@@ -47,6 +64,20 @@
 }
 .hmpro-footer-menu-list a {
 	text-decoration: none;
+}
+
+/* Footer Info widget styles */
+.hmpro-footer-info-title {
+	font-weight: 600;
+	margin: 0 0 10px 0;
+}
+.hmpro-footer-info-lines {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.hmpro-footer-info-line {
+	opacity: 0.95;
 }
 
 /* Use our stable wrapper (works regardless of WP/theme classes) */

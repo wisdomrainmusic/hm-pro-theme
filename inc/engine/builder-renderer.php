@@ -136,6 +136,9 @@ function hmpro_builder_render_component( $comp, $context = 'header' ) {
 		case 'logo':
 			hmpro_builder_comp_logo();
 			break;
+		case 'footer_info':
+			hmpro_builder_comp_footer_info( $set );
+			break;
 		case 'footer_menu':
 			hmpro_builder_comp_footer_menu( $set );
 			break;
@@ -363,6 +366,40 @@ function hmpro_builder_comp_menu( array $set, $context = 'header' ) {
 		)
 	);
 	echo '</nav>';
+}
+
+/**
+ * Footer Info widget: prints optional title + multi-line text (address/phone/email).
+ * Settings:
+ * - title (string)
+ * - lines (textarea, newline separated)
+ */
+function hmpro_builder_comp_footer_info( array $set ) {
+	$title = isset( $set['title'] ) ? (string) $set['title'] : '';
+	$lines = isset( $set['lines'] ) ? (string) $set['lines'] : '';
+
+	$title = trim( wp_strip_all_tags( $title ) );
+	$lines = trim( (string) $lines );
+
+	echo '<div class="hmpro-footer-info">';
+	if ( '' !== $title ) {
+		echo '<div class="hmpro-footer-info-title">' . esc_html( $title ) . '</div>';
+	}
+
+	if ( '' !== $lines ) {
+		$rows = preg_split( "/\\r\\n|\\r|\\n/", $lines );
+		$rows = is_array( $rows ) ? $rows : array();
+		echo '<div class="hmpro-footer-info-lines">';
+		foreach ( $rows as $row ) {
+			$row = trim( wp_strip_all_tags( (string) $row ) );
+			if ( '' === $row ) {
+				continue;
+			}
+			echo '<div class="hmpro-footer-info-line">' . esc_html( $row ) . '</div>';
+		}
+		echo '</div>';
+	}
+	echo '</div>';
 }
 
 /**

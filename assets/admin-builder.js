@@ -537,6 +537,50 @@
 			loadRootItems(sMenu.value, settings.root_item_id || '');
 		}
 
+		// Footer Info widget (restore settings)
+		// Allows storing company/contact text (address/phone/email) as multi-line.
+		if (type === 'footer_info' || type === 'footer-info') {
+			var fWrap = document.createElement('div');
+			fWrap.className = 'hmpro-field';
+
+			var l1 = document.createElement('label');
+			l1.textContent = 'Title (optional)';
+			var inTitle = document.createElement('input');
+			inTitle.type = 'text';
+			inTitle.className = 'widefat';
+			inTitle.value = (settings.title ? String(settings.title) : '');
+
+			var l2 = document.createElement('label');
+			l2.textContent = 'Lines (one per line)';
+			var ta = document.createElement('textarea');
+			ta.className = 'widefat';
+			ta.rows = 6;
+			ta.value = (settings.lines ? String(settings.lines) : '');
+
+			var help = document.createElement('p');
+			help.style.marginTop = '8px';
+			help.style.opacity = '0.8';
+			help.textContent = 'Example: Address, Phone, Email. Each line will be printed separately.';
+
+			fWrap.appendChild(l1);
+			fWrap.appendChild(inTitle);
+			fWrap.appendChild(document.createElement('div')).style.height = '10px';
+			fWrap.appendChild(l2);
+			fWrap.appendChild(ta);
+			fWrap.appendChild(help);
+
+			modalBody.appendChild(fWrap);
+
+			modalSave.onclick = function () {
+				comp.settings = comp.settings || {};
+				comp.settings.title = inTitle.value || '';
+				comp.settings.lines = ta.value || '';
+				closeModal();
+				render();
+			};
+			return;
+		}
+
 		if (type === 'footer_menu') {
 			var footerMenuField = document.createElement('div');
 			footerMenuField.className = 'hmpro-field';
