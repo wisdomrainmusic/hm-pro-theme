@@ -136,8 +136,10 @@ function hmpro_builder_render_component( $comp, $context = 'header' ) {
 		case 'logo':
 			hmpro_builder_comp_logo();
 			break;
-		case 'menu':
 		case 'footer_menu':
+			hmpro_builder_comp_footer_menu( $set );
+			break;
+		case 'menu':
 		case 'header_menu':
 		case 'primary_menu':
 			hmpro_builder_comp_menu( $set, $context );
@@ -361,6 +363,40 @@ function hmpro_builder_comp_menu( array $set, $context = 'header' ) {
 		)
 	);
 	echo '</nav>';
+}
+
+/**
+ * Dedicated Footer Menu widget (legacy behavior):
+ * - Selects a WP menu (nav_menu term) instead of theme_location.
+ * - Renders as vertical list.
+ */
+function hmpro_builder_comp_footer_menu( array $set ) {
+	$menu_id    = isset( $set['menu_id'] ) ? absint( $set['menu_id'] ) : 0;
+	$show_title = ! empty( $set['show_title'] );
+
+	if ( $menu_id <= 0 ) {
+		return;
+	}
+
+	$menu_obj = wp_get_nav_menu_object( $menu_id );
+	if ( ! $menu_obj || is_wp_error( $menu_obj ) ) {
+		return;
+	}
+
+	echo '<div class="hmpro-footer-menu-widget">';
+	if ( $show_title ) {
+		echo '<div class="hmpro-footer-menu-title">' . esc_html( (string) $menu_obj->name ) . '</div>';
+	}
+	wp_nav_menu(
+		[
+			'menu'        => $menu_id,
+			'container'   => false,
+			'menu_class'  => 'hmpro-footer-menu-list',
+			'fallback_cb' => '__return_empty_string',
+			'depth'       => 2,
+		]
+	);
+	echo '</div>';
 }
 
 function hmpro_builder_comp_search( array $set, $comp_id = '' ) {

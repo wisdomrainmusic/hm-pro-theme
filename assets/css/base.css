@@ -24,6 +24,31 @@
 	text-decoration: none;
 }
 
+/* Dedicated Footer Menu widget (legacy) */
+.hmpro-footer-menu-widget {
+	display: block;
+}
+.hmpro-footer-menu-title {
+	font-weight: 600;
+	margin: 0 0 10px 0;
+}
+.hmpro-footer-menu-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	align-items: flex-start;
+}
+.hmpro-footer-menu-list li {
+	margin: 0;
+	padding: 0;
+}
+.hmpro-footer-menu-list a {
+	text-decoration: none;
+}
+
 /* Use our stable wrapper (works regardless of WP/theme classes) */
 .hmpro-primary-nav ul {
 	list-style: none;
