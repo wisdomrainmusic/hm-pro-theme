@@ -55,6 +55,7 @@ function hmpro_render_mega_builder_shell() {
 
 	$settings = function_exists( 'hmpro_mega_menu_get_settings' ) ? hmpro_mega_menu_get_settings( $current_id ) : hmpro_mega_default_settings();
 	$height_mode = isset( $settings['height_mode'] ) ? sanitize_key( (string) $settings['height_mode'] ) : 'auto';
+	$secondary_menu = isset( $settings['secondary_menu'] ) ? absint( $settings['secondary_menu'] ) : 0;
 
 	$elements = [
 		'mega_column_menu' => __( 'Mega Column Menu', 'hmpro' ),
@@ -107,6 +108,18 @@ function hmpro_render_mega_builder_shell() {
 							<option value="auto" <?php selected( $height_mode, 'auto' ); ?>><?php esc_html_e( 'Auto', 'hmpro' ); ?></option>
 							<option value="compact" <?php selected( $height_mode, 'compact' ); ?>><?php esc_html_e( 'Compact (360px)', 'hmpro' ); ?></option>
 							<option value="showcase" <?php selected( $height_mode, 'showcase' ); ?>><?php esc_html_e( 'Showcase (600px)', 'hmpro' ); ?></option>
+						</select>
+					</div>
+
+					<div style="margin-top:14px;">
+						<label for="hmproMegaSecondaryMenu" style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e( 'Secondary menu (optional)', 'hmpro' ); ?></label>
+						<select name="hmpro_mega_secondary_menu" id="hmproMegaSecondaryMenu">
+							<option value="0" <?php selected( $secondary_menu, 0 ); ?>><?php esc_html_e( 'None', 'hmpro' ); ?></option>
+							<?php foreach ( wp_get_nav_menus() as $m ) : ?>
+								<option value="<?php echo esc_attr( (string) $m->term_id ); ?>" <?php selected( $secondary_menu, (int) $m->term_id ); ?>>
+									<?php echo esc_html( $m->name ); ?>
+								</option>
+							<?php endforeach; ?>
 						</select>
 					</div>
 				</aside>

@@ -50,7 +50,8 @@ function hmpro_mega_default_layout_schema() {
 
 function hmpro_mega_default_settings() {
 	return [
-		'height_mode' => 'auto', // auto|compact|showcase
+		'height_mode'     => 'auto', // auto|compact|showcase
+		'secondary_menu' => 0, // WP nav menu term_id
 	];
 }
 
@@ -99,6 +100,7 @@ function hmpro_mega_menu_get_settings( $post_id ) {
 		$mode = 'auto';
 	}
 	$out['height_mode'] = $mode;
+	$out['secondary_menu'] = isset( $out['secondary_menu'] ) ? absint( $out['secondary_menu'] ) : 0;
 	return $out;
 }
 
@@ -107,11 +109,24 @@ function hmpro_mega_menu_update_settings( $post_id, array $settings ) {
 	if ( $post_id < 1 ) {
 		return false;
 	}
+
 	$mode = isset( $settings['height_mode'] ) ? sanitize_key( (string) $settings['height_mode'] ) : 'auto';
 	if ( ! in_array( $mode, [ 'auto', 'compact', 'showcase' ], true ) ) {
 		$mode = 'auto';
 	}
-	$clean = [ 'height_mode' => $mode ];
+
+	$secondary = isset( $settings['secondary_menu'] ) ? absint( $settings['secondary_menu'] ) : 0;
+	if ( $secondary > 0 ) {
+		$menu_obj = wp_get_nav_menu_object( $secondary );
+		if ( ! $menu_obj ) {
+			$secondary = 0;
+		}
+	}
+
+	$clean = [
+		'height_mode'     => $mode,
+		'secondary_menu' => $secondary,
+	];
 	return update_post_meta( $post_id, '_hmpro_mega_settings', $clean );
 }
 
@@ -233,6 +248,20 @@ add_shortcode( 'hm_mega_menu', function ( $atts ) {
 	ob_start();
 	echo '<div class="hmpro-mega-layout hmpro-mega-height-' . esc_attr( $settings['height_mode'] ) . '" data-mega-id="' . esc_attr( (string) $post_id ) . '">';
 	hmpro_builder_render_layout_rows( $layout['regions']['mega_content'] ?? [], 'mega' );
+
+	if ( ! empty( $settings['secondary_menu'] ) ) {
+		$menu_id = absint( $settings['secondary_menu'] );
+		if ( $menu_id > 0 ) {
+			echo '<div class="hmpro-mega-secondary">';
+			wp_nav_menu( [
+				'menu'        => $menu_id,
+				'container'   => false,
+				'fallback_cb' => '__return_empty_string',
+				'depth'       => 1,
+			] );
+			echo '</div>';
+		}
+	}
 	echo '</div>';
 	return (string) ob_get_clean();
 } );
