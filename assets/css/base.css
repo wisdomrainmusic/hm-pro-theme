@@ -186,14 +186,14 @@ footer.site-footer .hmpro-footer-inner {
 	position: static;
 }
 .hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel {
-	/* Full viewport width, centered to avoid "shift right" */
-	left: 50%;
-	right: auto;
-	transform: translateX(-50%);
+	/* Left-align panel to nav container without viewport centering. */
+	left: 0;
+	right: 0;
 	box-sizing: border-box;
-	width: calc(100vw - 40px);
-	max-width: 1280px;
-	overflow-x: auto;
+	width: auto;
+	max-width: none;
+	transform: none;
+	overflow-x: hidden;
 }
 
 /* Mega Menu (Commit 3D) */
@@ -214,16 +214,17 @@ footer.site-footer .hmpro-footer-inner {
 .hmpro-primary-nav .hmpro-mega-panel {
 	display: none;
 	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
+	left: 0;
+	right: 0;
 	top: 100%;
-	width: calc(100vw - 40px);
-	max-width: 1280px;
+	width: auto;
+	max-width: none;
 	z-index: 9999;
 	background: #fff;
 	border-top: 1px solid rgba(0, 0, 0, 0.08);
 	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
-	overflow-x: auto;
+	transform: none;
+	overflow-x: hidden;
 }
 
 /* Reveal on hover (desktop default) */
@@ -251,6 +252,13 @@ footer.site-footer .hmpro-footer-inner {
 /* Mega layout container */
 .hmpro-mega-layout {
 	padding: 18px 22px;
+}
+
+/* Keep content readable without centering the whole panel */
+.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel .hmpro-mega-layout {
+	max-width: 1280px;
+	margin-left: 0;
+	margin-right: auto;
 }
 
 /* Secondary menu row inside mega panel */
