@@ -99,13 +99,19 @@
 		ensureSingleRowCols(sectionKey);
 		var row = layout.regions[sectionKey][0];
 		var idx = ZONES.indexOf(zone);
-		return row.columns[idx].components;
+		if (idx < 0 || !row || !row.columns || !row.columns[idx]) {
+			return [];
+		}
+		return row.columns[idx].components || [];
 	}
 
 	function setComponents(sectionKey, zone, comps) {
 		ensureSingleRowCols(sectionKey);
 		var row = layout.regions[sectionKey][0];
 		var idx = ZONES.indexOf(zone);
+		if (idx < 0 || !row || !row.columns || !row.columns[idx]) {
+			return;
+		}
 		row.columns[idx].components = comps;
 	}
 
@@ -270,7 +276,13 @@
 
 	function addComponent(type) {
 		if (!type) return;
+		// Default drop zone:
+		// - Header/Footer builders have "center"
+		// - Mega builder has 4 zones: left/center_left/center_right/right (no "center")
 		var zone = 'center';
+		if (ZONES.indexOf(zone) === -1) {
+			zone = (ZONES && ZONES.length) ? ZONES[0] : 'left';
+		}
 		var arr = getComponents(activeSection, zone).slice();
 		arr.push({ id: uid(type), type: type, settings: {} });
 		setComponents(activeSection, zone, arr);
