@@ -3,6 +3,36 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+add_action( 'wp_ajax_hmpro_get_menu_root_items', function () {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_send_json_error( 'forbidden', 403 );
+	}
+	$nonce = isset( $_POST['_ajax_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_ajax_nonce'] ) ) : '';
+	if ( ! wp_verify_nonce( $nonce, 'hmpro_mega_builder' ) ) {
+		wp_send_json_error( 'nonce', 403 );
+	}
+	$menu_id = isset( $_POST['menu_id'] ) ? absint( $_POST['menu_id'] ) : 0;
+	if ( $menu_id < 1 ) {
+		wp_send_json_success( [] );
+	}
+	$items = wp_get_nav_menu_items( $menu_id );
+	if ( empty( $items ) || ! is_array( $items ) ) {
+		wp_send_json_success( [] );
+	}
+	$out = [];
+	foreach ( $items as $it ) {
+		// root candidates = top-level items (menu_item_parent = 0)
+		if ( 0 !== absint( $it->menu_item_parent ) ) {
+			continue;
+		}
+		$out[] = [
+			'id'    => absint( $it->ID ),
+			'title' => (string) $it->title,
+		];
+	}
+	wp_send_json_success( $out );
+} );
+
 /**
  * Mega Menu Builder Page (Commit 3B)
  * UI cloned from Header/Footer builder, adapted to:
@@ -208,4 +238,3 @@ function hmpro_render_mega_builder_shell() {
 		]
 	);
 }
-
