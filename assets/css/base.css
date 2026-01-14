@@ -189,10 +189,11 @@ footer.site-footer .hmpro-footer-inner {
 	/* Full viewport width, centered to avoid "shift right" */
 	left: 50%;
 	right: auto;
-	width: 100vw;
-	max-width: 100vw;
 	transform: translateX(-50%);
 	box-sizing: border-box;
+	width: calc(100vw - 40px);
+	max-width: 1280px;
+	overflow-x: auto;
 }
 
 /* Mega Menu (Commit 3D) */
@@ -207,12 +208,17 @@ footer.site-footer .hmpro-footer-inner {
 	position: relative;
 }
 
-.hmpro-mega-panel {
+/* IMPORTANT:
+   Keep mega panel rules scoped under primary nav so it won't override
+   our hmpro-li-has-mega positioning above. */
+.hmpro-primary-nav .hmpro-mega-panel {
 	display: none;
 	position: absolute;
-	left: 0;
+	left: 50%;
+	transform: translateX(-50%);
 	top: 100%;
-	width: 100vw;
+	width: calc(100vw - 40px);
+	max-width: 1280px;
 	z-index: 9999;
 	background: #fff;
 	border-top: 1px solid rgba(0, 0, 0, 0.08);
@@ -276,13 +282,14 @@ footer.site-footer .hmpro-footer-inner {
 	display: flex;
 	gap: 18px;
 	align-items: flex-start;
-	flex-wrap: wrap;
+	flex-wrap: wrap; /* 4th column never disappears; wrap instead */
 }
 .hmpro-context-mega .hmpro-builder-col {
-	flex: 1 1 240px;
+	flex: 1 1 260px; /* 4 cols on wide screens, wraps on medium */
 	min-width: 0;
 	flex-direction: column;
 	align-items: flex-start;
+	max-width: 100%;
 }
 
 .hmpro-mega-column-menu .hmpro-mega-root-title {
