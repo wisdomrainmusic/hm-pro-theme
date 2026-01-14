@@ -3,6 +3,7 @@
    - Makes WP menu look normal (no bullets, horizontal)
    - Enables submenu dropdown hover for non-mega items
    Multi-level dropdown improvements
+   Mega Menu integration fixes
    ========================================================= */
 
 /* Use our stable wrapper (works regardless of WP/theme classes) */
@@ -10,6 +11,11 @@
 	list-style: none;
 	margin: 0;
 	padding: 0;
+}
+
+/* Ensure mega panel can anchor to a full-width container */
+.hmpro-primary-nav {
+	position: relative;
 }
 
 /* Top-level horizontal */
@@ -27,8 +33,12 @@
 	text-decoration: none;
 }
 
-/* Submenus */
-.hmpro-primary-nav ul li ul {
+/* ---------------------------------------------------------
+   Submenus (NORMAL dropdown)
+   IMPORTANT: scope to WP submenu markup only (ul.sub-menu),
+   otherwise it will hide mega menu column lists (also <ul>).
+   --------------------------------------------------------- */
+.hmpro-primary-nav ul.sub-menu {
 	display: none;
 	position: absolute;
 	left: 0;
@@ -41,22 +51,22 @@
 }
 
 /* Open on hover */
-.hmpro-primary-nav ul li:hover > ul {
+.hmpro-primary-nav li:hover > ul.sub-menu {
 	display: block;
 }
 
 /* Submenu items */
-.hmpro-primary-nav ul li ul li {
+.hmpro-primary-nav ul.sub-menu li {
 	display: block;
 	position: relative;
 }
 
 /* Make submenu hover area stable (avoid accidental close) */
-.hmpro-primary-nav ul li ul {
+.hmpro-primary-nav ul.sub-menu {
 	margin-top: 0;
 }
 
-.hmpro-primary-nav ul li ul li a {
+.hmpro-primary-nav ul.sub-menu li a {
 	display: block;
 	padding: 10px 12px;
 	text-decoration: none;
@@ -64,7 +74,7 @@
 }
 
 /* Third level flyout */
-.hmpro-primary-nav ul li ul li ul {
+.hmpro-primary-nav ul.sub-menu li ul.sub-menu {
 	left: 100%;
 	top: 0;
 	margin-left: 0;
@@ -82,12 +92,23 @@
 	margin-left: 12px;
 }
 
-/* When mega panel exists under the item, prefer mega panel (keep submenu hidden) */
-.hmpro-primary-nav ul > li:hover > ul + .hmpro-mega-panel {
-	display: block;
+/* ---------------------------------------------------------
+   Mega panel positioning + preventing normal dropdown overlap
+   --------------------------------------------------------- */
+
+/* When mega is bound, do NOT show the normal submenu */
+.hmpro-primary-nav li.hmpro-li-has-mega:hover > ul.sub-menu {
+	display: none !important;
 }
-.hmpro-primary-nav ul > li:hover > ul {
-	/* if mega exists, the mega panel will cover; but keep default behavior for others */
+
+/* Full-width mega panel: position relative to nav (not to <li>) */
+.hmpro-primary-nav li.hmpro-li-has-mega {
+	position: static;
+}
+.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel {
+	left: 0;
+	right: 0;
+	width: auto;
 }
 
 /* Mega Menu (Commit 3D) */
@@ -118,6 +139,11 @@
 .menu > li:hover > .hmpro-mega-panel,
 .primary-navigation > li:hover > .hmpro-mega-panel,
 .main-navigation > li:hover > .hmpro-mega-panel {
+	display: block;
+}
+
+/* Also reveal mega panel within our wrapper */
+.hmpro-primary-nav li.hmpro-li-has-mega:hover > .hmpro-mega-panel {
 	display: block;
 }
 
