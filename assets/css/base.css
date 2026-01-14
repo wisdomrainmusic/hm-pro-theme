@@ -643,3 +643,69 @@ footer,
 	box-sizing: border-box;
 	overflow-x: hidden;
 }
+
+/* =========================================================
+   Mega Menu – Spacing + Column Alignment (Hero feel)
+   Fixes:
+   - Panel looks too tight (exam paper)
+   - Repeated root titles in lower rows become misaligned (wrap)
+   ========================================================= */
+
+/* Make the content area wider + more breathable */
+.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel .hmpro-mega-layout{
+	max-width: 1520px;
+	margin: 0 auto;
+	padding: 34px 52px;
+}
+
+/* Keep column blocks consistent */
+.hmpro-mega-column-menu{
+	margin: 0;
+}
+.hmpro-mega-column-menu .hmpro-mega-root-title{
+	margin: 0 0 14px;
+}
+
+/* Desktop: force a stable 4-column grid so headings always line up */
+@media (min-width: 1100px){
+	.hmpro-context-mega .hmpro-builder-row{
+		display: grid;
+		grid-template-columns: repeat(4, minmax(220px, 1fr));
+		column-gap: 56px;
+		row-gap: 26px;
+		align-items: start;
+	}
+
+	/* override previous flex sizing safely */
+	.hmpro-context-mega .hmpro-builder-col{
+		flex: initial;
+		width: auto;
+		max-width: none;
+	}
+}
+
+/* Tablet: 2 columns (still aligned) */
+@media (min-width: 768px) and (max-width: 1099px){
+	.hmpro-context-mega .hmpro-builder-row{
+		display: grid;
+		grid-template-columns: repeat(2, minmax(240px, 1fr));
+		column-gap: 44px;
+		row-gap: 22px;
+		align-items: start;
+	}
+	.hmpro-context-mega .hmpro-builder-col{
+		flex: initial;
+		width: auto;
+		max-width: none;
+	}
+}
+
+/* Mobile: single column */
+@media (max-width: 767px){
+	.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel .hmpro-mega-layout{
+		padding: 22px 18px;
+	}
+	.hmpro-context-mega .hmpro-builder-row{
+		display: block;
+	}
+}
