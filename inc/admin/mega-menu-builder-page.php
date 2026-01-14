@@ -19,17 +19,66 @@ add_action( 'wp_ajax_hmpro_get_menu_root_items', function () {
 	if ( empty( $items ) || ! is_array( $items ) ) {
 		wp_send_json_success( [] );
 	}
+
+	/**
+	 * IMPORTANT:
+	 * Root item should be selectable from ANY menu item (not only top-level),
+	 * so the user can pick "Kozmetik" and auto-render its children.
+	 * We return a hierarchical list with indentation.
+	 */
+
+	// Sort by menu_order to keep WP order.
+	usort( $items, function( $a, $b ) {
+		return (int) $a->menu_order <=> (int) $b->menu_order;
+	} );
+
+	$by_id = [];
+	foreach ( $items as $it ) {
+		$by_id[ (int) $it->ID ] = $it;
+	}
+
+	$depth_cache = [];
+	$calc_depth = function( $id ) use ( &$calc_depth, &$depth_cache, $by_id ) {
+		$id = (int) $id;
+		if ( isset( $depth_cache[ $id ] ) ) {
+			return (int) $depth_cache[ $id ];
+		}
+		if ( empty( $by_id[ $id ] ) ) {
+			$depth_cache[ $id ] = 0;
+			return 0;
+		}
+		$parent = (int) $by_id[ $id ]->menu_item_parent;
+		if ( $parent <= 0 || $parent === $id ) {
+			$depth_cache[ $id ] = 0;
+			return 0;
+		}
+		// cap to avoid weird loops
+		$d = 1 + $calc_depth( $parent );
+		if ( $d > 12 ) {
+			$d = 12;
+		}
+		$depth_cache[ $id ] = $d;
+		return $d;
+	};
+
 	$out = [];
 	foreach ( $items as $it ) {
-		// root candidates = top-level items (menu_item_parent = 0)
-		if ( 0 !== absint( $it->menu_item_parent ) ) {
-			continue;
+		$id    = (int) $it->ID;
+		$title = (string) $it->title;
+		$depth = $calc_depth( $id );
+
+		// Visual indent for dropdown (works well in <option> text).
+		$prefix = '';
+		if ( $depth > 0 ) {
+			$prefix = str_repeat( '— ', $depth );
 		}
+
 		$out[] = [
-			'id'    => absint( $it->ID ),
-			'title' => (string) $it->title,
+			'id'    => $id,
+			'title' => $prefix . $title,
 		];
 	}
+
 	wp_send_json_success( $out );
 } );
 
