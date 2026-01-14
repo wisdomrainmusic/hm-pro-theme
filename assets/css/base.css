@@ -365,16 +365,15 @@ footer.site-footer .hmpro-footer-inner {
 
 /* Layout inner wrapper */
 .hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel .hmpro-mega-layout {
-	/* Wider canvas area (still controlled, not hero-wide) */
-	max-width: 1400px;
+	/* Wider canvas area (Excel-style) */
+	max-width: 1560px;
 	margin: 0 auto;
-	padding: 0 24px;
+	padding: 36px 56px;
 }
 
-/* Optional: on very large screens allow a bit more width */
-@media (min-width: 1600px) {
+@media (max-width: 1024px) {
 	.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel .hmpro-mega-layout {
-		max-width: 1520px;
+		padding: 22px 18px;
 	}
 }
 
