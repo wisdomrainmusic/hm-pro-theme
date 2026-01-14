@@ -217,6 +217,7 @@ footer.site-footer .hmpro-footer-inner {
 	background: #fff;
 	border-top: 1px solid rgba(0, 0, 0, 0.08);
 	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+	overflow-x: auto;
 }
 
 /* Reveal on hover (desktop default) */
@@ -246,13 +247,39 @@ footer.site-footer .hmpro-footer-inner {
 	padding: 18px 22px;
 }
 
+/* Secondary menu row inside mega panel */
+.hmpro-mega-secondary {
+	margin-top: 16px;
+	padding-top: 14px;
+	border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+.hmpro-mega-secondary ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+}
+.hmpro-mega-secondary li {
+	margin: 0;
+	padding: 0;
+}
+.hmpro-mega-secondary a {
+	text-decoration: none;
+}
+.hmpro-mega-secondary a:hover {
+	text-decoration: underline;
+}
+
 .hmpro-context-mega .hmpro-builder-row {
 	display: flex;
 	gap: 18px;
 	align-items: flex-start;
+	flex-wrap: wrap;
 }
 .hmpro-context-mega .hmpro-builder-col {
-	flex: 1;
+	flex: 1 1 240px;
 	min-width: 0;
 	flex-direction: column;
 	align-items: flex-start;
@@ -260,7 +287,8 @@ footer.site-footer .hmpro-footer-inner {
 
 .hmpro-mega-column-menu .hmpro-mega-root-title {
 	font-weight: 700;
-	margin-bottom: 10px;
+	margin: 0 0 10px;
+	line-height: 1.2;
 }
 .hmpro-mega-col-list {
 	list-style: none;

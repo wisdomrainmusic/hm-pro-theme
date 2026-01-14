@@ -48,8 +48,13 @@ add_action( 'admin_init', function () {
 		}
 
 		$height_mode = isset( $_POST['hmpro_mega_height_mode'] ) ? sanitize_key( wp_unslash( $_POST['hmpro_mega_height_mode'] ) ) : 'auto';
+		$secondary_menu = isset( $_POST['hmpro_mega_secondary_menu'] ) ? absint( $_POST['hmpro_mega_secondary_menu'] ) : 0;
+
 		if ( function_exists( 'hmpro_mega_menu_update_settings' ) ) {
-			hmpro_mega_menu_update_settings( $mega_id, [ 'height_mode' => $height_mode ] );
+			hmpro_mega_menu_update_settings( $mega_id, [
+				'height_mode'     => $height_mode,
+				'secondary_menu' => $secondary_menu,
+			] );
 		}
 
 		$redirect_args = [
