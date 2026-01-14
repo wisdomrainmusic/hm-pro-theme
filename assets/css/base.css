@@ -15,6 +15,78 @@ footer.site-footer {
 	padding-bottom: 46px;
 }
 
+/* =========================================================
+   Mega Menu – Final Column Layout (Excel-style)
+   Scope: ONLY mega menu
+   ========================================================= */
+
+/* Full-width anchor (nav is reference) */
+.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel{
+	left: 0;
+	right: 0;
+	width: 100%;
+}
+
+/* Wide & breathable inner container */
+.hmpro-primary-nav .hmpro-mega-layout{
+	max-width: 1560px;
+	margin: 0 auto;
+	padding: 36px 56px;
+}
+
+/* 🔑 Core layout: column-based (NOT grid) */
+.hmpro-context-mega .hmpro-builder-row{
+	display: flex;
+	flex-wrap: nowrap;          /* no row-based wrapping */
+	gap: 64px;                  /* column spacing */
+	align-items: flex-start;    /* titles always aligned */
+}
+
+/* Each builder column = one Excel column */
+.hmpro-context-mega .hmpro-builder-col{
+	flex: 0 0 auto;
+	width: 240px;
+	max-width: 240px;
+}
+
+/* Column title */
+.hmpro-mega-root-title{
+	font-weight: 600;
+	margin-bottom: 14px;
+}
+
+/* List cleanup */
+.hmpro-mega-col-list{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.hmpro-mega-col-list li{
+	margin-bottom: 10px;
+}
+
+/* Tablet: allow wrapping into 2 columns */
+@media (max-width: 1100px){
+	.hmpro-context-mega .hmpro-builder-row{
+		flex-wrap: wrap;
+	}
+	.hmpro-context-mega .hmpro-builder-col{
+		width: 45%;
+		max-width: 45%;
+	}
+}
+
+/* Mobile: single column */
+@media (max-width: 640px){
+	.hmpro-primary-nav .hmpro-mega-layout{
+		padding: 22px 18px;
+	}
+	.hmpro-context-mega .hmpro-builder-col{
+		width: 100%;
+		max-width: 100%;
+	}
+}
+
 /* If footer uses a flex/grid inner wrapper, reduce gaps to bring menus closer */
 .hmpro-site-footer .hmpro-footer-inner,
 .hmpro-footer .hmpro-footer-inner,
