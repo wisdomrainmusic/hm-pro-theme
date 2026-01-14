@@ -137,6 +137,9 @@ function hmpro_builder_render_component( $comp, $context = 'header' ) {
 			hmpro_builder_comp_logo();
 			break;
 		case 'menu':
+		case 'footer_menu':
+		case 'header_menu':
+		case 'primary_menu':
 			hmpro_builder_comp_menu( $set );
 			break;
 		case 'search':

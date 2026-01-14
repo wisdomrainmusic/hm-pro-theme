@@ -106,9 +106,13 @@
 	position: static;
 }
 .hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel {
-	left: 0;
-	right: 0;
-	width: auto;
+	/* Full viewport width, centered to avoid "shift right" */
+	left: 50%;
+	right: auto;
+	width: 100vw;
+	max-width: 100vw;
+	transform: translateX(-50%);
+	box-sizing: border-box;
 }
 
 /* Mega Menu (Commit 3D) */

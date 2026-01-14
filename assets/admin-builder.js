@@ -1,6 +1,40 @@
 (function () {
 	'use strict';
 
+	/**
+	 * Backward compatibility:
+	 * Some older saved layouts used component types like "footer_menu".
+	 * Current system uses "menu". Normalize in admin UI so settings work.
+	 */
+	function normalizeCompType(type) {
+		var normalized = (type || '').toLowerCase();
+		if (normalized === 'footer_menu' || normalized === 'header_menu' || normalized === 'primary_menu') {
+			return 'menu';
+		}
+		return normalized;
+	}
+
+	function normalizeLayoutObject(layoutObj) {
+		if (!layoutObj || typeof layoutObj !== 'object' || !layoutObj.regions) return layoutObj;
+
+		Object.keys(layoutObj.regions).forEach(function (sectionKey) {
+			var rows = layoutObj.regions[sectionKey];
+			if (!Array.isArray(rows)) return;
+			rows.forEach(function (row) {
+				if (!row || !Array.isArray(row.columns)) return;
+				row.columns.forEach(function (column) {
+					if (!column || !Array.isArray(column.components)) return;
+					column.components.forEach(function (comp) {
+						if (!comp || typeof comp !== 'object' || !comp.type) return;
+						comp.type = normalizeCompType(comp.type);
+					});
+				});
+			});
+		});
+
+		return layoutObj;
+	}
+
 	var data = window.hmproBuilderData || {};
 	var layoutField = document.getElementById('hmproBuilderLayoutField');
 	var sectionButtons = document.querySelectorAll('.hmpro-builder-section-btn');
@@ -30,6 +64,7 @@
 	} catch (e) {
 		layout = data.layout || { schema_version: 1, regions: {} };
 	}
+	layout = normalizeLayoutObject(layout);
 	var currentLayout = layout;
 
 	var activeSection = (data.area === 'footer') ? 'footer_top' : ((data.area === 'mega') ? 'mega_content' : 'header_top');
@@ -167,6 +202,7 @@
 			}
 
 			comps.forEach(function (comp, idx) {
+				var compType = normalizeCompType(comp.type);
 				var li = document.createElement('li');
 				li.className = 'hmpro-canvas-item';
 				li.draggable = true;
@@ -179,12 +215,12 @@
 
 				var pill = document.createElement('span');
 				pill.className = 'hmpro-pill';
-				pill.textContent = titleize(comp.type);
+				pill.textContent = titleize(compType);
 
 				var tw = document.createElement('div');
 				tw.className = 'hmpro-titlewrap';
 				var strong = document.createElement('strong');
-				strong.textContent = titleize(comp.type);
+				strong.textContent = titleize(compType);
 				var meta = document.createElement('div');
 				meta.className = 'hmpro-meta';
 				meta.textContent = comp.id || '';
@@ -388,7 +424,7 @@
 		};
 		while (modalBody.firstChild) modalBody.removeChild(modalBody.firstChild);
 
-		var type = (comp.type || '').toLowerCase();
+		var type = normalizeCompType(comp.type);
 		var settings = comp.settings || {};
 
 		if (type === 'mega_column_menu') {
@@ -814,7 +850,7 @@
 			var comp = comps[index];
 			comp.settings = comp.settings || {};
 
-			var type = (comp.type || '').toLowerCase();
+			var type = normalizeCompType(comp.type);
 
 			if (type === 'mega_column_menu') {
 				comp.settings = comp.settings || {};
