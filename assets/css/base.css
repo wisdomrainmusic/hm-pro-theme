@@ -1,3 +1,88 @@
+/* Mega Menu (Commit 3D) */
+.hmpro-has-mega {
+	position: relative;
+}
+
+/* Most WP menu structures: .menu > li is relative; ensure panel can anchor */
+.main-navigation li,
+.primary-navigation li,
+.menu li {
+	position: relative;
+}
+
+.hmpro-mega-panel {
+	display: none;
+	position: absolute;
+	left: 0;
+	top: 100%;
+	width: 100vw;
+	z-index: 9999;
+	background: #fff;
+	border-top: 1px solid rgba(0, 0, 0, 0.08);
+	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+}
+
+/* Reveal on hover (desktop default) */
+.menu > li:hover > .hmpro-mega-panel,
+.primary-navigation > li:hover > .hmpro-mega-panel,
+.main-navigation > li:hover > .hmpro-mega-panel {
+	display: block;
+}
+
+/* Height presets */
+.hmpro-mega-panel.hmpro-mega-height-compact {
+	max-height: 360px;
+	overflow: auto;
+}
+.hmpro-mega-panel.hmpro-mega-height-showcase {
+	max-height: 600px;
+	overflow: auto;
+}
+
+/* Mega layout container */
+.hmpro-mega-layout {
+	padding: 18px 22px;
+}
+
+.hmpro-context-mega .hmpro-builder-row {
+	display: flex;
+	gap: 18px;
+}
+.hmpro-context-mega .hmpro-builder-col {
+	flex: 1;
+	min-width: 0;
+}
+
+.hmpro-mega-column-menu .hmpro-mega-root-title {
+	font-weight: 700;
+	margin-bottom: 10px;
+}
+.hmpro-mega-col-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.hmpro-mega-col-item {
+	margin: 0;
+	padding: 0;
+}
+.hmpro-mega-col-link {
+	display: inline-block;
+	padding: 6px 0;
+	text-decoration: none;
+	color: inherit;
+}
+.hmpro-mega-col-link:hover {
+	text-decoration: underline;
+}
+
+.hmpro-mega-image img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 10px;
+}
+
 :root {
 	--hm-primary: #111111;
 	--hm-dark: #000000;

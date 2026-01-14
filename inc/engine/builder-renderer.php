@@ -36,6 +36,64 @@ add_action( 'wp_footer', function () {
 	hmpro_builder_output_social_sprite();
 }, 20 );
 
+/**
+ * Generic renderer for layout rows (used by header/footer regions + mega layouts).
+ * $context:
+ * - header/footer: existing components
+ * - mega: includes mega_column_menu + image
+ */
+function hmpro_builder_render_layout_rows( array $rows, $context = 'header' ) {
+	if ( empty( $rows ) ) {
+		return;
+	}
+
+	echo '<div class="hmpro-builder-region hmpro-builder-region-generic hmpro-context-' . esc_attr( $context ) . '">';
+
+	foreach ( $rows as $row ) {
+		if ( ! is_array( $row ) || empty( $row['columns'] ) || ! is_array( $row['columns'] ) ) {
+			continue;
+		}
+		$row_id = isset( $row['id'] ) ? sanitize_key( $row['id'] ) : '';
+		echo '<div class="hmpro-builder-row" data-row="' . esc_attr( $row_id ) . '">';
+
+		$col_index = 0;
+		foreach ( $row['columns'] as $col ) {
+			if ( ! is_array( $col ) ) {
+				continue;
+			}
+			$col_id = isset( $col['id'] ) ? sanitize_key( $col['id'] ) : '';
+			$width  = isset( $col['width'] ) ? absint( $col['width'] ) : 12;
+			if ( $width < 1 || $width > 12 ) {
+				$width = 12;
+			}
+
+			// Alignment class: keep legacy behavior for 3 columns, neutral for mega.
+			$align_class = 'hmpro-align-left';
+			if ( 'mega' !== $context ) {
+				if ( 1 === $col_index ) {
+					$align_class = 'hmpro-align-center';
+				} elseif ( 2 === $col_index ) {
+					$align_class = 'hmpro-align-right';
+				}
+			}
+
+			echo '<div class="hmpro-builder-col hmpro-col-' . esc_attr( (string) $width ) . ' ' . esc_attr( $align_class ) . '" data-col="' . esc_attr( $col_id ) . '">';
+
+			$components = isset( $col['components'] ) && is_array( $col['components'] ) ? $col['components'] : [];
+			foreach ( $components as $comp ) {
+				hmpro_builder_render_component( $comp, $context );
+			}
+
+			echo '</div>';
+			$col_index++;
+		}
+
+		echo '</div>';
+	}
+
+	echo '</div>';
+}
+
 function hmpro_builder_render_region( $area, $region_key ) {
 	$area = ( 'footer' === $area ) ? 'footer' : 'header';
 	if ( ! function_exists( 'hmpro_builder_get_layout' ) ) {
@@ -49,53 +107,10 @@ function hmpro_builder_render_region( $area, $region_key ) {
 	if ( empty( $rows ) ) {
 		return;
 	}
-
-	echo '<div class="hmpro-builder-region hmpro-builder-region-' . esc_attr( $region_key ) . '">';
-
-	foreach ( $rows as $row ) {
-		if ( ! is_array( $row ) || empty( $row['columns'] ) || ! is_array( $row['columns'] ) ) {
-			continue;
-		}
-
-		$row_id = isset( $row['id'] ) ? sanitize_key( $row['id'] ) : '';
-		echo '<div class="hmpro-builder-row" data-row="' . esc_attr( $row_id ) . '">';
-
-		$col_index = 0;
-		foreach ( $row['columns'] as $col ) {
-			if ( ! is_array( $col ) ) {
-				continue;
-			}
-
-			$col_id = isset( $col['id'] ) ? sanitize_key( $col['id'] ) : '';
-			$width  = isset( $col['width'] ) ? absint( $col['width'] ) : 12;
-			if ( $width < 1 || $width > 12 ) {
-				$width = 12;
-			}
-			$align_class = 'hmpro-align-left';
-			if ( 1 === $col_index ) {
-				$align_class = 'hmpro-align-center';
-			} elseif ( 2 === $col_index ) {
-				$align_class = 'hmpro-align-right';
-			}
-
-			echo '<div class="hmpro-builder-col hmpro-col-' . esc_attr( (string) $width ) . ' ' . esc_attr( $align_class ) . '" data-col="' . esc_attr( $col_id ) . '">';
-
-			$components = isset( $col['components'] ) && is_array( $col['components'] ) ? $col['components'] : array();
-			foreach ( $components as $comp ) {
-				hmpro_builder_render_component( $comp );
-			}
-
-			echo '</div>';
-			$col_index++;
-		}
-
-		echo '</div>';
-	}
-
-	echo '</div>';
+	hmpro_builder_render_layout_rows( $rows, $area );
 }
 
-function hmpro_builder_render_component( $comp ) {
+function hmpro_builder_render_component( $comp, $context = 'header' ) {
 	if ( ! is_array( $comp ) ) {
 		return;
 	}
@@ -108,6 +123,16 @@ function hmpro_builder_render_component( $comp ) {
 	echo '<div class="' . esc_attr( implode( ' ', $classes ) ) . '" data-comp="' . esc_attr( $id ) . '">';
 
 	switch ( $type ) {
+		case 'mega_column_menu':
+			if ( 'mega' === $context ) {
+				hmpro_builder_comp_mega_column_menu( $set );
+			}
+			break;
+		case 'image':
+			if ( 'mega' === $context ) {
+				hmpro_builder_comp_image( $set );
+			}
+			break;
 		case 'logo':
 			hmpro_builder_comp_logo();
 			break;
@@ -142,6 +167,79 @@ function hmpro_builder_render_component( $comp ) {
 			break;
 	}
 
+	echo '</div>';
+}
+
+function hmpro_builder_comp_image( array $set ) {
+	$url = isset( $set['url'] ) ? esc_url( (string) $set['url'] ) : '';
+	if ( '' === $url ) {
+		return;
+	}
+	$alt     = isset( $set['alt'] ) ? esc_attr( (string) $set['alt'] ) : '';
+	$link    = isset( $set['link'] ) ? esc_url( (string) $set['link'] ) : '';
+	$new_tab = ! empty( $set['new_tab'] );
+
+	$img = '<img src="' . $url . '" alt="' . $alt . '" loading="lazy" />';
+	if ( '' !== $link ) {
+		$attrs = $new_tab ? ' target="_blank" rel="noopener noreferrer"' : '';
+		$img   = '<a href="' . $link . '"' . $attrs . '>' . $img . '</a>';
+	}
+	echo '<div class="hmpro-mega-image">' . $img . '</div>';
+}
+
+function hmpro_builder_comp_mega_column_menu( array $set ) {
+	$menu_id      = isset( $set['menu_id'] ) ? absint( $set['menu_id'] ) : 0;
+	$root_item_id = isset( $set['root_item_id'] ) ? absint( $set['root_item_id'] ) : 0;
+	$max_depth    = isset( $set['max_depth'] ) ? max( 1, min( 3, absint( $set['max_depth'] ) ) ) : 2;
+	$show_root    = ! empty( $set['show_root_title'] );
+
+	if ( $menu_id < 1 || $root_item_id < 1 ) {
+		return;
+	}
+
+	$items = wp_get_nav_menu_items( $menu_id );
+	if ( empty( $items ) || ! is_array( $items ) ) {
+		return;
+	}
+
+	$by_parent  = [];
+	$root_title = '';
+	foreach ( $items as $it ) {
+		$pid = absint( $it->menu_item_parent );
+		$iid = absint( $it->ID );
+		if ( $iid === $root_item_id ) {
+			$root_title = (string) $it->title;
+		}
+		if ( ! isset( $by_parent[ $pid ] ) ) {
+			$by_parent[ $pid ] = [];
+		}
+		$by_parent[ $pid ][] = $it;
+	}
+
+	$render_list = function ( $parent_id, $depth ) use ( &$render_list, $by_parent, $max_depth ) {
+		if ( $depth > $max_depth ) {
+			return;
+		}
+		if ( empty( $by_parent[ $parent_id ] ) ) {
+			return;
+		}
+		echo '<ul class="hmpro-mega-col-list hmpro-depth-' . esc_attr( (string) $depth ) . '">';
+		foreach ( $by_parent[ $parent_id ] as $it ) {
+			$url   = ! empty( $it->url ) ? esc_url( (string) $it->url ) : '#';
+			$title = esc_html( (string) $it->title );
+			echo '<li class="hmpro-mega-col-item">';
+			echo '<a class="hmpro-mega-col-link" href="' . $url . '">' . $title . '</a>';
+			$render_list( absint( $it->ID ), $depth + 1 );
+			echo '</li>';
+		}
+		echo '</ul>';
+	};
+
+	echo '<div class="hmpro-mega-column-menu" data-menu-id="' . esc_attr( (string) $menu_id ) . '" data-root-item="' . esc_attr( (string) $root_item_id ) . '">';
+	if ( $show_root && '' !== $root_title ) {
+		echo '<div class="hmpro-mega-root-title">' . esc_html( $root_title ) . '</div>';
+	}
+	$render_list( $root_item_id, 1 );
 	echo '</div>';
 }
 

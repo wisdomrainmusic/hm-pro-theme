@@ -9,6 +9,8 @@
 
 	var zoneLeft = document.getElementById('hmproZoneLeft');
 	var zoneCenter = document.getElementById('hmproZoneCenter');
+	var zoneCenterLeft = document.getElementById('hmproZoneCenterLeft');
+	var zoneCenterRight = document.getElementById('hmproZoneCenterRight');
 	var zoneRight = document.getElementById('hmproZoneRight');
 
 	var modal = document.getElementById('hmproCompModal');
@@ -17,7 +19,10 @@
 	var builderForm = layoutField ? layoutField.form : null;
 	var isAutoSubmit = false;
 
-	if (!layoutField || !zoneLeft || !zoneCenter || !zoneRight) return;
+	if (!layoutField || !zoneLeft || !zoneRight) return;
+
+	// Zones: default header/footer (3 zones), mega uses 4 zones.
+	var ZONES = Array.isArray(data.zones) && data.zones.length ? data.zones.slice() : ['left', 'center', 'right'];
 
 	var layout;
 	try {
@@ -27,10 +32,8 @@
 	}
 	var currentLayout = layout;
 
-	var activeSection = (data.area === 'footer') ? 'footer_top' : 'header_top';
+	var activeSection = (data.area === 'footer') ? 'footer_top' : ((data.area === 'mega') ? 'mega_content' : 'header_top');
 	var activeEditing = null;
-
-	var ZONES = ['left', 'center', 'right'];
 
 	function uid(prefix) {
 		return prefix + '_' + Math.random().toString(36).slice(2, 8) + '_' + Date.now().toString(36).slice(2, 6);
@@ -42,51 +45,44 @@
 		layout.regions[sectionKey] = layout.regions[sectionKey] || [];
 	}
 
-	function ensureSingleRow3Cols(sectionKey) {
+	function ensureSingleRowCols(sectionKey) {
 		ensureRegion(sectionKey);
 		if (!layout.regions[sectionKey].length) {
+			var cols = [];
+			var w = (ZONES.length === 4) ? 3 : 4;
+			ZONES.forEach(function (z) {
+				cols.push({ id: uid('col_' + z), width: w, components: [] });
+			});
 			layout.regions[sectionKey].push({
 				id: uid('row'),
-				columns: [
-					{ id: uid('col_left'), width: 4, components: [] },
-					{ id: uid('col_center'), width: 4, components: [] },
-					{ id: uid('col_right'), width: 4, components: [] }
-				]
+				columns: cols
 			});
 			return;
 		}
 
 		var row = layout.regions[sectionKey][0];
 		if (!row || !Array.isArray(row.columns) || row.columns.length === 0) {
+			var cols2 = [];
+			var w2 = (ZONES.length === 4) ? 3 : 4;
+			ZONES.forEach(function (z) {
+				cols2.push({ id: uid('col_' + z), width: w2, components: [] });
+			});
 			layout.regions[sectionKey] = [{
 				id: uid('row'),
-				columns: [
-					{ id: uid('col_left'), width: 4, components: [] },
-					{ id: uid('col_center'), width: 4, components: [] },
-					{ id: uid('col_right'), width: 4, components: [] }
-				]
+				columns: cols2
 			}];
 			return;
 		}
 
-		if (row.columns.length === 1) {
-			var existing = row.columns[0].components || [];
-			row.columns = [
-				{ id: uid('col_left'), width: 4, components: [] },
-				{ id: uid('col_center'), width: 4, components: existing },
-				{ id: uid('col_right'), width: 4, components: [] }
-			];
+		// Normalize columns count to ZONES length.
+		while (row.columns.length < ZONES.length) {
+			row.columns.push({ id: uid('col_extra'), width: (ZONES.length === 4 ? 3 : 4), components: [] });
 		}
+		row.columns = row.columns.slice(0, ZONES.length);
 
-		while (row.columns.length < 3) {
-			row.columns.push({ id: uid('col_extra'), width: 4, components: [] });
-		}
-		row.columns = row.columns.slice(0, 3);
-		row.columns[0].width = 4;
-		row.columns[1].width = 4;
-		row.columns[2].width = 4;
-
-		for (var i = 0; i < 3; i++) {
+		var w3 = (ZONES.length === 4) ? 3 : 4;
+		for (var i = 0; i < ZONES.length; i++) {
+			row.columns[i].width = w3;
 			row.columns[i].components = Array.isArray(row.columns[i].components) ? row.columns[i].components : [];
 		}
 	}
@@ -94,18 +90,20 @@
 	function getZoneListEl(zone) {
 		if (zone === 'left') return zoneLeft;
 		if (zone === 'center') return zoneCenter;
+		if (zone === 'center_left') return zoneCenterLeft;
+		if (zone === 'center_right') return zoneCenterRight;
 		return zoneRight;
 	}
 
 	function getComponents(sectionKey, zone) {
-		ensureSingleRow3Cols(sectionKey);
+		ensureSingleRowCols(sectionKey);
 		var row = layout.regions[sectionKey][0];
 		var idx = ZONES.indexOf(zone);
 		return row.columns[idx].components;
 	}
 
 	function setComponents(sectionKey, zone, comps) {
-		ensureSingleRow3Cols(sectionKey);
+		ensureSingleRowCols(sectionKey);
 		var row = layout.regions[sectionKey][0];
 		var idx = ZONES.indexOf(zone);
 		row.columns[idx].components = comps;
@@ -113,7 +111,7 @@
 
 	function findComponentById(sectionKey, compId) {
 		if (!compId) return null;
-		ensureSingleRow3Cols(sectionKey);
+		ensureSingleRowCols(sectionKey);
 		var row = layout.regions[sectionKey][0];
 		if (!row || !Array.isArray(row.columns)) return null;
 		for (var i = 0; i < row.columns.length; i++) {
@@ -143,7 +141,7 @@
 	}
 
 	function render() {
-		ensureSingleRow3Cols(activeSection);
+		ensureSingleRowCols(activeSection);
 
 		if (editingLabel) {
 			editingLabel.textContent = activeSection;
@@ -380,6 +378,119 @@
 
 		var type = (comp.type || '').toLowerCase();
 		var settings = comp.settings || {};
+
+		if (type === 'mega_column_menu') {
+			var wrap = document.createElement('div');
+			wrap.className = 'hmpro-field';
+
+			var lMenu = document.createElement('label');
+			lMenu.textContent = 'WP Menu';
+			var sMenu = document.createElement('select');
+			sMenu.id = 'hmproSettingMegaMenuId';
+			var menus = Array.isArray(data.megaMenus) ? data.megaMenus : [];
+			if (!menus.length) {
+				var o0 = document.createElement('option');
+				o0.value = '';
+				o0.textContent = '(No menus found)';
+				sMenu.appendChild(o0);
+			} else {
+				menus.forEach(function (m) {
+					var o = document.createElement('option');
+					o.value = String(m.id);
+					o.textContent = m.name;
+					sMenu.appendChild(o);
+				});
+			}
+			sMenu.value = settings.menu_id ? String(settings.menu_id) : (menus[0] ? String(menus[0].id) : '');
+			wrap.appendChild(lMenu);
+			wrap.appendChild(sMenu);
+			modalBody.appendChild(wrap);
+
+			var wrapRoot = document.createElement('div');
+			wrapRoot.className = 'hmpro-field';
+			var lRoot = document.createElement('label');
+			lRoot.textContent = 'Root item';
+			var sRoot = document.createElement('select');
+			sRoot.id = 'hmproSettingMegaRootItem';
+			wrapRoot.appendChild(lRoot);
+			wrapRoot.appendChild(sRoot);
+			modalBody.appendChild(wrapRoot);
+
+			var wrapDepth = document.createElement('div');
+			wrapDepth.className = 'hmpro-field';
+			var lDepth = document.createElement('label');
+			lDepth.textContent = 'Max depth';
+			var sDepth = document.createElement('select');
+			sDepth.id = 'hmproSettingMegaDepth';
+			['1', '2', '3'].forEach(function (v) {
+				var o = document.createElement('option');
+				o.value = v;
+				o.textContent = v;
+				sDepth.appendChild(o);
+			});
+			sDepth.value = settings.max_depth ? String(settings.max_depth) : '2';
+			wrapDepth.appendChild(lDepth);
+			wrapDepth.appendChild(sDepth);
+			modalBody.appendChild(wrapDepth);
+
+			var wrapShow = document.createElement('div');
+			wrapShow.className = 'hmpro-field';
+			var lShow = document.createElement('label');
+			lShow.textContent = 'Show root title';
+			var chk = document.createElement('input');
+			chk.type = 'checkbox';
+			chk.id = 'hmproSettingMegaShowRoot';
+			chk.checked = settings.show_root_title ? true : false;
+			wrapShow.appendChild(lShow);
+			wrapShow.appendChild(chk);
+			modalBody.appendChild(wrapShow);
+
+			function loadRootItems(menuId, preselectId) {
+				while (sRoot.firstChild) sRoot.removeChild(sRoot.firstChild);
+				var optLoading = document.createElement('option');
+				optLoading.value = '';
+				optLoading.textContent = 'Loading...';
+				sRoot.appendChild(optLoading);
+
+				var fd = new FormData();
+				fd.append('action', 'hmpro_get_menu_root_items');
+				fd.append('menu_id', menuId || '');
+				fd.append('_ajax_nonce', data.nonce || '');
+
+				fetch(data.ajaxUrl || ajaxurl, { method: 'POST', credentials: 'same-origin', body: fd })
+					.then(function (r) { return r.json(); })
+					.then(function (resp) {
+						while (sRoot.firstChild) sRoot.removeChild(sRoot.firstChild);
+						if (!resp || !resp.success || !Array.isArray(resp.data)) {
+							var o = document.createElement('option');
+							o.value = '';
+							o.textContent = '(No items found)';
+							sRoot.appendChild(o);
+							return;
+						}
+						resp.data.forEach(function (it) {
+							var o = document.createElement('option');
+							o.value = String(it.id);
+							o.textContent = it.title;
+							sRoot.appendChild(o);
+						});
+						var val = preselectId ? String(preselectId) : (resp.data[0] ? String(resp.data[0].id) : '');
+						sRoot.value = val;
+					})
+					.catch(function () {
+						while (sRoot.firstChild) sRoot.removeChild(sRoot.firstChild);
+						var o = document.createElement('option');
+						o.value = '';
+						o.textContent = '(Error loading items)';
+						sRoot.appendChild(o);
+					});
+			}
+
+			sMenu.addEventListener('change', function () {
+				loadRootItems(sMenu.value, '');
+			});
+			loadRootItems(sMenu.value, settings.root_item_id || '');
+		}
 
 		if (type === 'menu') {
 			var field = document.createElement('div');
@@ -692,6 +803,19 @@
 			comp.settings = comp.settings || {};
 
 			var type = (comp.type || '').toLowerCase();
+
+			if (type === 'mega_column_menu') {
+				comp.settings = comp.settings || {};
+				comp.settings.source = 'wp_menu';
+				var mId = document.getElementById('hmproSettingMegaMenuId');
+				var rId = document.getElementById('hmproSettingMegaRootItem');
+				var dId = document.getElementById('hmproSettingMegaDepth');
+				var sR = document.getElementById('hmproSettingMegaShowRoot');
+				comp.settings.menu_id = mId ? parseInt(mId.value || '0', 10) : 0;
+				comp.settings.root_item_id = rId ? parseInt(rId.value || '0', 10) : 0;
+				comp.settings.max_depth = dId ? parseInt(dId.value || '2', 10) : 2;
+				comp.settings.show_root_title = sR && sR.checked ? 1 : 0;
+			}
 			if (type === 'menu') {
 				var sel = document.getElementById('hmproSettingMenuLocation');
 				if (sel) comp.settings.location = sel.value;
@@ -788,7 +912,7 @@
 
 	var firstSectionBtn = document.querySelector('.hmpro-builder-section-btn[data-section="' + activeSection + '"]');
 	if (firstSectionBtn) firstSectionBtn.classList.add('button-primary');
-	ensureSingleRow3Cols(activeSection);
+	ensureSingleRowCols(activeSection);
 	render();
 	sync();
 }());

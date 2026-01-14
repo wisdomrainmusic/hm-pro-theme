@@ -18,6 +18,7 @@ require_once HMPRO_PATH . '/inc/engine/typography.php';
 require_once HMPRO_PATH . '/inc/engine/builder-storage.php';
 require_once HMPRO_PATH . '/inc/engine/builder-renderer.php';
 require_once HMPRO_PATH . '/inc/engine/mega-menu-library.php';
+require_once HMPRO_PATH . '/inc/engine/mega-menu-menuitem-meta.php';
 
 require_once HMPRO_PATH . '/inc/tools/tools-loader.php';
 

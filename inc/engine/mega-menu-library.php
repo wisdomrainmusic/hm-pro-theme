@@ -163,15 +163,26 @@ function hmpro_mega_sanitize_layout( $payload ) {
 				if ( '' === $comp_id || '' === $type ) {
 					continue;
 				}
-				// allowed types will be expanded in 3C
-				if ( ! in_array( $type, [ 'html', 'button', 'spacer' ], true ) ) {
+				// allowed types (mega builder set)
+				if ( ! in_array( $type, [ 'mega_column_menu', 'image', 'html', 'button', 'spacer' ], true ) ) {
 					continue;
 				}
 
 				$settings       = isset( $comp['settings'] ) && is_array( $comp['settings'] ) ? $comp['settings'] : [];
 				$clean_settings = [];
 
-				if ( 'button' === $type ) {
+				if ( 'mega_column_menu' === $type ) {
+					$clean_settings['source']          = 'wp_menu';
+					$clean_settings['menu_id']         = isset( $settings['menu_id'] ) ? absint( $settings['menu_id'] ) : 0;
+					$clean_settings['root_item_id']    = isset( $settings['root_item_id'] ) ? absint( $settings['root_item_id'] ) : 0;
+					$clean_settings['max_depth']       = isset( $settings['max_depth'] ) ? max( 1, min( 3, absint( $settings['max_depth'] ) ) ) : 2;
+					$clean_settings['show_root_title'] = ! empty( $settings['show_root_title'] ) ? 1 : 0;
+				} elseif ( 'image' === $type ) {
+					$clean_settings['url']     = isset( $settings['url'] ) ? esc_url_raw( (string) $settings['url'] ) : '';
+					$clean_settings['alt']     = isset( $settings['alt'] ) ? sanitize_text_field( (string) $settings['alt'] ) : '';
+					$clean_settings['link']    = isset( $settings['link'] ) ? esc_url_raw( (string) $settings['link'] ) : '';
+					$clean_settings['new_tab'] = ! empty( $settings['new_tab'] ) ? 1 : 0;
+				} elseif ( 'button' === $type ) {
 					$clean_settings['text'] = isset( $settings['text'] ) ? sanitize_text_field( (string) $settings['text'] ) : '';
 					$clean_settings['url']  = isset( $settings['url'] ) ? esc_url_raw( (string) $settings['url'] ) : '';
 				} elseif ( 'html' === $type ) {
