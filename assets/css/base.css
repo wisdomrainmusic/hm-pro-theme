@@ -1,3 +1,83 @@
+/* =========================================================
+   Primary Navigation (Base Fix)
+   - Makes WP menu look normal (no bullets, horizontal)
+   - Enables submenu dropdown hover for non-mega items
+   ========================================================= */
+
+/* Target common WP nav wrappers + any theme nav container */
+.main-navigation ul,
+.primary-navigation ul,
+.menu,
+.menu ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* Top-level horizontal */
+.main-navigation .menu > li,
+.primary-navigation .menu > li,
+.menu > li {
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+}
+
+.main-navigation .menu > li > a,
+.primary-navigation .menu > li > a,
+.menu > li > a {
+	display: inline-block;
+	padding: 10px 12px;
+	text-decoration: none;
+}
+
+/* Submenus */
+.main-navigation .menu li ul,
+.primary-navigation .menu li ul,
+.menu li ul {
+	display: none;
+	position: absolute;
+	left: 0;
+	top: 100%;
+	min-width: 220px;
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+	z-index: 9998;
+}
+
+/* Open on hover */
+.main-navigation .menu li:hover > ul,
+.primary-navigation .menu li:hover > ul,
+.menu li:hover > ul {
+	display: block;
+}
+
+/* Submenu items */
+.main-navigation .menu li ul li,
+.primary-navigation .menu li ul li,
+.menu li ul li {
+	display: block;
+	position: relative;
+}
+
+.main-navigation .menu li ul li a,
+.primary-navigation .menu li ul li a,
+.menu li ul li a {
+	display: block;
+	padding: 10px 12px;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+/* Third level flyout */
+.main-navigation .menu li ul li ul,
+.primary-navigation .menu li ul li ul,
+.menu li ul li ul {
+	left: 100%;
+	top: 0;
+}
+
 /* Mega Menu (Commit 3D) */
 .hmpro-has-mega {
 	position: relative;

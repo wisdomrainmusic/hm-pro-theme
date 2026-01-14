@@ -24,6 +24,7 @@ require_once HMPRO_PATH . '/inc/tools/tools-loader.php';
 
 require_once HMPRO_PATH . '/inc/admin/admin-menu.php';
 require_once HMPRO_PATH . '/inc/admin/actions.php';
+require_once HMPRO_PATH . '/inc/admin/mega-menu-ajax.php';
 require_once HMPRO_PATH . '/inc/admin/presets-page.php';
 require_once HMPRO_PATH . '/inc/admin/preset-edit.php';
 require_once HMPRO_PATH . '/inc/admin/builder-pages.php';
