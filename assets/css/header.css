@@ -378,7 +378,9 @@ html.hmpro-mobile-drawer-open body{
 	#site-header .hmpro-social-buttons,
 	#site-header .hmpro-social-icon,
 	#site-header .hmpro-social-icon-button,
-	#site-header .hmpro-social-wrap{
+	#site-header .hmpro-social-wrap,
+	#site-header .hmpro-builder-comp.hmpro-comp-social_icon_button,
+	#site-header [data-comp="social_icon_button"]{
 		display:none !important;
 	}
 
@@ -386,15 +388,24 @@ html.hmpro-mobile-drawer-open body{
 	#site-header .hmpro-logo,
 	#site-header .hmpro-header-logo,
 	#site-header .site-logo,
-	#site-header .custom-logo-link{
+	#site-header .custom-logo-link,
+	#site-header .hmpro-builder-comp.hmpro-comp-logo,
+	#site-header [data-comp="logo"]{
 		display:flex;
 		justify-content:center;
 	}
 
 	/* If logo container is inside a flex row, force full width to center */
 	#site-header .hmpro-logo,
-	#site-header .hmpro-header-logo{
+	#site-header .hmpro-header-logo,
+	#site-header .hmpro-builder-comp.hmpro-comp-logo,
+	#site-header [data-comp="logo"]{
 		width:100%;
+	}
+	#site-header .hmpro-builder-comp.hmpro-comp-logo img,
+	#site-header [data-comp="logo"] img{
+		max-width:180px;
+		height:auto;
 	}
 
 	/* Mobile hamburger position: keep it top-right but not overlapping search */
@@ -403,21 +414,14 @@ html.hmpro-mobile-drawer-open body{
 		right:12px;
 	}
 
-	/* Mobile: keep search under header (full width) if it exists */
+	/* Mobile: hide search (drawer menu yeterliyse) */
 	#site-header .hmpro-search,
 	#site-header .hmpro-search-wrap,
 	#site-header .hmpro-header-search,
-	#site-header form.search-form{
-		width:100%;
-		max-width:100%;
-	}
-
-	#site-header .hmpro-search input[type="search"],
-	#site-header .hmpro-search input[type="text"],
-	#site-header form.search-form input[type="search"],
-	#site-header form.search-form input[type="text"]{
-		width:100%;
-		box-sizing:border-box;
+	#site-header form.search-form,
+	#site-header .hmpro-builder-comp.hmpro-comp-search,
+	#site-header [data-comp="search"]{
+		display:none !important;
 	}
 
 	/* Add a bit of breathing room under logo if search is shown */
