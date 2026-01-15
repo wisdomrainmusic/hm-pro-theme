@@ -278,3 +278,49 @@
 .hmpro-canvas-item{
 	padding:10px 12px;
 }
+
+/* =========================================================
+   Admin builder polish (safe)
+   - hide component type/title/meta inside cards
+   - keep only action buttons visible
+   - make modal always fit viewport
+   ========================================================= */
+
+/* Hide component type pill + title text + internal id */
+.hmpro-pill,
+.hmpro-titlewrap strong,
+.hmpro-meta{
+	display:none !important;
+}
+
+/* Optional: leave a tiny neutral placeholder so cards don't look "empty" */
+.hmpro-label::before{
+	content:"Item";
+	font-size:12px;
+	opacity:.55;
+}
+
+/* Ensure actions always sit nicely to the right */
+.hmpro-label{
+	display:flex;
+	align-items:center;
+	gap:10px;
+}
+.hmpro-actions{
+	margin-left:auto;
+	display:flex;
+	align-items:center;
+	gap:6px;
+}
+
+/* --- Modal: fit to viewport --- */
+.hmpro-modal__panel{
+	max-height: calc(100vh - 32px);
+	overflow: hidden;
+}
+
+.hmpro-modal__body{
+	max-height: calc(100vh - 32px - 52px - 56px);
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+}
