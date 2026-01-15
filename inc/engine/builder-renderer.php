@@ -28,8 +28,9 @@ add_action(
 
 add_action( 'wp_head', function () {
 	$height = absint( get_theme_mod( 'hmpro_logo_max_height', 56 ) );
+	$mobile_height = absint( get_theme_mod( 'hmpro_mobile_logo_max_height', 64 ) );
 	$footer_height = absint( get_theme_mod( 'hmpro_footer_logo_max_height', 96 ) );
-	echo '<style>:root{--hmpro-logo-max-height:' . $height . 'px;--hmpro-footer-logo-max-height:' . $footer_height . 'px;}</style>';
+	echo '<style>:root{--hmpro-logo-max-height:' . $height . 'px;--hmpro-logo-max-height-mobile:' . $mobile_height . 'px;--hmpro-footer-logo-max-height:' . $footer_height . 'px;}</style>';
 }, 20 );
 
 add_action( 'wp_footer', function () {

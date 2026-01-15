@@ -41,6 +41,23 @@ do_action( 'hmpro/header/before' );
 
 <?php $hmpro_account_url = home_url( '/hesabim/' ); ?>
 
+<?php
+// Inline SVG icons (consistent across fonts/browsers)
+function hmpro_icon_hamburger() {
+	return '<svg class="hmpro-icon hmpro-icon-burger" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+		<path d="M4 7h16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+		<path d="M4 12h16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+		<path d="M4 17h16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+	</svg>';
+}
+function hmpro_icon_close() {
+	return '<svg class="hmpro-icon hmpro-icon-close" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+		<path d="M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+		<path d="M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+	</svg>';
+}
+?>
+
 <?php if ( function_exists( 'hmpro_header_builder_has_layout' ) && hmpro_header_builder_has_layout() ) : ?>
 
 	<?php do_action( 'hmpro/header/builder/before' ); ?>
@@ -65,7 +82,7 @@ do_action( 'hmpro/header/before' );
 			aria-controls="hmpro-mobile-drawer"
 			aria-expanded="false"
 		>
-			<span class="hmpro-burger" aria-hidden="true"></span>
+			<?php echo hmpro_icon_hamburger(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</button>
 	</header>
 
@@ -78,7 +95,7 @@ do_action( 'hmpro/header/before' );
 					<?php echo esc_html__( 'Giriş Yap / Kayıt Ol', 'hm-pro-theme' ); ?>
 				</a>
 				<button type="button" class="hmpro-mobile-drawer-close" data-hmpro-close="1" aria-label="<?php echo esc_attr__( 'Menüyü Kapat', 'hm-pro-theme' ); ?>">
-					×
+					<?php echo hmpro_icon_close(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</button>
 			</div>
 			<nav class="hmpro-mobile-nav" aria-label="<?php echo esc_attr__( 'Mobil Menü', 'hm-pro-theme' ); ?>">
