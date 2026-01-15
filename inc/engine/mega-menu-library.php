@@ -192,11 +192,33 @@ function hmpro_mega_sanitize_layout( $payload ) {
 					$clean_settings['root_item_id']    = isset( $settings['root_item_id'] ) ? absint( $settings['root_item_id'] ) : 0;
 					$clean_settings['max_depth']       = isset( $settings['max_depth'] ) ? max( 1, min( 3, absint( $settings['max_depth'] ) ) ) : 2;
 					$clean_settings['show_root_title'] = ! empty( $settings['show_root_title'] ) ? 1 : 0;
+					$clean_settings['max_items']       = isset( $settings['max_items'] ) ? max( 1, min( 50, absint( $settings['max_items'] ) ) ) : 8;
+					$clean_settings['show_more']       = ! empty( $settings['show_more'] ) ? 1 : 0;
+					$clean_settings['more_text']       = isset( $settings['more_text'] ) ? sanitize_text_field( (string) $settings['more_text'] ) : 'Daha Fazla Gör';
 				} elseif ( 'image' === $type ) {
-					$clean_settings['url']     = isset( $settings['url'] ) ? esc_url_raw( (string) $settings['url'] ) : '';
-					$clean_settings['alt']     = isset( $settings['alt'] ) ? sanitize_text_field( (string) $settings['alt'] ) : '';
-					$clean_settings['link']    = isset( $settings['link'] ) ? esc_url_raw( (string) $settings['link'] ) : '';
-					$clean_settings['new_tab'] = ! empty( $settings['new_tab'] ) ? 1 : 0;
+					$clean_settings['attachment_id'] = isset( $settings['attachment_id'] ) ? absint( $settings['attachment_id'] ) : 0;
+					$clean_settings['url']           = isset( $settings['url'] ) ? esc_url_raw( (string) $settings['url'] ) : '';
+					$clean_settings['alt']           = isset( $settings['alt'] ) ? sanitize_text_field( (string) $settings['alt'] ) : '';
+					$clean_settings['link']          = isset( $settings['link'] ) ? esc_url_raw( (string) $settings['link'] ) : '';
+					$clean_settings['new_tab']       = ! empty( $settings['new_tab'] ) ? 1 : 0;
+
+					$size = isset( $settings['size'] ) ? sanitize_key( (string) $settings['size'] ) : 'large';
+					if ( ! in_array( $size, [ 'medium', 'large', 'full' ], true ) ) {
+						$size = 'large';
+					}
+					$clean_settings['size'] = $size;
+
+					$aspect = isset( $settings['aspect'] ) ? sanitize_key( (string) $settings['aspect'] ) : 'landscape';
+					if ( ! in_array( $aspect, [ 'landscape', 'square', 'portrait' ], true ) ) {
+						$aspect = 'landscape';
+					}
+					$clean_settings['aspect'] = $aspect;
+
+					$fit = isset( $settings['fit'] ) ? sanitize_key( (string) $settings['fit'] ) : 'cover';
+					if ( ! in_array( $fit, [ 'cover', 'contain' ], true ) ) {
+						$fit = 'cover';
+					}
+					$clean_settings['fit'] = $fit;
 				} elseif ( 'button' === $type ) {
 					$clean_settings['text'] = isset( $settings['text'] ) ? sanitize_text_field( (string) $settings['text'] ) : '';
 					$clean_settings['url']  = isset( $settings['url'] ) ? esc_url_raw( (string) $settings['url'] ) : '';
