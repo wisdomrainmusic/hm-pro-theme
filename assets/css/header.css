@@ -28,7 +28,10 @@
 	vertical-align: middle;
 }
 
-.hmpro-primary-nav a {
+/* Top-level nav links only (do not affect mega panel inner links) */
+.hmpro-primary-nav > ul > li > a,
+.hmpro-primary-nav > .menu > li > a,
+.hmpro-primary-nav > ul.menu > li > a {
 	display: inline-block;
 	padding: 10px 12px;
 	color: inherit;
