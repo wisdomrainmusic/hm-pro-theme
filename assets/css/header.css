@@ -236,28 +236,38 @@
 	background: rgba(255,255,255,.70);
 	backdrop-filter: blur(6px);
 	cursor:pointer;
-	color: #222; /* ensure burger uses a visible color */
+	color:#222;
 }
 .hmpro-mobile-menu-toggle .hmpro-burger{
 	display:block;
-	width:18px;
+	width:20px;
 	height:2px;
-	background: #222; /* harden line color */
+	background:#222;
 	margin:0 auto;
 	position:relative;
+	border-radius:2px;
 }
 .hmpro-mobile-menu-toggle .hmpro-burger:before,
 .hmpro-mobile-menu-toggle .hmpro-burger:after{
 	content:"";
 	position:absolute;
 	left:0;
-	width:18px;
+	width:20px;
 	height:2px;
-	background:#222; /* harden line color */
+	background:#222;
 	display:block;
+	border-radius:2px;
 }
-.hmpro-mobile-menu-toggle .hmpro-burger:before{ top:-6px; }
-.hmpro-mobile-menu-toggle .hmpro-burger:after{ top:6px; }
+.hmpro-mobile-menu-toggle .hmpro-burger:before{ top:-7px; }
+.hmpro-mobile-menu-toggle .hmpro-burger:after{ top:7px; }
+
+/* Slight hover/active polish */
+.hmpro-mobile-menu-toggle:hover{
+	transform: translateY(-1px);
+}
+.hmpro-mobile-menu-toggle:active{
+	transform: translateY(0);
+}
 
 /* Drawer base */
 .hmpro-mobile-drawer{
@@ -300,6 +310,13 @@
 	gap:10px;
 	padding:14px;
 	border-bottom:1px solid rgba(0,0,0,.08);
+}
+.hmpro-mobile-drawer-close{
+	color:#222;
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+	font-weight:800;
 }
 .hmpro-mobile-account-cta{
 	flex:1 1 auto;
@@ -404,7 +421,7 @@ html.hmpro-mobile-drawer-open body{
 	}
 	#site-header .hmpro-builder-comp.hmpro-comp-logo img,
 	#site-header [data-comp="logo"] img{
-		max-width:180px;
+		max-width:220px;
 		height:auto;
 	}
 
