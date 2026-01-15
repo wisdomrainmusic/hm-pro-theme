@@ -643,3 +643,33 @@ body.hmpro-mega-click .hmpro-mega-wrap {
 	font-weight: 700;
 	padding-top: 8px !important;
 }
+
+/* ==============================
+   “More” expand/collapse behavior
+   ============================== */
+
+.hmpro-mega-column-menu.hmpro-more-mode-expand .hmpro-mega-hidden{
+	display: none;
+}
+
+.hmpro-mega-column-menu.hmpro-more-mode-expand.hmpro-more-open .hmpro-mega-hidden{
+	display: block;
+}
+
+.hmpro-mega-more-toggle{
+	font-weight: 700;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+/* Simple caret */
+.hmpro-mega-more-toggle:after{
+	content: "▾";
+	font-size: 12px;
+	opacity: .8;
+}
+
+.hmpro-mega-column-menu.hmpro-more-open .hmpro-mega-more-toggle:after{
+	content: "▴";
+}

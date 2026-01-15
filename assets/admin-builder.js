@@ -528,6 +528,35 @@
 			fMoreText.appendChild(iMoreText);
 			modalBody.appendChild(fMoreText);
 
+			var fMoreMode = document.createElement('div');
+			fMoreMode.className = 'hmpro-field';
+			var lMoreMode = document.createElement('label');
+			lMoreMode.textContent = 'More behavior';
+			var sMoreMode = document.createElement('select');
+			sMoreMode.id = 'hmproSettingMegaMoreMode';
+			['expand', 'link'].forEach(function (v) {
+				var o = document.createElement('option');
+				o.value = v;
+				o.textContent = (v === 'expand') ? 'Expand in menu (Trendyol)' : 'Go to category page (Link)';
+				sMoreMode.appendChild(o);
+			});
+			sMoreMode.value = settings.more_mode || 'expand';
+			fMoreMode.appendChild(lMoreMode);
+			fMoreMode.appendChild(sMoreMode);
+			modalBody.appendChild(fMoreMode);
+
+			var fLessText = document.createElement('div');
+			fLessText.className = 'hmpro-field';
+			var lLessText = document.createElement('label');
+			lLessText.textContent = 'Collapse label';
+			var iLessText = document.createElement('input');
+			iLessText.type = 'text';
+			iLessText.id = 'hmproSettingMegaLessText';
+			iLessText.value = settings.less_text || 'Daha Az Göster';
+			fLessText.appendChild(lLessText);
+			fLessText.appendChild(iLessText);
+			modalBody.appendChild(fLessText);
+
 			function loadRootItems(menuId, preselectId) {
 				while (sRoot.firstChild) sRoot.removeChild(sRoot.firstChild);
 				var optLoading = document.createElement('option');
@@ -1147,10 +1176,14 @@
 				var maxItems = document.getElementById('hmproSettingMegaMaxItems');
 				var showMore = document.getElementById('hmproSettingMegaShowMore');
 				var moreText = document.getElementById('hmproSettingMegaMoreText');
+				var moreMode = document.getElementById('hmproSettingMegaMoreMode');
+				var lessText = document.getElementById('hmproSettingMegaLessText');
 
 				comp.settings.max_items = maxItems ? parseInt(maxItems.value || '8', 10) : 8;
 				comp.settings.show_more = showMore && showMore.checked ? 1 : 0;
 				comp.settings.more_text = moreText ? (moreText.value || 'Daha Fazla Gör') : 'Daha Fazla Gör';
+				comp.settings.more_mode = moreMode ? (moreMode.value || 'expand') : 'expand';
+				comp.settings.less_text = lessText ? (lessText.value || 'Daha Az Göster') : 'Daha Az Göster';
 			}
 			if (type === 'image') {
 				var aid = document.getElementById('hmproSettingImageAttachmentId');
