@@ -62,6 +62,21 @@ function hmpro_register_admin_menu() {
 		'hmpro_render_mega_menu_builder_page'
 	);
 
+	// Menu Access Control (HM Menu Controller)
+	// HM Menu Controller registers its submenu on admin_menu as well, but it can
+	// run before the parent HM Pro Theme menu is registered depending on load order.
+	// This fallback ensures the page always appears under HM Pro Theme.
+	if ( class_exists( 'HM_MC_Admin_Page' ) ) {
+		add_submenu_page(
+			'hmpro-theme',
+			__( 'Menu Access Control', 'hmpro' ),
+			__( 'Menu Access Control', 'hmpro' ),
+			'manage_options',
+			'hmpro-menu-controller',
+			[ 'HM_MC_Admin_Page', 'render_page' ]
+		);
+	}
+
 	add_submenu_page(
 		'hmpro-theme',
 		__( 'Importers', 'hmpro' ),
