@@ -64,6 +64,13 @@ if ( empty( $layout ) || ! is_array( $layout ) || empty( $layout['regions'] ) ) 
 
 $layout_json = wp_json_encode( $layout );
 
+	// Zones:
+	// - Header: 3 zones (left/center/right)
+	// - Footer: 4 zones (left/center_left/center_right/right) like Mega Menu Builder
+	$zones = ( 'footer' === $area )
+		? [ 'left', 'center_left', 'center_right', 'right' ]
+		: [ 'left', 'center', 'right' ];
+
 	$title = ( 'footer' === $area )
 		? __( 'Footer Builder', 'hmpro' )
 		: __( 'Header Builder', 'hmpro' );
@@ -142,20 +149,41 @@ $layout_json = wp_json_encode( $layout );
 							</div>
 						</div>
 
-						<div class="hmpro-zones" id="hmproZones">
-							<div class="hmpro-zone" data-zone="left">
-								<div class="hmpro-zone-title"><?php esc_html_e( 'Left', 'hmpro' ); ?></div>
-								<ul class="hmpro-canvas-list" id="hmproZoneLeft"></ul>
+						<?php if ( 'footer' === $area ) : ?>
+							<div class="hmpro-zones hmpro-zones-4" id="hmproZones">
+								<div class="hmpro-zone" data-zone="left">
+									<div class="hmpro-zone-title"><?php esc_html_e( 'Left', 'hmpro' ); ?></div>
+									<ul class="hmpro-canvas-list" id="hmproZoneLeft"></ul>
+								</div>
+								<div class="hmpro-zone" data-zone="center_left">
+									<div class="hmpro-zone-title"><?php esc_html_e( 'Center-left', 'hmpro' ); ?></div>
+									<ul class="hmpro-canvas-list" id="hmproZoneCenterLeft"></ul>
+								</div>
+								<div class="hmpro-zone" data-zone="center_right">
+									<div class="hmpro-zone-title"><?php esc_html_e( 'Center-right', 'hmpro' ); ?></div>
+									<ul class="hmpro-canvas-list" id="hmproZoneCenterRight"></ul>
+								</div>
+								<div class="hmpro-zone" data-zone="right">
+									<div class="hmpro-zone-title"><?php esc_html_e( 'Right', 'hmpro' ); ?></div>
+									<ul class="hmpro-canvas-list" id="hmproZoneRight"></ul>
+								</div>
 							</div>
-							<div class="hmpro-zone" data-zone="center">
-								<div class="hmpro-zone-title"><?php esc_html_e( 'Center', 'hmpro' ); ?></div>
-								<ul class="hmpro-canvas-list" id="hmproZoneCenter"></ul>
+						<?php else : ?>
+							<div class="hmpro-zones" id="hmproZones">
+								<div class="hmpro-zone" data-zone="left">
+									<div class="hmpro-zone-title"><?php esc_html_e( 'Left', 'hmpro' ); ?></div>
+									<ul class="hmpro-canvas-list" id="hmproZoneLeft"></ul>
+								</div>
+								<div class="hmpro-zone" data-zone="center">
+									<div class="hmpro-zone-title"><?php esc_html_e( 'Center', 'hmpro' ); ?></div>
+									<ul class="hmpro-canvas-list" id="hmproZoneCenter"></ul>
+								</div>
+								<div class="hmpro-zone" data-zone="right">
+									<div class="hmpro-zone-title"><?php esc_html_e( 'Right', 'hmpro' ); ?></div>
+									<ul class="hmpro-canvas-list" id="hmproZoneRight"></ul>
+								</div>
 							</div>
-							<div class="hmpro-zone" data-zone="right">
-								<div class="hmpro-zone-title"><?php esc_html_e( 'Right', 'hmpro' ); ?></div>
-								<ul class="hmpro-canvas-list" id="hmproZoneRight"></ul>
-							</div>
-						</div>
+						<?php endif; ?>
 					</div>
 				</main>
 
@@ -222,12 +250,13 @@ $layout_json = wp_json_encode( $layout );
 
 	wp_localize_script(
 		'hmpro-admin-builder',
-		'hmproBuilderData',
-		[
-			'area'          => $area,
-			'layout'        => $layout,
-			'menuLocations' => $menu_locations,
-			'wp_menus'      => $menus_data,
+			'hmproBuilderData',
+			[
+				'area'          => $area,
+				'zones'         => $zones,
+				'layout'        => $layout,
+				'menuLocations' => $menu_locations,
+				'wp_menus'      => $menus_data,
 			'i18n'          => [
 				'editing'      => __( 'Editing:', 'hmpro' ),
 				'empty'        => __( 'Drop components here.', 'hmpro' ),
