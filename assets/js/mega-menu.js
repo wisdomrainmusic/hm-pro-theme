@@ -82,11 +82,30 @@
     });
   }
 
+  function onMoreToggleClick(e) {
+    var t = e.target.closest(".hmpro-mega-more-toggle");
+    if (!t) return;
+
+    e.preventDefault();
+
+    var wrap = t.closest(".hmpro-mega-column-menu");
+    if (!wrap) return;
+
+    var isOpen = wrap.classList.toggle("hmpro-more-open");
+
+    t.setAttribute("aria-expanded", isOpen ? "true" : "false");
+
+    var more = t.getAttribute("data-more") || "Daha Fazla Gör";
+    var less = t.getAttribute("data-less") || "Daha Az Göster";
+    t.textContent = isOpen ? less : more;
+  }
+
   function init() {
     // Always set aria (harmless in hover mode)
     initAria();
 
     document.addEventListener("click", onDocumentClick, true);
+    document.addEventListener("click", onMoreToggleClick);
     document.addEventListener("keydown", onKeyDown);
   }
 
