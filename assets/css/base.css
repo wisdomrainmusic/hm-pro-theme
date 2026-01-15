@@ -883,7 +883,7 @@ footer,
 }
 
 /* =====================================================================
-   Mega Menu interaction: CLICK to open/close (no hover persistence)
+   Mega Menu interaction: hover/focus and click-to-toggle
    ===================================================================== */
 
 /* Never show the normal WP dropdown for mega-bound items */
@@ -891,17 +891,11 @@ footer,
 	display: none !important;
 }
 
-/* Disable hover-open behaviors that block clicking other top-level items */
+/* Keep open on hover/focus AND while the cursor is over the panel */
 .hmpro-primary-nav li.hmpro-li-has-mega:hover > .hmpro-mega-panel,
 .hmpro-primary-nav li.hmpro-li-has-mega:focus-within > .hmpro-mega-panel,
 .hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel:hover,
-.menu > li:hover > .hmpro-mega-panel,
-.primary-navigation > li:hover > .hmpro-mega-panel,
-.main-navigation > li:hover > .hmpro-mega-panel {
-	display: none !important;
-}
-
-/* Show mega panel only when toggled open via JS */
+/* Click toggle support (JS adds .hmpro-mega-open) */
 .hmpro-primary-nav li.hmpro-li-has-mega.hmpro-mega-open > .hmpro-mega-panel {
 	display: block !important;
 }

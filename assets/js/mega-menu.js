@@ -4,9 +4,7 @@
 	/* Click-to-toggle mega menu (no hover close) */
 
 	function initClickToggle() {
-		var nav = document.querySelector('.hmpro-primary-nav');
-		if (!nav) return;
-
+		// Works for both header builder (.hmpro-primary-nav) and legacy header (.site-nav/.menu)
 		function findDirectAnchor(li) {
 			if (!li) return null;
 			var kids = li.children;
@@ -19,7 +17,7 @@
 		}
 
 		function closeAll(exceptLi) {
-			var openLis = nav.querySelectorAll('li.hmpro-li-has-mega.hmpro-mega-open');
+			var openLis = document.querySelectorAll('li.hmpro-li-has-mega.hmpro-mega-open');
 			openLis.forEach(function (li) {
 				if (exceptLi && li === exceptLi) return;
 				li.classList.remove('hmpro-mega-open');
@@ -44,7 +42,8 @@
 			setMegaTopVar();
 		}
 
-		nav.addEventListener('click', function (e) {
+		// Delegate from document so it works regardless of nav wrapper classes
+		document.addEventListener('click', function (e) {
 			var link = e.target && e.target.closest ? e.target.closest('li.hmpro-li-has-mega > a') : null;
 			if (!link) return;
 			var li = link.parentElement;
@@ -56,7 +55,8 @@
 
 		// Close when clicking outside the open mega panels / triggers
 		document.addEventListener('click', function (e) {
-			if (!nav.contains(e.target)) {
+			var anyMega = e.target && e.target.closest ? e.target.closest('li.hmpro-li-has-mega') : null;
+			if (!anyMega) {
 				closeAll(null);
 				return;
 			}
