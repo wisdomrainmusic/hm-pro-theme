@@ -599,3 +599,47 @@ body.hmpro-mega-click .hmpro-mega-wrap {
 		display: block;
 	}
 }
+
+/* =========================================================
+   Mega Column Menu - Hard Override (Compact + Aligned)
+   Ensures header.css does not leak spacing into mega panel
+   ========================================================= */
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-mega-root-title {
+	margin: 0 0 10px;
+	line-height: 1.2;
+}
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-mega-col-list {
+	margin: 0 !important;
+	padding: 0 !important;
+	list-style: none !important;
+}
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-mega-col-item {
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-mega-col-item + .hmpro-mega-col-item {
+	margin-top: 4px !important;
+}
+
+/* Higher specificity than header.css */
+.hmpro-context-mega .hmpro-mega-column-menu a.hmpro-mega-col-link {
+	display: block !important;
+	padding: 4px 0 !important;
+	line-height: 1.25 !important;
+	text-decoration: none;
+}
+
+/* Remove dropdown arrows inside mega panel (clean list like Trendyol) */
+.hmpro-context-mega li.menu-item-has-children > a:after {
+	content: none !important;
+}
+
+/* More link: slightly stronger */
+.hmpro-context-mega .hmpro-mega-more-link {
+	font-weight: 700;
+	padding-top: 8px !important;
+}
