@@ -1,0 +1,193 @@
+/* =========================================================
+   Primary Navigation (Base Fix)
+   - Makes WP menu look normal (no bullets, horizontal)
+   - Enables submenu dropdown hover for non-mega items
+   Multi-level dropdown improvements
+   Mega Menu integration fixes
+   ========================================================= */
+
+/* Anchor mega dropdown to the full header width, not the nav component width */
+#site-header,
+.site-header {
+	position: relative;
+}
+
+/* Use our stable wrapper (works regardless of WP/theme classes) */
+.hmpro-primary-nav ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* Top-level horizontal */
+.hmpro-primary-nav > ul > li,
+.hmpro-primary-nav > .menu > li,
+.hmpro-primary-nav > ul.menu > li {
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+}
+
+.hmpro-primary-nav a {
+	display: inline-block;
+	padding: 10px 12px;
+	color: inherit;
+	text-decoration: none;
+}
+
+/* ---------------------------------------------------------
+   Submenus (NORMAL dropdown)
+   IMPORTANT: scope to WP submenu markup only (ul.sub-menu),
+   otherwise it will hide mega menu column lists (also <ul>).
+   --------------------------------------------------------- */
+.hmpro-primary-nav ul.sub-menu {
+	display: none;
+	position: absolute;
+	left: 0;
+	top: 100%;
+	min-width: 220px;
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+	z-index: 9999;
+}
+
+/* Open on hover */
+.hmpro-primary-nav li:hover > ul.sub-menu {
+	display: block;
+}
+
+/* Submenu items */
+.hmpro-primary-nav ul.sub-menu li {
+	display: block;
+	position: relative;
+}
+
+/* Make submenu hover area stable (avoid accidental close) */
+.hmpro-primary-nav ul.sub-menu {
+	padding: 10px;
+}
+
+.hmpro-primary-nav ul.sub-menu li a {
+	display: block;
+	padding: 10px 12px;
+	text-decoration: none;
+}
+
+/* Third level flyout */
+.hmpro-primary-nav ul.sub-menu li ul.sub-menu {
+	left: 100%;
+	top: 0;
+}
+
+/* Optional: indicator for items that have children */
+.hmpro-primary-nav li.menu-item-has-children > a:after {
+	content: "▾";
+	font-size: 12px;
+	margin-left: 6px;
+}
+.hmpro-primary-nav li ul li.menu-item-has-children > a:after {
+	content: "▸";
+	float: right;
+	margin-left: 12px;
+}
+
+/* Builder Frontend Base (Commit 018) */
+.hmpro-header-builder{
+	width:100%;
+}
+
+/* ---------------------------------------------------------
+   Header Builder
+   The builder renderer assigns left/center/right classes by column index.
+   Using flex:1 on all columns makes them equal width, which can squeeze
+   the center navigation and cause top-level items to wrap (e.g. one item
+   drops to a new line). Keep footer builder behavior unchanged by scoping
+   these overrides to the header builder only.
+   --------------------------------------------------------- */
+.hmpro-header-builder .hmpro-builder-col{
+	flex:0 0 auto;
+}
+.hmpro-header-builder .hmpro-builder-col.hmpro-align-center{
+	flex:1 1 auto;
+	min-width:0;
+}
+
+/* Make top-level header menus a single horizontal line when space allows */
+.hmpro-header-builder .hmpro-primary-nav > ul,
+.hmpro-header-builder .hmpro-primary-nav .menu{
+	white-space:nowrap;
+}
+
+.hmpro-logo img,
+.hmpro-logo img.custom-logo,
+.hmpro-logo .custom-logo,
+.hmpro-logo .custom-logo-link img{
+  max-height: var(--hmpro-logo-max-height);
+  width:auto !important;
+  height:auto !important;
+  display:block;
+	object-fit:contain;
+}
+.hmpro-logo-text{
+	font-weight:600;
+	text-decoration:none;
+}
+.hmpro-nav .hmpro-menu{
+	list-style:none;
+	margin:0;
+	padding:0;
+	display:flex;
+	gap:22px;
+	align-items:center;
+}
+.hmpro-nav .hmpro-menu li{
+	margin:0;
+	padding:0;
+}
+.hmpro-nav .hmpro-menu a{
+	text-decoration:none;
+}
+.hmpro-search{
+	display:flex;
+	gap:8px;
+	align-items:center;
+}
+.hmpro-search-field{
+	padding:8px 10px;
+	border:1px solid rgba(0,0,0,.2);
+	border-radius:8px;
+	color: var(--hmpro-text, #111);
+	background: transparent;
+}
+.hmpro-search-field::placeholder{
+	opacity:.75;
+}
+.hmpro-search-submit{
+	padding:8px 12px;
+	border-radius:8px;
+	cursor:pointer;
+
+	/* chameleon: theme accent by default */
+	background: var(--hmpro-accent, #6b4a50);
+	border: 1px solid var(--hmpro-accent, #6b4a50);
+	color: var(--hmpro-accent-contrast, #fff);
+
+	transition: opacity .15s ease, transform .15s ease, filter .15s ease;
+}
+.hmpro-search-submit:hover,
+.hmpro-search-submit:focus{
+	opacity:.95;
+	transform: translateY(-1px);
+	filter: brightness(.95);
+}
+.hmpro-search-submit:disabled{
+	opacity:.55;
+	cursor:not-allowed;
+	transform:none;
+	filter:none;
+}
+
+@media (max-width: 768px){
+	.hmpro-nav .hmpro-menu{flex-wrap:wrap;gap:14px;}
+}
