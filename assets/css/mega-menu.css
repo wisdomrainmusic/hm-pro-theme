@@ -218,6 +218,42 @@
 /* IMPORTANT:
    Keep mega panel rules scoped under primary nav so it won't override
    our hmpro-li-has-mega positioning above. */
+
+/* =========================================================
+   Mega Menu - Optional Click Mode
+   Default hover behavior remains unchanged unless
+   body.hmpro-mega-click is present.
+   ========================================================= */
+
+body.hmpro-mega-click li.hmpro-li-has-mega:hover .hmpro-mega-panel,
+body.hmpro-mega-click li.hmpro-li-has-mega:hover .hmpro-mega-dropdown,
+body.hmpro-mega-click li.hmpro-li-has-mega:hover .hmpro-mega-wrap {
+	/* Disable hover-open in click mode (selectors may vary by theme) */
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+body.hmpro-mega-click li.hmpro-li-has-mega.hmpro-mega-open .hmpro-mega-panel,
+body.hmpro-mega-click li.hmpro-li-has-mega.hmpro-mega-open .hmpro-mega-dropdown,
+body.hmpro-mega-click li.hmpro-li-has-mega.hmpro-mega-open .hmpro-mega-wrap {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+
+/* Keep top-level links clickable even if mega panel overlaps */
+body.hmpro-mega-click li.hmpro-li-has-mega > a {
+	position: relative;
+	z-index: 5;
+}
+
+/* Mega panel stays below link layer but above header background */
+body.hmpro-mega-click .hmpro-mega-panel,
+body.hmpro-mega-click .hmpro-mega-dropdown,
+body.hmpro-mega-click .hmpro-mega-wrap {
+	z-index: 4;
+}
 .hmpro-primary-nav .hmpro-mega-panel {
 	display: none;
 	position: absolute; /* now anchored to #site-header */

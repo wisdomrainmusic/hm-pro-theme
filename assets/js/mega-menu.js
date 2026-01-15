@@ -1,155 +1,98 @@
-/* global window, document */
 (function () {
-	'use strict';
-	/* Click-to-toggle mega menu (no hover close) */
+  "use strict";
 
-	function initClickToggle() {
-		// Works for both header builder (.hmpro-primary-nav) and legacy header (.site-nav/.menu)
-		function findDirectAnchor(li) {
-			if (!li) return null;
-			var kids = li.children;
-			for (var i = 0; i < kids.length; i++) {
-				if (kids[i] && kids[i].tagName && kids[i].tagName.toLowerCase() === 'a') {
-					return kids[i];
-				}
-			}
-			return li.querySelector('a');
-		}
+  // Change only if your theme uses a different wrapper.
+  var BODY_CLASS_CLICK = "hmpro-mega-click";
+  var OPEN_CLASS = "hmpro-mega-open";
+  var ITEM_SELECTOR = "li.hmpro-li-has-mega";
+  var LINK_SELECTOR = "a";
 
-		function closeAll(exceptLi) {
-			var openLis = document.querySelectorAll('li.hmpro-li-has-mega.hmpro-mega-open');
-			openLis.forEach(function (li) {
-				if (exceptLi && li === exceptLi) return;
-				li.classList.remove('hmpro-mega-open');
-				var a = findDirectAnchor(li);
-				if (a) a.setAttribute('aria-expanded', 'false');
-			});
-		}
+  function isClickMode() {
+    return document.body.classList.contains(BODY_CLASS_CLICK);
+  }
 
-		function toggle(li) {
-			if (!li) return;
-			var isOpen = li.classList.contains('hmpro-mega-open');
-			closeAll(li);
-			if (isOpen) {
-				li.classList.remove('hmpro-mega-open');
-				var aClose = findDirectAnchor(li);
-				if (aClose) aClose.setAttribute('aria-expanded', 'false');
-				return;
-			}
-			li.classList.add('hmpro-mega-open');
-			var aOpen = findDirectAnchor(li);
-			if (aOpen) aOpen.setAttribute('aria-expanded', 'true');
-			setMegaTopVar();
-		}
+  function getItemFromTarget(target) {
+    if (!target) return null;
+    return target.closest(ITEM_SELECTOR);
+  }
 
-		// Delegate from document so it works regardless of nav wrapper classes
-		document.addEventListener('click', function (e) {
-			var link = e.target && e.target.closest ? e.target.closest('li.hmpro-li-has-mega > a') : null;
-			if (!link) return;
-			var li = link.parentElement;
-			if (!li || !li.classList || !li.classList.contains('hmpro-li-has-mega')) return;
-			e.preventDefault();
-			e.stopPropagation();
-			toggle(li);
-		});
+  function closeAll(exceptItem) {
+    var items = document.querySelectorAll(ITEM_SELECTOR + "." + OPEN_CLASS);
+    items.forEach(function (item) {
+      if (exceptItem && item === exceptItem) return;
+      item.classList.remove(OPEN_CLASS);
+      var link = item.querySelector(":scope > " + LINK_SELECTOR);
+      if (link) link.setAttribute("aria-expanded", "false");
+    });
+  }
 
-		// Close when clicking outside the open mega panels / triggers
-		document.addEventListener('click', function (e) {
-			var anyMega = e.target && e.target.closest ? e.target.closest('li.hmpro-li-has-mega') : null;
-			if (!anyMega) {
-				closeAll(null);
-				return;
-			}
-			// If click is inside the mega panel content, keep open.
-			var insidePanel = e.target && e.target.closest ? e.target.closest('.hmpro-mega-panel') : null;
-			if (insidePanel) return;
-			// If clicked another mega trigger, let the nav handler toggle that one.
-			var clickedMegaTrigger = e.target && e.target.closest ? e.target.closest('li.hmpro-li-has-mega > a') : null;
-			if (clickedMegaTrigger) return;
-			// Any other click inside the nav closes.
-			closeAll(null);
-		});
+  function toggleItem(item) {
+    if (!item) return;
 
-		document.addEventListener('keydown', function (e) {
-			if (!e) return;
-			var key = e.key || e.keyCode;
-			if (key === 'Escape' || key === 'Esc' || key === 27) {
-				closeAll(null);
-			}
-		});
-	}
+    var isOpen = item.classList.contains(OPEN_CLASS);
+    closeAll(item);
 
-	function setMegaTopVar() {
-		var header = document.getElementById('site-header');
-		if (!header) {
-			document.documentElement.style.setProperty('--hmpro-mega-top', '80px');
-			return;
-		}
-		var rect = header.getBoundingClientRect();
-		var top = Math.max(0, Math.round(rect.bottom));
-		document.documentElement.style.setProperty('--hmpro-mega-top', top + 'px');
-	}
+    if (!isOpen) {
+      item.classList.add(OPEN_CLASS);
+      var link = item.querySelector(":scope > " + LINK_SELECTOR);
+      if (link) link.setAttribute("aria-expanded", "true");
+    } else {
+      item.classList.remove(OPEN_CLASS);
+      var link2 = item.querySelector(":scope > " + LINK_SELECTOR);
+      if (link2) link2.setAttribute("aria-expanded", "false");
+    }
+  }
 
-	function initShowMore() {
-		var menus = document.querySelectorAll('.hmpro-mega-panel .hmpro-mega-column-menu');
-		if (!menus.length) return;
+  function onDocumentClick(e) {
+    if (!isClickMode()) return;
 
-		menus.forEach(function (menu) {
-			// We only collapse the first visible list under each "column menu"
-			// (avoid :scope for maximum compatibility)
-			var ul = null;
-			var directUls = menu.getElementsByTagName('ul');
-			for (var i = 0; i < directUls.length; i++) {
-				var candidate = directUls[i];
-				if (candidate.parentElement === menu && candidate.classList.contains('hmpro-mega-col-list') && candidate.classList.contains('hmpro-depth-1')) {
-					ul = candidate;
-					break;
-				}
-			}
-			if (!ul) return;
+    var item = getItemFromTarget(e.target);
 
-			var items = ul.children;
-			var count = 0;
-			for (var j = 0; j < items.length; j++) {
-				if (items[j].classList && items[j].classList.contains('hmpro-mega-col-item')) count++;
-			}
-			if (!count || count <= 5) return;
+    // Click inside an open mega panel should not close it.
+    if (item) {
+      // Only toggle when clicking the top-level link of the mega parent item.
+      var link = e.target.closest(ITEM_SELECTOR + " > " + LINK_SELECTOR);
+      if (link) {
+        e.preventDefault();
+        toggleItem(item);
+      }
+      return;
+    }
 
-			menu.classList.add('hmpro-has-more');
-			menu.classList.add('hmpro-collapsed');
+    // Clicked outside any mega item -> close all
+    closeAll();
+  }
 
-			// Avoid duplicating controls if re-initialized
-			if (menu.querySelector('.hmpro-mega-more')) return;
+  function onKeyDown(e) {
+    if (!isClickMode()) return;
 
-			var btn = document.createElement('button');
-			btn.type = 'button';
-			btn.className = 'hmpro-mega-more';
-			btn.setAttribute('aria-expanded', 'false');
-			btn.textContent = 'Daha Fazla Gör';
+    if (e.key === "Escape" || e.key === "Esc") {
+      closeAll();
+    }
+  }
 
-			btn.addEventListener('click', function () {
-				var expanded = menu.classList.toggle('hmpro-expanded');
-				menu.classList.toggle('hmpro-collapsed', !expanded);
-				btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-				btn.textContent = expanded ? 'Daha Az Göster' : 'Daha Fazla Gör';
-			});
+  function initAria() {
+    var items = document.querySelectorAll(ITEM_SELECTOR);
+    items.forEach(function (item) {
+      var link = item.querySelector(":scope > " + LINK_SELECTOR);
+      if (link) {
+        link.setAttribute("aria-haspopup", "true");
+        link.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
 
-			menu.appendChild(btn);
-		});
-	}
+  function init() {
+    // Always set aria (harmless in hover mode)
+    initAria();
 
-	function init() {
-		setMegaTopVar();
-		initShowMore();
-		initClickToggle();
-	}
+    document.addEventListener("click", onDocumentClick, true);
+    document.addEventListener("keydown", onKeyDown);
+  }
 
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', init);
-	} else {
-		init();
-	}
-
-	window.addEventListener('resize', setMegaTopVar);
-	window.addEventListener('scroll', setMegaTopVar, { passive: true });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
 })();

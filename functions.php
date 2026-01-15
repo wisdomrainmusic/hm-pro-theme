@@ -95,6 +95,14 @@ add_action( 'wp_enqueue_scripts', function () {
 		HMPRO_VERSION
 	);
 
+	wp_enqueue_script(
+		'hmpro-mega-menu',
+		get_template_directory_uri() . '/assets/js/mega-menu.js',
+		array(),
+		HMPRO_VERSION,
+		true
+	);
+
 	if ( class_exists( 'WooCommerce' ) ) {
 		wp_enqueue_style(
 			'hmpro-woo',
@@ -103,4 +111,43 @@ add_action( 'wp_enqueue_scripts', function () {
 			HMPRO_VERSION
 		);
 	}
+} );
+
+add_action( 'customize_register', function ( $wp_customize ) {
+	$section_id = 'hmpro_header_settings';
+
+	if ( ! $wp_customize->get_section( $section_id ) ) {
+		$wp_customize->add_section( $section_id, [
+			'title'    => __( 'Header & Navigation', 'hm-pro-theme' ),
+			'priority' => 30,
+		] );
+	}
+
+	$wp_customize->add_setting( 'hmpro_mega_menu_interaction', [
+		'default'           => 'hover',
+		'sanitize_callback' => function ( $value ) {
+			return in_array( $value, [ 'hover', 'click' ], true ) ? $value : 'hover';
+		},
+		'transport'         => 'refresh',
+	] );
+
+	$wp_customize->add_control( 'hmpro_mega_menu_interaction', [
+		'label'   => __( 'Mega Menu Interaction Mode', 'hm-pro-theme' ),
+		'section' => $section_id,
+		'type'    => 'radio',
+		'choices' => [
+			'hover' => __( 'Hover (Default)', 'hm-pro-theme' ),
+			'click' => __( 'Click to Open', 'hm-pro-theme' ),
+		],
+	] );
+} );
+
+add_filter( 'body_class', function ( $classes ) {
+	$mode = get_theme_mod( 'hmpro_mega_menu_interaction', 'hover' );
+
+	if ( 'click' === $mode ) {
+		$classes[] = 'hmpro-mega-click';
+	}
+
+	return $classes;
 } );
