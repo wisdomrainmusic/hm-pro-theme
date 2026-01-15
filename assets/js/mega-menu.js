@@ -2,6 +2,81 @@
 (function () {
 	'use strict';
 
+	function initClickToggle() {
+		var nav = document.querySelector('.hmpro-primary-nav');
+		if (!nav) return;
+
+		function findDirectAnchor(li) {
+			if (!li) return null;
+			var kids = li.children;
+			for (var i = 0; i < kids.length; i++) {
+				if (kids[i] && kids[i].tagName && kids[i].tagName.toLowerCase() === 'a') {
+					return kids[i];
+				}
+			}
+			return li.querySelector('a');
+		}
+
+		function closeAll(exceptLi) {
+			var openLis = nav.querySelectorAll('li.hmpro-li-has-mega.hmpro-mega-open');
+			openLis.forEach(function (li) {
+				if (exceptLi && li === exceptLi) return;
+				li.classList.remove('hmpro-mega-open');
+				var a = findDirectAnchor(li);
+				if (a) a.setAttribute('aria-expanded', 'false');
+			});
+		}
+
+		function toggle(li) {
+			if (!li) return;
+			var isOpen = li.classList.contains('hmpro-mega-open');
+			closeAll(li);
+			if (isOpen) {
+				li.classList.remove('hmpro-mega-open');
+				var aClose = findDirectAnchor(li);
+				if (aClose) aClose.setAttribute('aria-expanded', 'false');
+				return;
+			}
+			li.classList.add('hmpro-mega-open');
+			var aOpen = findDirectAnchor(li);
+			if (aOpen) aOpen.setAttribute('aria-expanded', 'true');
+			setMegaTopVar();
+		}
+
+		nav.addEventListener('click', function (e) {
+			var link = e.target && e.target.closest ? e.target.closest('li.hmpro-li-has-mega > a') : null;
+			if (!link) return;
+			var li = link.parentElement;
+			if (!li || !li.classList || !li.classList.contains('hmpro-li-has-mega')) return;
+			e.preventDefault();
+			e.stopPropagation();
+			toggle(li);
+		});
+
+		// Close when clicking outside the open mega panels / triggers
+		document.addEventListener('click', function (e) {
+			if (!nav.contains(e.target)) {
+				closeAll(null);
+				return;
+			}
+			// If click is inside the mega panel content, keep open.
+			var insidePanel = e.target && e.target.closest ? e.target.closest('.hmpro-mega-panel') : null;
+			if (insidePanel) return;
+			// Clicked somewhere else in the nav (e.g., another top-level link) -> close.
+			var clickedMegaTrigger = e.target && e.target.closest ? e.target.closest('li.hmpro-li-has-mega > a') : null;
+			if (clickedMegaTrigger) return;
+			closeAll(null);
+		});
+
+		document.addEventListener('keydown', function (e) {
+			if (!e) return;
+			var key = e.key || e.keyCode;
+			if (key === 'Escape' || key === 'Esc' || key === 27) {
+				closeAll(null);
+			}
+		});
+	}
+
 	function setMegaTopVar() {
 		var header = document.getElementById('site-header');
 		if (!header) {
@@ -64,6 +139,7 @@
 	function init() {
 		setMegaTopVar();
 		initShowMore();
+		initClickToggle();
 	}
 
 	if (document.readyState === 'loading') {
