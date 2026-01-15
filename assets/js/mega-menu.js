@@ -1,6 +1,7 @@
 /* global window, document */
 (function () {
 	'use strict';
+	/* Click-to-toggle mega menu (no hover close) */
 
 	function initClickToggle() {
 		var nav = document.querySelector('.hmpro-primary-nav');
@@ -62,9 +63,10 @@
 			// If click is inside the mega panel content, keep open.
 			var insidePanel = e.target && e.target.closest ? e.target.closest('.hmpro-mega-panel') : null;
 			if (insidePanel) return;
-			// Clicked somewhere else in the nav (e.g., another top-level link) -> close.
+			// If clicked another mega trigger, let the nav handler toggle that one.
 			var clickedMegaTrigger = e.target && e.target.closest ? e.target.closest('li.hmpro-li-has-mega > a') : null;
 			if (clickedMegaTrigger) return;
+			// Any other click inside the nav closes.
 			closeAll(null);
 		});
 

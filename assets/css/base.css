@@ -58,10 +58,8 @@ footer.site-footer {
 	top: -18px;
 	height: 18px;
 }
-/* Keep open on hover/focus AND while the cursor is over the panel */
-.hmpro-primary-nav li.hmpro-li-has-mega:hover > .hmpro-mega-panel,
-.hmpro-primary-nav li.hmpro-li-has-mega:focus-within > .hmpro-mega-panel,
-.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel:hover{
+/* Open/close ONLY via click toggle (JS adds .hmpro-mega-open) */
+.hmpro-primary-nav li.hmpro-li-has-mega.hmpro-mega-open > .hmpro-mega-panel{
 	display: block;
 }
 
