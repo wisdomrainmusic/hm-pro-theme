@@ -15,6 +15,81 @@ What’s working:
 - All existing components preserved without regression
 - Responsive behavior verified
 - Layout save/load verified across builders
+# CHECKPOINT — HM Pro Theme (Tema Motoru) + Demo Kurulum Mimarisi
+
+## Amaç
+HM Pro Theme, ajans içi hızlı kurulum için “motor tema”dır.
+Demolar tema içine gömülmez. Demolar ve kurulum akışı ayrı bir eklenti ile yönetilir.
+
+## Tema Motoru (Mevcut Yapı) — Kritik Veri Noktaları
+
+### Header/Footer Builder
+- Option Keys:
+  - hmpro_header_layout
+  - hmpro_footer_layout
+- Kaynak: /inc/engine/builder-storage.php
+
+### Preset Sistemi (Renk/Font)
+- Option Keys:
+  - hmpro_presets
+  - hmpro_active_preset
+- CSS Engine: /inc/engine/css-engine.php (CSS variable basar)
+- Preset CSV Import/Export: /inc/engine/import-export.php
+
+### Mega Menu Sistemi
+- CPT: hm_mega_menu
+- Post Meta:
+  - _hmpro_mega_layout
+  - _hmpro_mega_settings
+- Menu Item Meta (Appearance > Menus):
+  - _hmpro_mega_menu_id
+- Kaynaklar:
+  - /inc/engine/mega-menu-library.php
+  - /inc/engine/mega-menu-menuitem-meta.php
+
+### Tema Admin Menüsü
+- HM Pro Theme üst menüsü ve builder/preset/mega menu sayfaları:
+  - /inc/admin/admin-menu.php
+  - /inc/admin/builder-pages.php
+  - /inc/admin/presets-page.php
+  - /inc/admin/mega-menu-builder-page.php
+
+### Gömülü Araçlar
+- Tools loader: /inc/tools/tools-loader.php
+- Embedded: Category Importer, Slug Menu Builder, Product Importer, HM Menu Controller
+
+## Demo Kurulum Eklentisi (Plan)
+Tema şişmemesi için demolar ayrı eklentide tutulur.
+
+### Kararlar
+- Dil: Türkçe
+- Kategori ve menüler otomatik üretilmez; manuel hazırlanır, paketlenir, aynen uygulanır.
+- Her demoda “Kurumsal + Yardım” sayfaları zorunludur.
+- HızlıMağazaPro = showcase (önizleme), müşteri sitesi = kurulum (apply).
+- Müşteri sitesinde demo uygulanınca eklenti kaldırılır, demo klasörleri kalmaz.
+
+### Demo Paketinin Çekirdek İçeriği
+- Sayfalar (Kurumsal + Yardım + demo özel sayfalar)
+- Kategoriler (product_cat ağaç)
+- Menüler + menu locations
+- Mega Menüler (hm_mega_menu CPT + meta)
+- Nav menu item mega binding (_hmpro_mega_menu_id) — import sırasında ID remap gerekir
+- Header/Footer layout option’ları
+- Preset option’ları (opsiyonel ama önerilir)
+
+### En Kritik Teknik Not
+Mega menü bağları ID’ye bağlıdır:
+- Menü item meta: _hmpro_mega_menu_id
+Import sırasında hm_mega_menu yeni ID aldığı için eski ID -> yeni ID map yapılmalıdır (en sağlam eşleştirme mega menü slug üzerinden).
+
+## Sonraki Adım
+HM Pro Demo Kurulum Eklentisi için commit planı:
+A) Eklenti iskeleti + mod (showcase/kurulum)
+B) Demo paket formatı + listeleme
+C) Export (mevcut siteden demo paketi üret)
+D) Apply (demo paketini müşteri sitesine kur)
+E) Showcase preview (gezilebilir demo, yazma aksiyonları kapalı)
+F) Temizlik/kaldırma akışı
 
 This checkpoint marks a stable UI builders milestone.
 
