@@ -467,10 +467,10 @@
 			lDepth.textContent = 'Max depth';
 			var sDepth = document.createElement('select');
 			sDepth.id = 'hmproSettingMegaDepth';
-			['1', '2', '3'].forEach(function (v) {
+			[1, 2, 3, 4, 5, 6].forEach(function (v) {
 				var o = document.createElement('option');
-				o.value = v;
-				o.textContent = v;
+				o.value = String(v);
+				o.textContent = String(v);
 				sDepth.appendChild(o);
 			});
 			sDepth.value = settings.max_depth ? String(settings.max_depth) : '2';

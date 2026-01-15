@@ -673,3 +673,50 @@ body.hmpro-mega-click .hmpro-mega-wrap {
 .hmpro-mega-column-menu.hmpro-more-open .hmpro-mega-more-toggle:after{
 	content: "▴";
 }
+
+/* ==========================================
+   Mega Column Menu - Nested hierarchy visuals
+   Makes messy WP menu structures readable
+   ========================================== */
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-mega-col-item > ul{
+	margin-top: 4px;
+	padding-left: 14px;
+}
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-depth-2{
+	border-left: 1px solid rgba(0,0,0,0.08);
+	padding-left: 12px !important;
+	margin-left: 2px;
+}
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-depth-2 .hmpro-mega-col-link{
+	font-size: 0.95em;
+	opacity: 0.95;
+}
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-depth-3{
+	border-left: 1px solid rgba(0,0,0,0.06);
+	padding-left: 12px !important;
+	margin-left: 2px;
+}
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-depth-3 .hmpro-mega-col-link{
+	font-size: 0.92em;
+	opacity: 0.90;
+}
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-depth-4 .hmpro-mega-col-link{
+	font-size: 0.90em;
+	opacity: 0.88;
+}
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-depth-5 .hmpro-mega-col-link{
+	font-size: 0.89em;
+	opacity: 0.86;
+}
+
+.hmpro-context-mega .hmpro-mega-column-menu .hmpro-depth-6 .hmpro-mega-col-link{
+	font-size: 0.88em;
+	opacity: 0.84;
+}
