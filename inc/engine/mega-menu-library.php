@@ -190,7 +190,7 @@ function hmpro_mega_sanitize_layout( $payload ) {
 					$clean_settings['source']          = 'wp_menu';
 					$clean_settings['menu_id']         = isset( $settings['menu_id'] ) ? absint( $settings['menu_id'] ) : 0;
 					$clean_settings['root_item_id']    = isset( $settings['root_item_id'] ) ? absint( $settings['root_item_id'] ) : 0;
-					$clean_settings['max_depth']       = isset( $settings['max_depth'] ) ? max( 1, min( 3, absint( $settings['max_depth'] ) ) ) : 2;
+					$clean_settings['max_depth']       = isset( $settings['max_depth'] ) ? max( 1, min( 6, absint( $settings['max_depth'] ) ) ) : 2;
 					$clean_settings['show_root_title'] = ! empty( $settings['show_root_title'] ) ? 1 : 0;
 					$clean_settings['max_items']       = isset( $settings['max_items'] ) ? max( 1, min( 50, absint( $settings['max_items'] ) ) ) : 8;
 					$clean_settings['show_more']       = ! empty( $settings['show_more'] ) ? 1 : 0;

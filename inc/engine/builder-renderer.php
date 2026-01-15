@@ -240,7 +240,7 @@ function hmpro_builder_comp_image( array $set ) {
 function hmpro_builder_comp_mega_column_menu( array $set ) {
 	$menu_id      = isset( $set['menu_id'] ) ? absint( $set['menu_id'] ) : 0;
 	$root_item_id = isset( $set['root_item_id'] ) ? absint( $set['root_item_id'] ) : 0;
-	$max_depth    = isset( $set['max_depth'] ) ? max( 1, min( 3, absint( $set['max_depth'] ) ) ) : 2;
+	$max_depth    = isset( $set['max_depth'] ) ? max( 1, min( 6, absint( $set['max_depth'] ) ) ) : 2;
 	$show_root    = ! empty( $set['show_root_title'] );
 	$max_items    = isset( $set['max_items'] ) ? max( 1, min( 50, absint( $set['max_items'] ) ) ) : 8;
 	$show_more    = ! empty( $set['show_more'] );
