@@ -19,17 +19,30 @@
 
 		menus.forEach(function (menu) {
 			// We only collapse the first visible list under each "column menu"
-			var ul = menu.querySelector(':scope > ul.hmpro-mega-col-list.hmpro-depth-1');
+			// (avoid :scope for maximum compatibility)
+			var ul = null;
+			var directUls = menu.getElementsByTagName('ul');
+			for (var i = 0; i < directUls.length; i++) {
+				var candidate = directUls[i];
+				if (candidate.parentElement === menu && candidate.classList.contains('hmpro-mega-col-list') && candidate.classList.contains('hmpro-depth-1')) {
+					ul = candidate;
+					break;
+				}
+			}
 			if (!ul) return;
 
-			var items = ul.querySelectorAll(':scope > li.hmpro-mega-col-item');
-			if (!items || items.length <= 5) return;
+			var items = ul.children;
+			var count = 0;
+			for (var j = 0; j < items.length; j++) {
+				if (items[j].classList && items[j].classList.contains('hmpro-mega-col-item')) count++;
+			}
+			if (!count || count <= 5) return;
 
 			menu.classList.add('hmpro-has-more');
 			menu.classList.add('hmpro-collapsed');
 
 			// Avoid duplicating controls if re-initialized
-			if (menu.querySelector(':scope > .hmpro-mega-more')) return;
+			if (menu.querySelector('.hmpro-mega-more')) return;
 
 			var btn = document.createElement('button');
 			btn.type = 'button';
@@ -62,4 +75,3 @@
 	window.addEventListener('resize', setMegaTopVar);
 	window.addEventListener('scroll', setMegaTopVar, { passive: true });
 })();
-
