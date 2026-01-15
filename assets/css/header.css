@@ -194,3 +194,188 @@
 @media (max-width: 768px){
 	.hmpro-nav .hmpro-menu{flex-wrap:wrap;gap:14px;}
 }
+
+/* =========================================================
+   Mobile Header + Right Drawer (Commit A)
+   - Hides desktop primary nav on mobile
+   - Shows hamburger toggle
+   - Right-side off-canvas drawer with overlay
+   ========================================================= */
+
+.hmpro-header-account-cta{
+	position:absolute;
+	right:14px;
+	top:10px;
+	z-index:30;
+}
+.hmpro-header-account-cta .hmpro-account-link{
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+	padding:8px 12px;
+	border-radius:10px;
+	text-decoration:none;
+	border:1px solid rgba(0,0,0,.12);
+	background: rgba(255,255,255,.65);
+	backdrop-filter: blur(6px);
+	color: inherit;
+	font-weight:600;
+}
+
+.hmpro-mobile-menu-toggle{
+	display:none;
+	position:absolute;
+	right:14px;
+	top:56px;
+	z-index:40;
+	width:44px;
+	height:44px;
+	border-radius:12px;
+	border:1px solid rgba(0,0,0,.12);
+	background: rgba(255,255,255,.70);
+	backdrop-filter: blur(6px);
+	cursor:pointer;
+}
+.hmpro-mobile-menu-toggle .hmpro-burger{
+	display:block;
+	width:18px;
+	height:2px;
+	background: currentColor;
+	margin:0 auto;
+	position:relative;
+}
+.hmpro-mobile-menu-toggle .hmpro-burger:before,
+.hmpro-mobile-menu-toggle .hmpro-burger:after{
+	content:"";
+	position:absolute;
+	left:0;
+	width:18px;
+	height:2px;
+	background: currentColor;
+}
+.hmpro-mobile-menu-toggle .hmpro-burger:before{ top:-6px; }
+.hmpro-mobile-menu-toggle .hmpro-burger:after{ top:6px; }
+
+/* Drawer base */
+.hmpro-mobile-drawer{
+	position:fixed;
+	inset:0;
+	z-index:99999;
+	pointer-events:none;
+	opacity:0;
+	transition: opacity .18s ease;
+}
+.hmpro-mobile-drawer.is-open{
+	pointer-events:auto;
+	opacity:1;
+}
+.hmpro-mobile-drawer-overlay{
+	position:absolute;
+	inset:0;
+	background: rgba(0,0,0,.35);
+}
+.hmpro-mobile-drawer-panel{
+	position:absolute;
+	top:0;
+	right:0;
+	height:100%;
+	width:340px;
+	max-width:86vw;
+	background:#fff;
+	transform: translateX(100%);
+	transition: transform .22s ease;
+	display:flex;
+	flex-direction:column;
+}
+.hmpro-mobile-drawer.is-open .hmpro-mobile-drawer-panel{
+	transform: translateX(0);
+}
+
+.hmpro-mobile-drawer-head{
+	display:flex;
+	align-items:center;
+	gap:10px;
+	padding:14px;
+	border-bottom:1px solid rgba(0,0,0,.08);
+}
+.hmpro-mobile-account-cta{
+	flex:1 1 auto;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	padding:10px 12px;
+	border-radius:12px;
+	text-decoration:none;
+	font-weight:700;
+	background: var(--hmpro-accent, #111);
+	color: var(--hmpro-accent-contrast, #fff);
+}
+.hmpro-mobile-drawer-close{
+	flex:0 0 auto;
+	width:44px;
+	height:44px;
+	border-radius:12px;
+	border:1px solid rgba(0,0,0,.12);
+	background: rgba(0,0,0,.03);
+	font-size:26px;
+	line-height:1;
+	cursor:pointer;
+}
+
+.hmpro-mobile-nav{
+	padding:14px;
+	overflow:auto;
+	-webkit-overflow-scrolling:touch;
+}
+.hmpro-mobile-nav ul{
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+.hmpro-mobile-nav > ul > li{
+	border-bottom:1px solid rgba(0,0,0,.06);
+}
+.hmpro-mobile-nav a{
+	display:block;
+	padding:12px 6px;
+	text-decoration:none;
+	color:inherit;
+	font-weight:600;
+}
+.hmpro-mobile-nav ul.sub-menu{
+	display:block; /* simple: show nested items by default in Commit A */
+	padding-left:12px;
+	padding-bottom:8px;
+}
+.hmpro-mobile-nav ul.sub-menu a{
+	font-weight:500;
+	opacity:.92;
+}
+
+/* Body lock when drawer open */
+html.hmpro-mobile-drawer-open,
+html.hmpro-mobile-drawer-open body{
+	overflow:hidden;
+}
+
+/* Mobile breakpoint behavior */
+@media (max-width: 992px){
+	/* Hide desktop nav (we clone it into drawer) */
+	#site-header .hmpro-primary-nav{
+		display:none !important;
+	}
+	.hmpro-mobile-menu-toggle{
+		display:inline-flex;
+		align-items:center;
+		justify-content:center;
+	}
+	/* Keep account CTA visible but avoid crowding: move it slightly up */
+	.hmpro-header-account-cta{
+		top:10px;
+	}
+}
+
+/* On larger screens, keep everything as-is; hamburger hidden */
+@media (min-width: 993px){
+	.hmpro-mobile-drawer{ display:none; }
+}
