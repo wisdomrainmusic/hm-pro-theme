@@ -21,6 +21,24 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		],
 	] );
 
+	// Mobile logo sizing (separate control for mobile header)
+	$wp_customize->add_setting( 'hmpro_mobile_logo_max_height', [
+		'default'           => 64,
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+
+	$wp_customize->add_control( 'hmpro_mobile_logo_max_height', [
+		'label'       => __( 'Mobil Logo Max Height (px)', 'hm-pro-theme' ),
+		'section'     => 'title_tagline',
+		'type'        => 'range',
+		'input_attrs' => [
+			'min'  => 28,
+			'max'  => 140,
+			'step' => 1,
+		],
+	] );
+
 
 	// Footer logo sizing (separate control for footer builder logo).
 	$wp_customize->add_setting( 'hmpro_footer_logo_max_height', [

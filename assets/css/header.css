@@ -237,29 +237,13 @@
 	backdrop-filter: blur(6px);
 	cursor:pointer;
 	color:#222;
+	display:flex;
+	align-items:center;
+	justify-content:center;
 }
-.hmpro-mobile-menu-toggle .hmpro-burger{
+.hmpro-mobile-menu-toggle .hmpro-icon{
 	display:block;
-	width:20px;
-	height:2px;
-	background:#222;
-	margin:0 auto;
-	position:relative;
-	border-radius:2px;
 }
-.hmpro-mobile-menu-toggle .hmpro-burger:before,
-.hmpro-mobile-menu-toggle .hmpro-burger:after{
-	content:"";
-	position:absolute;
-	left:0;
-	width:20px;
-	height:2px;
-	background:#222;
-	display:block;
-	border-radius:2px;
-}
-.hmpro-mobile-menu-toggle .hmpro-burger:before{ top:-7px; }
-.hmpro-mobile-menu-toggle .hmpro-burger:after{ top:7px; }
 
 /* Slight hover/active polish */
 .hmpro-mobile-menu-toggle:hover{
@@ -312,12 +296,21 @@
 	border-bottom:1px solid rgba(0,0,0,.08);
 }
 .hmpro-mobile-drawer-close{
+	flex:0 0 auto;
 	color:#222;
 	display:inline-flex;
 	align-items:center;
 	justify-content:center;
 	font-weight:800;
+	width:44px;
+	height:44px;
+	border-radius:12px;
+	border:1px solid rgba(0,0,0,.10);
+	background: rgba(255,255,255,.70);
+	backdrop-filter: blur(6px);
+	cursor:pointer;
 }
+.hmpro-mobile-drawer-close .hmpro-icon{ display:block; }
 .hmpro-mobile-account-cta{
 	flex:1 1 auto;
 	display:flex;
@@ -329,17 +322,6 @@
 	font-weight:700;
 	background: var(--hmpro-accent, #111);
 	color: var(--hmpro-accent-contrast, #fff);
-}
-.hmpro-mobile-drawer-close{
-	flex:0 0 auto;
-	width:44px;
-	height:44px;
-	border-radius:12px;
-	border:1px solid rgba(0,0,0,.12);
-	background: rgba(0,0,0,.03);
-	font-size:26px;
-	line-height:1;
-	cursor:pointer;
 }
 
 .hmpro-mobile-nav{
@@ -421,7 +403,9 @@ html.hmpro-mobile-drawer-open body{
 	}
 	#site-header .hmpro-builder-comp.hmpro-comp-logo img,
 	#site-header [data-comp="logo"] img{
-		max-width:220px;
+		/* Mobile logo sizing comes from Customizer var */
+		max-height: var(--hmpro-logo-max-height-mobile, var(--hmpro-logo-max-height));
+		max-width: 240px;
 		height:auto;
 	}
 
