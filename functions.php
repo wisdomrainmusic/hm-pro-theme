@@ -58,14 +58,14 @@ add_action( 'admin_enqueue_scripts', function () {
 			'hmpro-admin-builder',
 			HMPRO_URL . '/assets/admin-builder.css',
 			[ 'hmpro-admin' ],
-			HMPRO_VERSION
+			filemtime( HMPRO_PATH . '/assets/admin-builder.css' )
 		);
 
 		wp_enqueue_script(
 			'hmpro-admin-builder',
 			HMPRO_URL . '/assets/admin-builder.js',
 			[ 'hmpro-admin' ],
-			HMPRO_VERSION,
+			filemtime( HMPRO_PATH . '/assets/admin-builder.js' ),
 			true
 		);
 	}
