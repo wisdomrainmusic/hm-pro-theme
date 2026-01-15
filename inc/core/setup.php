@@ -24,9 +24,10 @@ add_action( 'after_setup_theme', function () {
 	// WordPress merges locations by key.
 	register_nav_menus(
 		array(
-			'primary' => __( 'Primary Menu', 'hmpro' ),
-			'topbar'  => __( 'Top Bar Menu', 'hmpro' ),
-			'footer'  => __( 'Footer Menu', 'hmpro' ),
+			'primary'     => __( 'Primary Menu', 'hmpro' ),
+			'topbar'      => __( 'Top Bar Menu', 'hmpro' ),
+			'footer'      => __( 'Footer Menu', 'hmpro' ),
+			'mobile_menu' => __( 'Mobil Menü', 'hm-pro-theme' ),
 		)
 	);
 }, 20 );
