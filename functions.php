@@ -74,6 +74,27 @@ add_action( 'wp_enqueue_scripts', function () {
 		HMPRO_VERSION
 	);
 
+	wp_enqueue_style(
+		'hmpro-header',
+		HMPRO_URL . '/assets/css/header.css',
+		[ 'hmpro-base' ],
+		HMPRO_VERSION
+	);
+
+	wp_enqueue_style(
+		'hmpro-footer',
+		HMPRO_URL . '/assets/css/footer.css',
+		[ 'hmpro-base' ],
+		HMPRO_VERSION
+	);
+
+	wp_enqueue_style(
+		'hmpro-mega-menu',
+		HMPRO_URL . '/assets/css/mega-menu.css',
+		[ 'hmpro-base' ],
+		HMPRO_VERSION
+	);
+
 	if ( class_exists( 'WooCommerce' ) ) {
 		wp_enqueue_style(
 			'hmpro-woo',
