@@ -236,12 +236,13 @@
 	background: rgba(255,255,255,.70);
 	backdrop-filter: blur(6px);
 	cursor:pointer;
+	color: #222; /* ensure burger uses a visible color */
 }
 .hmpro-mobile-menu-toggle .hmpro-burger{
 	display:block;
 	width:18px;
 	height:2px;
-	background: currentColor;
+	background: #222; /* harden line color */
 	margin:0 auto;
 	position:relative;
 }
@@ -252,7 +253,8 @@
 	left:0;
 	width:18px;
 	height:2px;
-	background: currentColor;
+	background:#222; /* harden line color */
+	display:block;
 }
 .hmpro-mobile-menu-toggle .hmpro-burger:before{ top:-6px; }
 .hmpro-mobile-menu-toggle .hmpro-burger:after{ top:6px; }

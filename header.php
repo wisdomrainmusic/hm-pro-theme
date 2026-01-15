@@ -82,7 +82,24 @@ do_action( 'hmpro/header/before' );
 				</button>
 			</div>
 			<nav class="hmpro-mobile-nav" aria-label="<?php echo esc_attr__( 'Mobil Menü', 'hm-pro-theme' ); ?>">
-				<!-- JS will clone .hmpro-primary-nav content here -->
+				<?php
+				// Prefer "Mobil Menü" location. Fallback to Primary if not assigned.
+				if ( has_nav_menu( 'mobile_menu' ) ) {
+					wp_nav_menu( [
+						'theme_location' => 'mobile_menu',
+						'container'      => false,
+						'menu_class'     => 'hmpro-mobile-menu',
+						'depth'          => 3,
+					] );
+				} elseif ( has_nav_menu( 'primary' ) ) {
+					wp_nav_menu( [
+						'theme_location' => 'primary',
+						'container'      => false,
+						'menu_class'     => 'hmpro-mobile-menu',
+						'depth'          => 3,
+					] );
+				}
+				?>
 			</nav>
 		</div>
 	</div>

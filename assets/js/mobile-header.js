@@ -1,5 +1,4 @@
 /* HM Pro Theme - Mobile Header Drawer (Right Side)
- * - Clones existing .hmpro-primary-nav into the drawer
  * - Provides overlay close, ESC close, body scroll lock
  * - Keeps CTA /hesabim visible in drawer head
  */
@@ -33,29 +32,10 @@
     lockBody(false);
   }
 
-  function ensureMobileNav(drawer) {
-    var nav = qs(".hmpro-mobile-nav", drawer);
-    if (!nav) return;
-    if (nav.getAttribute("data-hmpro-ready") === "1") return;
-
-    var desktopNav = qs("#site-header .hmpro-primary-nav");
-    if (!desktopNav) {
-      nav.innerHTML = "";
-      nav.setAttribute("data-hmpro-ready", "1");
-      return;
-    }
-
-    // Clone only the menu markup; keep it simple/vertical for mobile.
-    nav.innerHTML = desktopNav.innerHTML;
-    nav.setAttribute("data-hmpro-ready", "1");
-  }
-
   document.addEventListener("DOMContentLoaded", function () {
     var drawer = qs("#hmpro-mobile-drawer");
     var toggle = qs(".hmpro-mobile-menu-toggle");
     if (!drawer || !toggle) return;
-
-    ensureMobileNav(drawer);
 
     toggle.addEventListener("click", function () {
       var isOpen = drawer.classList.contains("is-open");
@@ -76,16 +56,6 @@
       if (e.key === "Escape" && drawer.classList.contains("is-open")) {
         closeDrawer(drawer, toggle);
       }
-    });
-
-    // If menu gets re-rendered by builder changes, allow manual refresh on resize
-    window.addEventListener("resize", function () {
-      // Refresh clone once if needed
-      if (drawer && drawer.classList.contains("is-open")) return;
-      var nav = qs(".hmpro-mobile-nav", drawer);
-      if (!nav) return;
-      nav.removeAttribute("data-hmpro-ready");
-      ensureMobileNav(drawer);
     });
   });
 })();
