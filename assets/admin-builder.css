@@ -3,7 +3,13 @@
 	gap:16px;
 	margin-top:16px;
 	align-items:stretch;
+	/* allow wrapping if needed instead of spilling outside viewport */
+	flex-wrap:nowrap;
 }
+
+/* CRITICAL: allow flex children to shrink inside WP admin viewport */
+.hmpro-builder-panel{ min-width:0; }
+.hmpro-builder-canvas{ min-width:0; overflow-x:auto; overflow-y:visible; }
 .hmpro-builder-panel{
 	background:#fff;
 	border:1px solid #e2e2e2;
@@ -60,12 +66,12 @@
 
 .hmpro-zones{
 	display:grid;
-	grid-template-columns:1fr 1fr 1fr;
+	grid-template-columns:repeat(3, minmax(0, 1fr));
 	gap:12px;
 }
 .hmpro-zones.hmpro-zones-4{
 	display:grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns:repeat(4, minmax(0, 1fr));
 	gap:12px;
 }
 
@@ -95,6 +101,21 @@
 	background:#fff;
 	border-top-left-radius:8px;
 	border-top-right-radius:8px;
+
+	/* prevent long titles from forcing overflow */
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+}
+
+@media (max-width: 1400px){
+	.hmpro-builder-sections{width:220px;}
+	.hmpro-builder-elements{width:220px;}
+}
+
+@media (max-width: 1250px){
+	.hmpro-builder-sections{width:200px;}
+	.hmpro-builder-elements{width:200px;}
 }
 .hmpro-canvas-list{
 	padding:12px;
