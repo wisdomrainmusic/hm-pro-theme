@@ -108,6 +108,15 @@ add_action( 'wp_enqueue_scripts', function () {
 		true
 	);
 
+	// Mobile header hamburger + drawer (right side)
+	wp_enqueue_script(
+		'hmpro-mobile-header',
+		get_template_directory_uri() . '/assets/js/mobile-header.js',
+		array(),
+		HMPRO_VERSION,
+		true
+	);
+
 	if ( class_exists( 'WooCommerce' ) ) {
 		wp_enqueue_style(
 			'hmpro-woo',
