@@ -367,14 +367,70 @@ html.hmpro-mobile-drawer-open body{
 	#site-header .hmpro-primary-nav{
 		display:none !important;
 	}
+	/* Mobile: hide desktop account CTA (drawer already has it) */
+	.hmpro-header-account-cta{
+		display:none !important;
+	}
+
+	/* Mobile: hide social icons/buttons in header (keep them in desktop only) */
+	#site-header .hmpro-social,
+	#site-header .hmpro-social-icons,
+	#site-header .hmpro-social-buttons,
+	#site-header .hmpro-social-icon,
+	#site-header .hmpro-social-icon-button,
+	#site-header .hmpro-social-wrap{
+		display:none !important;
+	}
+
+	/* Mobile: center the logo */
+	#site-header .hmpro-logo,
+	#site-header .hmpro-header-logo,
+	#site-header .site-logo,
+	#site-header .custom-logo-link{
+		display:flex;
+		justify-content:center;
+	}
+
+	/* If logo container is inside a flex row, force full width to center */
+	#site-header .hmpro-logo,
+	#site-header .hmpro-header-logo{
+		width:100%;
+	}
+
+	/* Mobile hamburger position: keep it top-right but not overlapping search */
+	.hmpro-mobile-menu-toggle{
+		top:12px;
+		right:12px;
+	}
+
+	/* Mobile: keep search under header (full width) if it exists */
+	#site-header .hmpro-search,
+	#site-header .hmpro-search-wrap,
+	#site-header .hmpro-header-search,
+	#site-header form.search-form{
+		width:100%;
+		max-width:100%;
+	}
+
+	#site-header .hmpro-search input[type="search"],
+	#site-header .hmpro-search input[type="text"],
+	#site-header form.search-form input[type="search"],
+	#site-header form.search-form input[type="text"]{
+		width:100%;
+		box-sizing:border-box;
+	}
+
+	/* Add a bit of breathing room under logo if search is shown */
+	#site-header .hmpro-logo,
+	#site-header .hmpro-header-logo,
+	#site-header .custom-logo-link{
+		margin-top:6px;
+		margin-bottom:10px;
+	}
 	.hmpro-mobile-menu-toggle{
 		display:inline-flex;
 		align-items:center;
 		justify-content:center;
-	}
-	/* Keep account CTA visible but avoid crowding: move it slightly up */
-	.hmpro-header-account-cta{
-		top:10px;
 	}
 }
 
