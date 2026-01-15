@@ -135,7 +135,8 @@
 /* Column title */
 .hmpro-mega-root-title{
 	font-weight: 600;
-	margin-bottom: 14px;
+	margin-bottom: 10px;
+	line-height: 1.3;
 }
 
 /* List cleanup */
@@ -145,7 +146,7 @@
 	list-style: none;
 }
 .hmpro-mega-col-list li{
-	margin-bottom: 10px;
+	margin-bottom: 6px;
 }
 
 /* Tablet: allow wrapping into 2 columns */
@@ -357,21 +358,65 @@ body.hmpro-mega-click .hmpro-mega-wrap {
 	margin: 0;
 	padding: 0;
 }
+.hmpro-mega-col-item + .hmpro-mega-col-item {
+	margin-top: 6px;
+}
 .hmpro-mega-col-link {
 	display: inline-block;
-	padding: 6px 0;
+	padding: 4px 0;
 	text-decoration: none;
 	color: inherit;
+	line-height: 1.35;
 }
 .hmpro-mega-col-link:hover {
 	text-decoration: underline;
 }
 
+.hmpro-mega-col-more-link {
+	font-weight: 600;
+}
+
+.hmpro-mega-image {
+	width: 100%;
+	overflow: hidden;
+	border-radius: 10px;
+}
+
+.hmpro-mega-image-square,
+.hmpro-mega-image.is-square {
+	aspect-ratio: 1 / 1;
+}
+
+.hmpro-mega-image-landscape,
+.hmpro-mega-image.is-landscape {
+	aspect-ratio: 4 / 3;
+}
+
+.hmpro-mega-image-portrait,
+.hmpro-mega-image.is-portrait {
+	aspect-ratio: 3 / 4;
+}
+
+.hmpro-mega-image-media,
+.hmpro-mega-img {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+.hmpro-mega-image-fit-cover .hmpro-mega-image-media,
+.hmpro-mega-image.fit-cover .hmpro-mega-img {
+	object-fit: cover;
+}
+
+.hmpro-mega-image-fit-contain .hmpro-mega-image-media,
+.hmpro-mega-image.fit-contain .hmpro-mega-img {
+	object-fit: contain;
+	background: #fff;
+}
+
 .hmpro-mega-image img {
 	max-width: 100%;
-	height: auto;
-	display: block;
-	border-radius: 10px;
 }
 
 /* =========================================================
@@ -381,6 +426,95 @@ body.hmpro-mega-click .hmpro-mega-wrap {
 
 .hmpro-primary-nav{
 	position: relative;
+}
+
+/* ==============================
+   Mega Column Menu - Compact List
+   ============================== */
+
+.hmpro-mega-column-menu {
+	width: 100%;
+}
+
+.hmpro-mega-root-title {
+	margin: 0 0 10px 0;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.hmpro-mega-col-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.hmpro-mega-col-item {
+	margin: 0;
+	padding: 0;
+}
+
+.hmpro-mega-col-link {
+	display: block;
+	padding: 6px 0;
+	line-height: 1.25;
+	text-decoration: none;
+}
+
+.hmpro-mega-col-link:hover {
+	text-decoration: underline;
+}
+
+.hmpro-depth-2 .hmpro-mega-col-link {
+	padding: 4px 0;
+	opacity: 0.92;
+}
+
+.hmpro-depth-3 .hmpro-mega-col-link {
+	padding: 3px 0;
+	opacity: 0.85;
+}
+
+.hmpro-mega-more {
+	margin-top: 6px;
+}
+
+.hmpro-mega-more-link {
+	font-weight: 700;
+}
+
+/* ==============================
+   Mega Image - Consistent Sizing
+   ============================== */
+
+.hmpro-mega-image {
+	width: 100%;
+	overflow: hidden;
+	border-radius: 12px;
+}
+
+.hmpro-mega-image .hmpro-mega-img,
+.hmpro-mega-image img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.hmpro-mega-image.fit-contain .hmpro-mega-img,
+.hmpro-mega-image.fit-contain img {
+	object-fit: contain;
+}
+
+.hmpro-mega-image.is-landscape {
+	aspect-ratio: 16 / 9;
+}
+
+.hmpro-mega-image.is-square {
+	aspect-ratio: 1 / 1;
+}
+
+.hmpro-mega-image.is-portrait {
+	aspect-ratio: 3 / 4;
 }
 
 /* Ensure the mega <li> anchors the centered panel */

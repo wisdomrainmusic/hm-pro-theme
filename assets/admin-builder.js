@@ -490,6 +490,44 @@
 			wrapShow.appendChild(chk);
 			modalBody.appendChild(wrapShow);
 
+			var fMax = document.createElement('div');
+			fMax.className = 'hmpro-field';
+			var lMax = document.createElement('label');
+			lMax.textContent = 'Max items (root)';
+			var iMax = document.createElement('input');
+			iMax.type = 'number';
+			iMax.min = '1';
+			iMax.max = '50';
+			iMax.id = 'hmproSettingMegaMaxItems';
+			iMax.value = settings.max_items ? String(settings.max_items) : '8';
+			fMax.appendChild(lMax);
+			fMax.appendChild(iMax);
+			modalBody.appendChild(fMax);
+
+			var fMore = document.createElement('div');
+			fMore.className = 'hmpro-field';
+			var lMore = document.createElement('label');
+			lMore.textContent = 'Show “More” link';
+			var cMore = document.createElement('input');
+			cMore.type = 'checkbox';
+			cMore.id = 'hmproSettingMegaShowMore';
+			cMore.checked = (settings.show_more === undefined) ? true : !!settings.show_more;
+			fMore.appendChild(lMore);
+			fMore.appendChild(cMore);
+			modalBody.appendChild(fMore);
+
+			var fMoreText = document.createElement('div');
+			fMoreText.className = 'hmpro-field';
+			var lMoreText = document.createElement('label');
+			lMoreText.textContent = 'More label';
+			var iMoreText = document.createElement('input');
+			iMoreText.type = 'text';
+			iMoreText.id = 'hmproSettingMegaMoreText';
+			iMoreText.value = settings.more_text || 'Daha Fazla Gör';
+			fMoreText.appendChild(lMoreText);
+			fMoreText.appendChild(iMoreText);
+			modalBody.appendChild(fMoreText);
+
 			function loadRootItems(menuId, preselectId) {
 				while (sRoot.firstChild) sRoot.removeChild(sRoot.firstChild);
 				var optLoading = document.createElement('option');
@@ -574,6 +612,172 @@
 			modalBody.appendChild(fWrap);
 
 			// Saved via the global modalSave handler.
+		}
+
+		if (type === 'image') {
+			var wrap = document.createElement('div');
+			wrap.className = 'hmpro-field';
+
+			var lbl = document.createElement('label');
+			lbl.textContent = 'Image (Media Library)';
+			wrap.appendChild(lbl);
+
+			var preview = document.createElement('div');
+			preview.style.marginTop = '8px';
+			preview.style.border = '1px solid #e5e5e5';
+			preview.style.borderRadius = '10px';
+			preview.style.padding = '10px';
+			preview.style.background = '#fff';
+			preview.innerHTML = settings.url ? '<img src="' + settings.url + '" style="max-width:100%;height:auto;display:block;border-radius:8px;" />' : '<em>No image selected</em>';
+			wrap.appendChild(preview);
+
+			var hiddenId = document.createElement('input');
+			hiddenId.type = 'hidden';
+			hiddenId.id = 'hmproSettingImageAttachmentId';
+			hiddenId.value = settings.attachment_id ? String(settings.attachment_id) : '';
+			wrap.appendChild(hiddenId);
+
+			var hiddenUrl = document.createElement('input');
+			hiddenUrl.type = 'hidden';
+			hiddenUrl.id = 'hmproSettingImageUrl';
+			hiddenUrl.value = settings.url || '';
+			wrap.appendChild(hiddenUrl);
+
+			var btn = document.createElement('button');
+			btn.type = 'button';
+			btn.className = 'button';
+			btn.textContent = 'Select Image';
+			btn.style.marginTop = '10px';
+			wrap.appendChild(btn);
+
+			var btnClear = document.createElement('button');
+			btnClear.type = 'button';
+			btnClear.className = 'button';
+			btnClear.textContent = 'Clear';
+			btnClear.style.marginLeft = '8px';
+			btnClear.style.marginTop = '10px';
+			wrap.appendChild(btnClear);
+
+			modalBody.appendChild(wrap);
+
+			var fSize = document.createElement('div');
+			fSize.className = 'hmpro-field';
+			var lSize = document.createElement('label');
+			lSize.textContent = 'Image size';
+			var sSize = document.createElement('select');
+			sSize.id = 'hmproSettingImageSize';
+			['medium', 'large', 'full'].forEach(function (v) {
+				var o = document.createElement('option');
+				o.value = v;
+				o.textContent = v;
+				sSize.appendChild(o);
+			});
+			sSize.value = settings.size || 'large';
+			fSize.appendChild(lSize);
+			fSize.appendChild(sSize);
+			modalBody.appendChild(fSize);
+
+			var fAspect = document.createElement('div');
+			fAspect.className = 'hmpro-field';
+			var lAspect = document.createElement('label');
+			lAspect.textContent = 'Aspect';
+			var sAspect = document.createElement('select');
+			sAspect.id = 'hmproSettingImageAspect';
+			['landscape', 'square', 'portrait'].forEach(function (v) {
+				var o = document.createElement('option');
+				o.value = v;
+				o.textContent = v;
+				sAspect.appendChild(o);
+			});
+			sAspect.value = settings.aspect || 'landscape';
+			fAspect.appendChild(lAspect);
+			fAspect.appendChild(sAspect);
+			modalBody.appendChild(fAspect);
+
+			var fFit = document.createElement('div');
+			fFit.className = 'hmpro-field';
+			var lFit = document.createElement('label');
+			lFit.textContent = 'Fit';
+			var sFit = document.createElement('select');
+			sFit.id = 'hmproSettingImageFit';
+			['cover', 'contain'].forEach(function (v) {
+				var o = document.createElement('option');
+				o.value = v;
+				o.textContent = v;
+				sFit.appendChild(o);
+			});
+			sFit.value = settings.fit || 'cover';
+			fFit.appendChild(lFit);
+			fFit.appendChild(sFit);
+			modalBody.appendChild(fFit);
+
+			var fAlt = document.createElement('div');
+			fAlt.className = 'hmpro-field';
+			var lAlt = document.createElement('label');
+			lAlt.textContent = 'Alt text';
+			var iAlt = document.createElement('input');
+			iAlt.type = 'text';
+			iAlt.id = 'hmproSettingImageAlt';
+			iAlt.value = settings.alt || '';
+			fAlt.appendChild(lAlt);
+			fAlt.appendChild(iAlt);
+			modalBody.appendChild(fAlt);
+
+			var fLink = document.createElement('div');
+			fLink.className = 'hmpro-field';
+			var lLink = document.createElement('label');
+			lLink.textContent = 'Link (optional)';
+			var iLink = document.createElement('input');
+			iLink.type = 'url';
+			iLink.id = 'hmproSettingImageLink';
+			iLink.placeholder = 'https://';
+			iLink.value = settings.link || '';
+			fLink.appendChild(lLink);
+			fLink.appendChild(iLink);
+			modalBody.appendChild(fLink);
+
+			var fTab = document.createElement('div');
+			fTab.className = 'hmpro-field';
+			var lTab = document.createElement('label');
+			lTab.textContent = 'Open in new tab';
+			var cTab = document.createElement('input');
+			cTab.type = 'checkbox';
+			cTab.id = 'hmproSettingImageNewTab';
+			cTab.checked = !!settings.new_tab;
+			fTab.appendChild(lTab);
+			fTab.appendChild(cTab);
+			modalBody.appendChild(fTab);
+
+			btn.addEventListener('click', function () {
+				if (!window.wp || !wp.media) return;
+
+				var frame = wp.media({
+					title: 'Select Image',
+					library: { type: 'image' },
+					button: { text: 'Use this image' },
+					multiple: false
+				});
+
+				frame.on('select', function () {
+					var att = frame.state().get('selection').first();
+					if (!att) return;
+					var data = att.toJSON();
+					var sizeKey = sSize.value || 'large';
+					var url = (data.sizes && data.sizes[sizeKey] && data.sizes[sizeKey].url) ? data.sizes[sizeKey].url : data.url;
+
+					hiddenId.value = data.id ? String(data.id) : '';
+					hiddenUrl.value = url || '';
+					preview.innerHTML = url ? '<img src="' + url + '" style="max-width:100%;height:auto;display:block;border-radius:8px;" />' : '<em>No image selected</em>';
+				});
+
+				frame.open();
+			});
+
+			btnClear.addEventListener('click', function () {
+				hiddenId.value = '';
+				hiddenUrl.value = '';
+				preview.innerHTML = '<em>No image selected</em>';
+			});
 		}
 
 		if (type === 'footer_menu') {
@@ -940,6 +1144,32 @@
 				comp.settings.root_item_id = rId ? parseInt(rId.value || '0', 10) : 0;
 				comp.settings.max_depth = dId ? parseInt(dId.value || '2', 10) : 2;
 				comp.settings.show_root_title = sR && sR.checked ? 1 : 0;
+				var maxItems = document.getElementById('hmproSettingMegaMaxItems');
+				var showMore = document.getElementById('hmproSettingMegaShowMore');
+				var moreText = document.getElementById('hmproSettingMegaMoreText');
+
+				comp.settings.max_items = maxItems ? parseInt(maxItems.value || '8', 10) : 8;
+				comp.settings.show_more = showMore && showMore.checked ? 1 : 0;
+				comp.settings.more_text = moreText ? (moreText.value || 'Daha Fazla Gör') : 'Daha Fazla Gör';
+			}
+			if (type === 'image') {
+				var aid = document.getElementById('hmproSettingImageAttachmentId');
+				var url = document.getElementById('hmproSettingImageUrl');
+				var size = document.getElementById('hmproSettingImageSize');
+				var aspect = document.getElementById('hmproSettingImageAspect');
+				var fit = document.getElementById('hmproSettingImageFit');
+				var alt = document.getElementById('hmproSettingImageAlt');
+				var link = document.getElementById('hmproSettingImageLink');
+				var tab = document.getElementById('hmproSettingImageNewTab');
+
+				comp.settings.attachment_id = aid ? parseInt(aid.value || '0', 10) : 0;
+				comp.settings.url = url ? (url.value || '') : '';
+				comp.settings.size = size ? (size.value || 'large') : 'large';
+				comp.settings.aspect = aspect ? (aspect.value || 'landscape') : 'landscape';
+				comp.settings.fit = fit ? (fit.value || 'cover') : 'cover';
+				comp.settings.alt = alt ? (alt.value || '') : '';
+				comp.settings.link = link ? (link.value || '') : '';
+				comp.settings.new_tab = tab && tab.checked ? 1 : 0;
 			}
 			if (type === 'footer_menu') {
 				var fmId = document.getElementById('hmproSettingFooterMenuId');

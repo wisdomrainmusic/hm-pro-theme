@@ -182,20 +182,59 @@ function hmpro_builder_render_component( $comp, $context = 'header' ) {
 }
 
 function hmpro_builder_comp_image( array $set ) {
-	$url = isset( $set['url'] ) ? esc_url( (string) $set['url'] ) : '';
-	if ( '' === $url ) {
-		return;
+	$attachment_id = isset( $set['attachment_id'] ) ? absint( $set['attachment_id'] ) : 0;
+	$size          = isset( $set['size'] ) ? sanitize_key( (string) $set['size'] ) : 'large';
+	if ( ! in_array( $size, [ 'medium', 'large', 'full' ], true ) ) {
+		$size = 'large';
 	}
+
+	$aspect = isset( $set['aspect'] ) ? sanitize_key( (string) $set['aspect'] ) : 'landscape';
+	if ( ! in_array( $aspect, [ 'landscape', 'square', 'portrait' ], true ) ) {
+		$aspect = 'landscape';
+	}
+
+	$fit = isset( $set['fit'] ) ? sanitize_key( (string) $set['fit'] ) : 'cover';
+	if ( ! in_array( $fit, [ 'cover', 'contain' ], true ) ) {
+		$fit = 'cover';
+	}
+
 	$alt     = isset( $set['alt'] ) ? esc_attr( (string) $set['alt'] ) : '';
 	$link    = isset( $set['link'] ) ? esc_url( (string) $set['link'] ) : '';
 	$new_tab = ! empty( $set['new_tab'] );
 
-	$img = '<img src="' . $url . '" alt="' . $alt . '" loading="lazy" />';
-	if ( '' !== $link ) {
-		$attrs = $new_tab ? ' target="_blank" rel="noopener noreferrer"' : '';
-		$img   = '<a href="' . $link . '"' . $attrs . '>' . $img . '</a>';
+	$img_html = '';
+
+	if ( $attachment_id > 0 ) {
+		$img_html = wp_get_attachment_image(
+			$attachment_id,
+			$size,
+			false,
+			[
+				'class'   => 'hmpro-mega-img',
+				'loading' => 'lazy',
+				'alt'     => $alt,
+			]
+		);
+	} else {
+		$url = isset( $set['url'] ) ? esc_url( (string) $set['url'] ) : '';
+		if ( '' === $url ) {
+			return;
+		}
+		$img_html = '<img class="hmpro-mega-img" src="' . $url . '" alt="' . $alt . '" loading="lazy" />';
 	}
-	echo '<div class="hmpro-mega-image">' . $img . '</div>';
+
+	if ( '' === $img_html ) {
+		return;
+	}
+
+	if ( '' !== $link ) {
+		$attrs    = $new_tab ? ' target="_blank" rel="noopener noreferrer"' : '';
+		$img_html = '<a href="' . $link . '"' . $attrs . '>' . $img_html . '</a>';
+	}
+
+	$classes = 'hmpro-mega-image is-' . $aspect . ' fit-' . $fit;
+
+	echo '<div class="' . esc_attr( $classes ) . '">' . $img_html . '</div>';
 }
 
 function hmpro_builder_comp_mega_column_menu( array $set ) {
@@ -203,6 +242,9 @@ function hmpro_builder_comp_mega_column_menu( array $set ) {
 	$root_item_id = isset( $set['root_item_id'] ) ? absint( $set['root_item_id'] ) : 0;
 	$max_depth    = isset( $set['max_depth'] ) ? max( 1, min( 3, absint( $set['max_depth'] ) ) ) : 2;
 	$show_root    = ! empty( $set['show_root_title'] );
+	$max_items    = isset( $set['max_items'] ) ? max( 1, min( 50, absint( $set['max_items'] ) ) ) : 8;
+	$show_more    = ! empty( $set['show_more'] );
+	$more_text    = isset( $set['more_text'] ) ? sanitize_text_field( (string) $set['more_text'] ) : 'Daha Fazla Gör';
 
 	if ( $menu_id < 1 || $root_item_id < 1 ) {
 		return;
@@ -215,11 +257,13 @@ function hmpro_builder_comp_mega_column_menu( array $set ) {
 
 	$by_parent  = [];
 	$root_title = '';
+	$root_url   = '';
 	foreach ( $items as $it ) {
 		$pid = absint( $it->menu_item_parent );
 		$iid = absint( $it->ID );
 		if ( $iid === $root_item_id ) {
 			$root_title = (string) $it->title;
+			$root_url   = ! empty( $it->url ) ? (string) $it->url : '';
 		}
 		if ( ! isset( $by_parent[ $pid ] ) ) {
 			$by_parent[ $pid ] = [];
@@ -227,20 +271,36 @@ function hmpro_builder_comp_mega_column_menu( array $set ) {
 		$by_parent[ $pid ][] = $it;
 	}
 
-	$render_list = function ( $parent_id, $depth ) use ( &$render_list, $by_parent, $max_depth ) {
+	$render_list = function ( $parent_id, $depth ) use ( &$render_list, $by_parent, $max_depth, $max_items, $show_more, $more_text, $root_url, $root_item_id ) {
 		if ( $depth > $max_depth ) {
 			return;
 		}
 		if ( empty( $by_parent[ $parent_id ] ) ) {
 			return;
 		}
+		$items = $by_parent[ $parent_id ];
+
+		// ✅ Only limit the first level under root item
+		$apply_limit = ( $parent_id === $root_item_id && 1 === $depth );
+
+		$total = count( $items );
+		if ( $apply_limit && $total > $max_items ) {
+			$items = array_slice( $items, 0, $max_items );
+		}
 		echo '<ul class="hmpro-mega-col-list hmpro-depth-' . esc_attr( (string) $depth ) . '">';
-		foreach ( $by_parent[ $parent_id ] as $it ) {
+		foreach ( $items as $it ) {
 			$url   = ! empty( $it->url ) ? esc_url( (string) $it->url ) : '#';
 			$title = esc_html( (string) $it->title );
 			echo '<li class="hmpro-mega-col-item">';
 			echo '<a class="hmpro-mega-col-link" href="' . $url . '">' . $title . '</a>';
 			$render_list( absint( $it->ID ), $depth + 1 );
+			echo '</li>';
+		}
+		// ✅ Add “More” link after limited root list
+		if ( $apply_limit && $show_more && $total > $max_items ) {
+			$more_url = $root_url ? esc_url( $root_url ) : '#';
+			echo '<li class="hmpro-mega-col-item hmpro-mega-more">';
+			echo '<a class="hmpro-mega-col-link hmpro-mega-more-link" href="' . $more_url . '">' . esc_html( $more_text ) . '</a>';
 			echo '</li>';
 		}
 		echo '</ul>';
