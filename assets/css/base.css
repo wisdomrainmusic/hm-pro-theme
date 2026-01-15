@@ -20,18 +20,25 @@ footer.site-footer {
    Deterministic 4-column grid
    ============================== */
 
-/* LAST-TRY: detach mega panel from any header/nav/container width constraints */
+/* Make the dropdown panel viewport-wide and independent from layout containers */
+
+/* Ensure the top-level <li> can anchor the mega panel */
 .hmpro-primary-nav li.hmpro-li-has-mega{
-	position: static;
+	position: relative !important;
 }
 
-/* Make the dropdown panel viewport-wide and independent from layout containers */
+/* Prevent header/nav containers from clipping the full-width panel */
+.hmpro-primary-nav{
+	overflow: visible !important;
+}
+
 .hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel{
 	display: none;
-	position: fixed;
-	left: 0;
-	right: 0;
-	width: 100vw;
+	position: absolute !important;
+	left: 50% !important;
+	top: 100% !important;
+	transform: translateX(-50%) !important;
+	width: 100vw !important;
 	z-index: 999999;
 	box-sizing: border-box;
 	background: #fff;
@@ -794,26 +801,27 @@ footer,
 }
 
 /* =========================================================
-   Mega Menu – Final Override (Regression Fix)
-   Ensures mega panel anchors to the nav container width, not the <li>
+   Mega Menu – Final Override (Viewport Wide)
+   Keeps the panel centered in the viewport without clipping
    ========================================================= */
 
 .hmpro-primary-nav{
 	position: relative;
 }
 
-/* Make sure the mega <li> is NEVER the positioned ancestor */
+/* Ensure the mega <li> anchors the centered panel */
 .hmpro-primary-nav li.hmpro-li-has-mega{
-	position: static !important;
+	position: relative !important;
 }
 
-/* Full-width mega panel: span the entire nav container */
+/* Keep mega panel viewport-wide (do not constrain to nav width) */
 .hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel{
 	position: absolute;
-	left: 0;
-	right: 0;
-	width: 100%;
+	left: 50% !important;
+	right: auto !important;
+	width: 100vw !important;
 	max-width: none;
+	transform: translateX(-50%) !important;
 	box-sizing: border-box;
 	overflow-x: hidden;
 }
