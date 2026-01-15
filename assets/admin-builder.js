@@ -528,6 +528,18 @@
 			fMoreText.appendChild(iMoreText);
 			modalBody.appendChild(fMoreText);
 
+			var fFlat = document.createElement('div');
+			fFlat.className = 'hmpro-field';
+			var lFlat = document.createElement('label');
+			lFlat.textContent = 'Flatten hierarchy (recommended)';
+			var cFlat = document.createElement('input');
+			cFlat.type = 'checkbox';
+			cFlat.id = 'hmproSettingMegaFlatten';
+			cFlat.checked = !!settings.flatten;
+			fFlat.appendChild(lFlat);
+			fFlat.appendChild(cFlat);
+			modalBody.appendChild(fFlat);
+
 			var fMoreMode = document.createElement('div');
 			fMoreMode.className = 'hmpro-field';
 			var lMoreMode = document.createElement('label');
@@ -1178,12 +1190,14 @@
 				var moreText = document.getElementById('hmproSettingMegaMoreText');
 				var moreMode = document.getElementById('hmproSettingMegaMoreMode');
 				var lessText = document.getElementById('hmproSettingMegaLessText');
+				var flat = document.getElementById('hmproSettingMegaFlatten');
 
 				comp.settings.max_items = maxItems ? parseInt(maxItems.value || '8', 10) : 8;
 				comp.settings.show_more = showMore && showMore.checked ? 1 : 0;
 				comp.settings.more_text = moreText ? (moreText.value || 'Daha Fazla Gör') : 'Daha Fazla Gör';
 				comp.settings.more_mode = moreMode ? (moreMode.value || 'expand') : 'expand';
 				comp.settings.less_text = lessText ? (lessText.value || 'Daha Az Göster') : 'Daha Az Göster';
+				comp.settings.flatten = (flat && flat.checked) ? 1 : 0;
 			}
 			if (type === 'image') {
 				var aid = document.getElementById('hmproSettingImageAttachmentId');
