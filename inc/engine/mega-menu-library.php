@@ -194,6 +194,7 @@ function hmpro_mega_sanitize_layout( $payload ) {
 					$clean_settings['show_root_title'] = ! empty( $settings['show_root_title'] ) ? 1 : 0;
 					$clean_settings['max_items']       = isset( $settings['max_items'] ) ? max( 1, min( 50, absint( $settings['max_items'] ) ) ) : 8;
 					$clean_settings['show_more']       = ! empty( $settings['show_more'] ) ? 1 : 0;
+					$clean_settings['flatten']         = ! empty( $settings['flatten'] ) ? 1 : 0;
 					$clean_settings['more_text']       = isset( $settings['more_text'] ) ? sanitize_text_field( (string) $settings['more_text'] ) : 'Daha Fazla Gör';
 					$mode                             = isset( $settings['more_mode'] ) ? sanitize_key( (string) $settings['more_mode'] ) : 'expand';
 					if ( ! in_array( $mode, [ 'expand', 'link' ], true ) ) {

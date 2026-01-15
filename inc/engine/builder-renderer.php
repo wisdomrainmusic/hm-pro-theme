@@ -244,6 +244,7 @@ function hmpro_builder_comp_mega_column_menu( array $set ) {
 	$show_root    = ! empty( $set['show_root_title'] );
 	$max_items    = isset( $set['max_items'] ) ? max( 1, min( 50, absint( $set['max_items'] ) ) ) : 8;
 	$show_more    = ! empty( $set['show_more'] );
+	$flatten      = ! empty( $set['flatten'] );
 	$more_text    = isset( $set['more_text'] ) ? sanitize_text_field( (string) $set['more_text'] ) : 'Daha Fazla Gör';
 	$more_mode    = isset( $set['more_mode'] ) ? sanitize_key( (string) $set['more_mode'] ) : 'expand';
 	if ( ! in_array( $more_mode, [ 'expand', 'link' ], true ) ) {
@@ -275,6 +276,54 @@ function hmpro_builder_comp_mega_column_menu( array $set ) {
 		}
 		$by_parent[ $pid ][] = $it;
 	}
+
+	// Build parent map for ancestor checks
+	$parent_map = [];
+	$order_map  = [];
+	foreach ( $items as $it ) {
+		$parent_map[ (int) $it->ID ] = (int) $it->menu_item_parent;
+		$order_map[ (int) $it->ID ]  = (int) $it->menu_order;
+	}
+
+	$collect_flat_descendants = function () use ( $items, $root_item_id, $parent_map, $order_map, $max_depth ) {
+		$out = [];
+
+		foreach ( $items as $it ) {
+			$id = (int) $it->ID;
+			if ( $id === (int) $root_item_id ) {
+				continue;
+			}
+
+			// Walk up to see if root_item_id is an ancestor
+			$depth = 0;
+			$p     = isset( $parent_map[ $id ] ) ? (int) $parent_map[ $id ] : 0;
+
+			while ( $p > 0 && $p !== (int) $root_item_id && $depth < 50 ) {
+				$depth++;
+				$p = isset( $parent_map[ $p ] ) ? (int) $parent_map[ $p ] : 0;
+			}
+
+			if ( $p === (int) $root_item_id ) {
+				// child depth from root = $depth + 1
+				$child_depth = $depth + 1;
+				if ( $child_depth <= (int) $max_depth ) {
+					$out[] = $it;
+				}
+			}
+		}
+
+		// Sort by menu_order to mirror WP menu editor order
+		usort( $out, function ( $a, $b ) {
+			$ao = (int) $a->menu_order;
+			$bo = (int) $b->menu_order;
+			if ( $ao === $bo ) {
+				return 0;
+			}
+			return ( $ao < $bo ) ? -1 : 1;
+		} );
+
+		return $out;
+	};
 
 	$render_list = function ( $parent_id, $depth ) use ( &$render_list, $by_parent, $max_depth, $max_items, $show_more, $more_text, $less_text, $more_mode, $root_url, $root_item_id ) {
 		if ( $depth > $max_depth ) {
@@ -341,6 +390,61 @@ function hmpro_builder_comp_mega_column_menu( array $set ) {
 	if ( $show_root && '' !== $root_title ) {
 		echo '<div class="hmpro-mega-root-title">' . esc_html( $root_title ) . '</div>';
 	}
+
+	if ( $flatten ) {
+		$flat_items = $collect_flat_descendants();
+
+		$total   = count( $flat_items );
+		$visible = $flat_items;
+		$hidden  = [];
+
+		if ( $total > $max_items ) {
+			$visible = array_slice( $flat_items, 0, $max_items );
+			$hidden  = array_slice( $flat_items, $max_items );
+		}
+
+		echo '<ul class="hmpro-mega-col-list hmpro-depth-1">';
+
+		foreach ( $visible as $it ) {
+			$url   = ! empty( $it->url ) ? esc_url( (string) $it->url ) : '#';
+			$title = esc_html( (string) $it->title );
+			echo '<li class="hmpro-mega-col-item">';
+			echo '<a class="hmpro-mega-col-link" href="' . $url . '">' . $title . '</a>';
+			echo '</li>';
+		}
+
+		// Hidden items for expand mode (Trendyol)
+		if ( ! empty( $hidden ) && $show_more && 'expand' === $more_mode ) {
+			foreach ( $hidden as $it ) {
+				$url   = ! empty( $it->url ) ? esc_url( (string) $it->url ) : '#';
+				$title = esc_html( (string) $it->title );
+				echo '<li class="hmpro-mega-col-item hmpro-mega-hidden" aria-hidden="true">';
+				echo '<a class="hmpro-mega-col-link" href="' . $url . '">' . $title . '</a>';
+				echo '</li>';
+			}
+		}
+
+		// More control
+		if ( $show_more && $total > $max_items ) {
+			if ( 'link' === $more_mode ) {
+				$more_url = $root_url ? esc_url( $root_url ) : '#';
+				echo '<li class="hmpro-mega-col-item hmpro-mega-more">';
+				echo '<a class="hmpro-mega-col-link hmpro-mega-more-link" href="' . $more_url . '">' . esc_html( $more_text ) . '</a>';
+				echo '</li>';
+			} else {
+				echo '<li class="hmpro-mega-col-item hmpro-mega-more">';
+				echo '<a href="#" class="hmpro-mega-col-link hmpro-mega-more-toggle" aria-expanded="false" data-more="' . esc_attr( $more_text ) . '" data-less="' . esc_attr( $less_text ) . '">';
+				echo esc_html( $more_text );
+				echo '</a>';
+				echo '</li>';
+			}
+		}
+
+		echo '</ul>';
+		echo '</div>'; // close hmpro-mega-column-menu
+		return;
+	}
+
 	$render_list( $root_item_id, 1 );
 	echo '</div>';
 }
