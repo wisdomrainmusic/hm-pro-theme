@@ -122,6 +122,19 @@
 	max-width: 560px;
 }
 
+/* Prevent any zoom/absolute overlay image from visually exploding outside the gallery box */
+.single-product.woocommerce div.product div.images .woocommerce-product-gallery,
+.single-product.woocommerce div.product div.images .woocommerce-product-gallery__wrapper,
+.single-product.woocommerce div.product div.images .woocommerce-product-gallery__image {
+	overflow: hidden;
+}
+
+/* If any zoom image still gets injected by a plugin, clamp it */
+.single-product.woocommerce div.product div.images img.zoomImg {
+	max-width: 100% !important;
+	max-height: 100% !important;
+}
+
 /* Main image: standard visual height, crop gently, keep aspect tidy. */
 .single-product.woocommerce div.product div.images .woocommerce-product-gallery__wrapper img {
 	width: 100%;
@@ -138,6 +151,10 @@
 
 /* FlexSlider arrows (single product gallery) */
 .single-product.woocommerce div.product div.images .flex-direction-nav a {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 10;
 	width: 38px;
 	height: 38px;
 	line-height: 38px;
