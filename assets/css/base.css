@@ -9,6 +9,8 @@
 	--hm-border: #e5e5e5;
 	--hm-footer: #111111;
 	--hmpro-logo-max-height: 56px;
+	/* Fixed logo slot width to prevent header nav shifting when logo height changes */
+	--hmpro-logo-slot-width: 240px;
 	--hmpro-footer-logo-max-height: 96px;
 
 	--hm-body-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
