@@ -34,11 +34,16 @@
 
 /*
  * HM Pro - Shop sidebar rendering
- * WooCommerce calls get_sidebar('shop') which loads sidebar-shop.php.
- * These styles place the sidebar to the right on desktop, and stack on mobile.
+ *
+ * We provide a dedicated "Shop Sidebar" widget area (sidebar-shop.php).
+ * For WooCommerce product archives (shop, category, tag), we render that sidebar
+ * on the LEFT like Astra-style layouts.
  */
 
-.woocommerce-page #primary {
+/* Layout wrapper for product archives (shop/category/tag). */
+.woocommerce-page.post-type-archive-product .hmpro-woo-archive-layout,
+.woocommerce-page.tax-product_cat .hmpro-woo-archive-layout,
+.woocommerce-page.tax-product_tag .hmpro-woo-archive-layout {
 	max-width: 1200px;
 	margin-left: auto;
 	margin-right: auto;
@@ -46,31 +51,46 @@
 	padding-right: 16px;
 }
 
-.woocommerce-page .hmpro-shop-sidebar {
-	padding-left: 16px;
-	padding-right: 16px;
+/* Reset padding/margins so the wrapper controls spacing. */
+.woocommerce-page.post-type-archive-product #primary,
+.woocommerce-page.tax-product_cat #primary,
+.woocommerce-page.tax-product_tag #primary {
+	max-width: none;
+	margin: 0;
+	padding: 0;
+}
+
+.woocommerce-page.post-type-archive-product .hmpro-shop-sidebar,
+.woocommerce-page.tax-product_cat .hmpro-shop-sidebar,
+.woocommerce-page.tax-product_tag .hmpro-shop-sidebar {
+	padding: 0;
 }
 
 @media (min-width: 992px) {
-	.woocommerce-page #primary {
-		float: left;
+	/*
+	 * Use inline-block instead of floats.
+	 * Floats can "bleed" into full-width page sections and visually look like
+	 * the sidebar is inside the footer (especially when pages use wide cover blocks).
+	 * Inline-block keeps everything in normal document flow so the footer always
+	 * stays below the shop layout.
+	 */
+	.woocommerce-page.post-type-archive-product #primary,
+	.woocommerce-page.tax-product_cat #primary,
+	.woocommerce-page.tax-product_tag #primary {
+		display: inline-block;
+		vertical-align: top;
 		width: calc(100% - 340px);
+		padding-left: 24px;
+		box-sizing: border-box;
+	}
+	.woocommerce-page.post-type-archive-product .hmpro-shop-sidebar,
+	.woocommerce-page.tax-product_cat .hmpro-shop-sidebar,
+	.woocommerce-page.tax-product_tag .hmpro-shop-sidebar {
+		display: inline-block;
+		vertical-align: top;
+		width: 320px;
 		padding-right: 24px;
 		box-sizing: border-box;
-	}
-	.woocommerce-page .hmpro-shop-sidebar {
-		float: right;
-		width: 320px;
-		box-sizing: border-box;
-	}
-}
-
-/* Clear floats after Woo content on desktop */
-@media (min-width: 992px) {
-	.woocommerce-page:after {
-		content: "";
-		display: table;
-		clear: both;
 	}
 }
 
