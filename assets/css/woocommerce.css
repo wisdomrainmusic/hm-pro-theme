@@ -238,3 +238,8 @@
 		max-height: 420px;
 	}
 }
+
+/* Remove FlexSlider pagination dots (black dots under gallery) */
+.single-product.woocommerce div.product div.images .flex-control-nav {
+	display: none !important;
+}
