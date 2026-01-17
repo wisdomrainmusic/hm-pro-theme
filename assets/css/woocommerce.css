@@ -143,10 +143,43 @@
 	display: block;
 }
 
+/* Hide the zoom/lightbox trigger icon/button entirely */
+.single-product.woocommerce div.product div.images .woocommerce-product-gallery__trigger {
+	display: none !important;
+}
+
+/* Thumbnail area: make it a neat framed grid (no float collapse / "ezik" look) */
+.single-product.woocommerce div.product div.images .flex-control-thumbs {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 10px;
+	padding: 12px;
+	margin: 14px 0 0;
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	border-radius: 14px;
+}
+
+.single-product.woocommerce div.product div.images .flex-control-thumbs li {
+	float: none !important;
+	width: auto !important;
+	margin: 0 !important;
+}
+
 /* Thumbnails: consistent strip sizing for the slider/carousel. */
 .single-product.woocommerce div.product div.images .flex-control-thumbs li img {
+	width: 100%;
 	height: 80px;
 	object-fit: cover;
+	border-radius: 10px;
+	display: block;
+	opacity: 0.8;
+	transition: opacity 150ms ease;
+}
+
+.single-product.woocommerce div.product div.images .flex-control-thumbs li img:hover,
+.single-product.woocommerce div.product div.images .flex-control-thumbs li img.flex-active {
+	opacity: 1;
 }
 
 /* FlexSlider arrows (single product gallery) */
@@ -197,6 +230,9 @@
 @media (max-width: 768px) {
 	.single-product.woocommerce div.product div.images {
 		max-width: none;
+	}
+	.single-product.woocommerce div.product div.images .flex-control-thumbs {
+		grid-template-columns: repeat(3, 1fr);
 	}
 	.single-product.woocommerce div.product div.images .woocommerce-product-gallery__wrapper img {
 		max-height: 420px;

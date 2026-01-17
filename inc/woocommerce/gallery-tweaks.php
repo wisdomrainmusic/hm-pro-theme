@@ -11,6 +11,9 @@ if ( ! class_exists( 'WooCommerce' ) ) {
 // Disable zoom completely (zoom overlay is what creates the "insane" scale on hover).
 add_filter( 'woocommerce_single_product_zoom_enabled', '__return_false' );
 
+// Disable PhotoSwipe lightbox so clicking the image won't open fullscreen viewer.
+add_filter( 'woocommerce_single_product_photoswipe_enabled', '__return_false' );
+
 /**
  * Ensure product gallery slider shows navigation arrows.
  * WooCommerce uses FlexSlider and respects these carousel options.
@@ -43,6 +46,12 @@ if (typeof wc_single_product_params !== 'undefined' && wc_single_product_params.
 	wc_single_product_params.flexslider.prevText = '';
 	wc_single_product_params.flexslider.nextText = '';
 }
+
+// Prevent default navigation to the raw image file when PhotoSwipe is disabled.
+document.addEventListener('click', function(e){
+	var a = e.target && e.target.closest ? e.target.closest('.woocommerce-product-gallery__wrapper a') : null;
+	if (a) { e.preventDefault(); }
+}, true);
 JS;
 		wp_add_inline_script( 'wc-single-product', $js, 'before' );
 	}
