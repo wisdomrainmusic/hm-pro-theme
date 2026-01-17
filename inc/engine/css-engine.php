@@ -81,7 +81,10 @@ function hmpro_output_css_variables() {
  * This restores the old behavior where Elementor widgets inherit preset styling by default,
  * while still allowing per-widget overrides via Elementor's style controls.
  */
+// NOTE: Elementor defines globals on `.elementor-kit-XX` (body class), not only `:root`.
+// To reliably override, we print our variables late AND scope them to `body[class*="elementor-kit-"]`.
 add_action( 'wp_head', 'hmpro_output_elementor_global_vars', 21 );
+add_action( 'wp_footer', 'hmpro_output_elementor_global_vars', 999 );
 add_action( 'elementor/frontend/after_enqueue_styles', 'hmpro_enqueue_elementor_global_vars', 5 );
 add_action( 'elementor/editor/after_enqueue_styles', 'hmpro_enqueue_elementor_global_vars', 5 );
 
@@ -100,17 +103,22 @@ function hmpro_get_elementor_global_vars_css() {
 	$body_font    = hmpro_sanitize_css_font_stack( hmpro_font_token_to_stack( (string) ( $preset['body_font'] ?? 'system' ) ) );
 	$heading_font = hmpro_sanitize_css_font_stack( hmpro_font_token_to_stack( (string) ( $preset['heading_font'] ?? 'system' ) ) );
 
-	$css  = ':root{';
-	$css .= '--e-global-color-primary:' . esc_html( $primary ) . ';';
-	$css .= '--e-global-color-secondary:' . esc_html( $dark ) . ';';
-	$css .= '--e-global-color-text:' . esc_html( $text ) . ';';
-	$css .= '--e-global-color-accent:' . esc_html( $link ) . ';';
-	$css .= '--e-global-color-background:' . esc_html( $bg ) . ';';
-	$css .= '--e-global-typography-text-font-family:' . esc_html( $body_font ) . ';';
-	$css .= '--e-global-typography-primary-font-family:' . esc_html( $heading_font ) . ';';
-	$css .= '--e-global-typography-secondary-font-family:' . esc_html( $heading_font ) . ';';
-	$css .= '--e-global-typography-accent-font-family:' . esc_html( $body_font ) . ';';
-	$css .= '}';
+	// Elementor usually sets these on `.elementor-kit-XX` (body class).
+	// We set on both `:root` and `body[class*="elementor-kit-"]` so widgets inherit preset globals,
+	// while still allowing per-widget overrides via Elementor controls.
+	$vars  = '';
+	$vars .= '--e-global-color-primary:' . esc_html( $primary ) . ';';
+	$vars .= '--e-global-color-secondary:' . esc_html( $dark ) . ';';
+	$vars .= '--e-global-color-text:' . esc_html( $text ) . ';';
+	$vars .= '--e-global-color-accent:' . esc_html( $link ) . ';';
+	$vars .= '--e-global-color-background:' . esc_html( $bg ) . ';';
+	$vars .= '--e-global-typography-text-font-family:' . esc_html( $body_font ) . ';';
+	$vars .= '--e-global-typography-primary-font-family:' . esc_html( $heading_font ) . ';';
+	$vars .= '--e-global-typography-secondary-font-family:' . esc_html( $heading_font ) . ';';
+	$vars .= '--e-global-typography-accent-font-family:' . esc_html( $body_font ) . ';';
+
+	$css  = ':root{' . $vars . '}';
+	$css .= 'body[class*="elementor-kit-"]{' . $vars . '}';
 
 	return $css;
 }
