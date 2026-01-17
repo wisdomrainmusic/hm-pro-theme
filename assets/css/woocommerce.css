@@ -258,6 +258,98 @@
 }
 
 /* =========================================================
+ * Checkout Layout (Astra-style)
+ * - Left: customer details (billing + notes)
+ * - Right: order review
+ * - Move "Ship to different address" section lower
+ * ========================================================= */
+
+.woocommerce-checkout form.checkout {
+	width: 100%;
+}
+
+/* Desktop two-column layout */
+@media (min-width: 992px) {
+	.woocommerce-checkout form.checkout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 420px;
+		gap: 28px;
+		align-items: start;
+	}
+
+	/* Left column */
+	.woocommerce-checkout #customer_details {
+		grid-column: 1 / 2;
+	}
+
+	/* Right column */
+	.woocommerce-checkout #order_review,
+	.woocommerce-checkout #order_review_heading {
+		grid-column: 2 / 3;
+	}
+
+	/* Make right column "card-like" and sticky-ish feeling */
+	.woocommerce-checkout #order_review {
+		position: sticky;
+		top: 18px;
+	}
+}
+
+/* Ensure customer_details can be re-ordered */
+.woocommerce-checkout #customer_details {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+/* Default blocks in classic checkout */
+.woocommerce-checkout #customer_details .col-1,
+.woocommerce-checkout #customer_details .col-2 {
+	width: 100%;
+	float: none;
+}
+
+/* Re-order sections to push shipping toggle lower (Astra-like) */
+.woocommerce-checkout .woocommerce-billing-fields {
+	order: 1;
+}
+
+.woocommerce-checkout .woocommerce-additional-fields {
+	order: 2;
+}
+
+.woocommerce-checkout .woocommerce-shipping-fields {
+	order: 3;
+}
+
+/* Shipping fields: keep the accordion/checkbox at top of its own section */
+.woocommerce-checkout .woocommerce-shipping-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+/* If your accordion class exists, keep its spacing consistent */
+.woocommerce-checkout #ship-to-different-address.hmpro-ship-accordion {
+	margin-top: 0;
+}
+
+/* Improve spacing under the shipping toggle area */
+.woocommerce-checkout .woocommerce-shipping-fields .shipping_address {
+	margin-top: 10px;
+}
+
+/* On desktop, remove Woo's legacy floats/margins that can break the grid */
+@media (min-width: 992px) {
+	.woocommerce-checkout .col2-set,
+	.woocommerce-checkout .col2-set .col-1,
+	.woocommerce-checkout .col2-set .col-2 {
+		float: none !important;
+		width: auto !important;
+	}
+}
+
+/* =========================================================
  * Checkout: "Ship to a different address?" as accordion
  * ========================================================= */
 .woocommerce-checkout #ship-to-different-address.hmpro-ship-accordion {
