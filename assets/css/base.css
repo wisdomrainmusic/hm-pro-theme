@@ -12,6 +12,11 @@
 	/* Fixed logo SLOT width so logo scaling never shifts header nav */
 	/* responsive clamp keeps it reasonable on smaller screens */
 	--hmpro-logo-slot-width: clamp(160px, 18vw, 240px);
+	/*
+	 * Header side columns MUST be equal width to keep the center nav perfectly centered.
+	 * Right side can be wider (social + search + CTA), so we reserve a symmetrical slot.
+	 */
+	--hmpro-header-side-slot-width: clamp(220px, 26vw, 380px);
 	--hmpro-footer-logo-max-height: 96px;
 
 	--hm-body-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
