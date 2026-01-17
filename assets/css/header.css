@@ -504,3 +504,31 @@ html.hmpro-mobile-drawer-open body{
 @media (min-width: 993px){
 	.hmpro-mobile-drawer{ display:none; }
 }
+
+/* === Google Translate Top Banner Safe Hide (HM) ===
+   Hides the injected Google Translate banner/toolbar without cancelling translation.
+   (Works with both old goog-te-banner-frame and newer VIpgJd-* containers.) */
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+.goog-te-balloon-frame,
+.goog-te-menu-frame,
+#goog-gt-tt,
+.goog-tooltip,
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.VIpgJd-ZVi9od-ORHb,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-aZ2wEe {
+	display: none !important;
+	visibility: hidden !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+/* Google Translate sometimes pushes the page down via inline styles */
+html {
+	margin-top: 0 !important;
+}
+body {
+	top: 0 !important;
+	position: static !important;
+}

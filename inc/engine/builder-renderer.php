@@ -686,7 +686,31 @@ function hmpro_builder_comp_html( array $set ) {
 	if ( '' === trim( $content ) ) {
 		return;
 	}
-	echo '<div class="hmpro-html">' . wp_kses_post( $content ) . '</div>';
+
+	// Allow shortcodes inside builder HTML blocks (admin-controlled content).
+	// Note: wp_kses_post() strips <select>/<option> etc. (needed by some inline widgets),
+	// so we use a tighter custom allowlist that still keeps scripts out.
+	$rendered = do_shortcode( $content );
+	$allowed  = array(
+		'div'    => array( 'class' => true, 'id' => true, 'style' => true, 'data-*' => true, 'role' => true, 'aria-*' => true ),
+		'span'   => array( 'class' => true, 'id' => true, 'style' => true, 'data-*' => true, 'role' => true, 'aria-*' => true, 'translate' => true ),
+		'a'      => array( 'href' => true, 'class' => true, 'id' => true, 'target' => true, 'rel' => true, 'aria-*' => true ),
+		'p'      => array( 'class' => true, 'id' => true, 'style' => true ),
+		'br'     => array(),
+		'strong' => array(),
+		'em'     => array(),
+		'ul'     => array( 'class' => true, 'id' => true ),
+		'ol'     => array( 'class' => true, 'id' => true ),
+		'li'     => array( 'class' => true, 'id' => true ),
+		// Form controls (used by inline switchers/search widgets).
+		'select' => array( 'class' => true, 'id' => true, 'name' => true, 'aria-*' => true, 'translate' => true ),
+		'option' => array( 'class' => true, 'value' => true, 'selected' => true, 'translate' => true ),
+		'label'  => array( 'class' => true, 'for' => true, 'aria-*' => true ),
+		'input'  => array( 'class' => true, 'id' => true, 'name' => true, 'type' => true, 'value' => true, 'placeholder' => true, 'checked' => true, 'aria-*' => true ),
+		'button' => array( 'class' => true, 'id' => true, 'type' => true, 'value' => true, 'aria-*' => true ),
+	);
+
+	echo '<div class="hmpro-html">' . wp_kses( $rendered, $allowed ) . '</div>';
 }
 
 function hmpro_builder_comp_spacer( array $set ) {
