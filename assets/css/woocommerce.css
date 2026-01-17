@@ -280,6 +280,7 @@
 	/* Left column */
 	.woocommerce-checkout #customer_details {
 		grid-column: 1 / 2;
+		grid-row: 1;
 	}
 
 	/* Right column */
@@ -288,10 +289,27 @@
 		grid-column: 2 / 3;
 	}
 
-	/* Make right column "card-like" and sticky-ish feeling */
+	/* Force order review to start from top (Astra-like) */
 	.woocommerce-checkout #order_review {
+		grid-row: 1;
+		align-self: start;
+		margin-top: 0 !important;
 		position: sticky;
 		top: 18px;
+	}
+
+	/* Woo prints heading in DOM later; hide it and render a heading inside the card */
+	.woocommerce-checkout #order_review_heading {
+		display: none !important;
+	}
+
+	.woocommerce-checkout #order_review::before {
+		content: "Siparişiniz";
+		display: block;
+		font-weight: 700;
+		font-size: 22px;
+		line-height: 1.2;
+		margin: 0 0 14px 0;
 	}
 }
 
