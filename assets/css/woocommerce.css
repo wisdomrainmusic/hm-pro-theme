@@ -31,3 +31,54 @@
 .woocommerce-message {
 	border-left-color: var(--hm-primary);
 }
+
+/*
+ * HM Pro - Shop sidebar rendering
+ * WooCommerce calls get_sidebar('shop') which loads sidebar-shop.php.
+ * These styles place the sidebar to the right on desktop, and stack on mobile.
+ */
+
+.woocommerce-page #primary {
+	max-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+.woocommerce-page .hmpro-shop-sidebar {
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+@media (min-width: 992px) {
+	.woocommerce-page #primary {
+		float: left;
+		width: calc(100% - 340px);
+		padding-right: 24px;
+		box-sizing: border-box;
+	}
+	.woocommerce-page .hmpro-shop-sidebar {
+		float: right;
+		width: 320px;
+		box-sizing: border-box;
+	}
+}
+
+/* Clear floats after Woo content on desktop */
+@media (min-width: 992px) {
+	.woocommerce-page:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+}
+
+.hmpro-sidebar .widget {
+	margin-bottom: 18px;
+}
+
+.hmpro-sidebar .widget-title {
+	margin: 0 0 10px;
+	font-weight: 700;
+}
