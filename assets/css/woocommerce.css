@@ -5,6 +5,49 @@
 	color: var(--hm-primary);
 }
 
+/* Checkout "Place Order" button - inherit theme colors */
+.woocommerce-checkout #place_order,
+.woocommerce-checkout button#place_order.button.alt {
+	background-color: var(--e-global-color-primary);
+	color: #ffffff;
+	border: none;
+	border-radius: 6px;
+	padding: 14px 28px;
+	font-weight: 600;
+	font-size: 15px;
+	transition: all 0.25s ease;
+}
+
+.woocommerce-checkout #place_order:hover,
+.woocommerce-checkout button#place_order.button.alt:hover {
+	background-color: var(--e-global-color-accent);
+	color: #ffffff;
+}
+
+.woocommerce-checkout #place_order:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* Checkout info boxes - unified color tone (coupon + payment boxes) */
+.woocommerce-checkout .woocommerce-form-coupon-toggle,
+.woocommerce-checkout .woocommerce-info,
+.woocommerce-checkout .payment_box {
+	background-color: rgba(20, 91, 83, 0.08);
+	border-left: 4px solid var(--e-global-color-primary);
+	color: var(--e-global-color-text);
+	border-radius: 6px;
+}
+
+.woocommerce-checkout .woocommerce-info a {
+	color: var(--e-global-color-primary);
+	font-weight: 500;
+}
+
+.woocommerce-checkout .payment_box::before {
+	border-bottom-color: rgba(20, 91, 83, 0.08);
+}
+
 /* Sale badge */
 .woocommerce span.onsale {
 	background-color: var(--hm-primary);
