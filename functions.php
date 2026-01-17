@@ -14,6 +14,8 @@ require_once HMPRO_PATH . '/inc/core/customizer.php';
 
 // WooCommerce tweaks (single product gallery UX).
 require_once HMPRO_PATH . '/inc/woocommerce/gallery-tweaks.php';
+// WooCommerce checkout UX (ship-to-different-address + accordion).
+require_once HMPRO_PATH . '/inc/woocommerce/checkout-tweaks.php';
 
 require_once HMPRO_PATH . '/inc/engine/presets.php';
 require_once HMPRO_PATH . '/inc/engine/css-engine.php';
