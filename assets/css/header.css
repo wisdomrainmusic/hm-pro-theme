@@ -117,13 +117,13 @@
 }
 /* Keep header center nav perfectly centered:
    reserve equal-width left & right slots, independent of logo scaling */
-.hmpro-header-builder .hmpro-builder-col.hmpro-align-left{
+.hmpro-header-builder .hmpro-region-header_main .hmpro-builder-col.hmpro-align-left{
 	flex: 0 0 var(--hmpro-header-side-slot-width);
 	max-width: var(--hmpro-header-side-slot-width);
 	min-width: var(--hmpro-header-side-slot-width);
 	overflow:hidden;
 }
-.hmpro-header-builder .hmpro-builder-col.hmpro-align-right{
+.hmpro-header-builder .hmpro-region-header_main .hmpro-builder-col.hmpro-align-right{
 	flex: 0 0 var(--hmpro-header-side-slot-width);
 	max-width: var(--hmpro-header-side-slot-width);
 	min-width: var(--hmpro-header-side-slot-width);
@@ -171,7 +171,7 @@
 	max-width:100%;
 }
 /* Logo itself should not expand to the full reserved side slot */
-.hmpro-context-header .hmpro-logo-wrap{
+.hmpro-header-builder .hmpro-region-header_main .hmpro-logo-wrap{
 	max-width: var(--hmpro-logo-slot-width);
 }
 .hmpro-logo-text{
@@ -236,12 +236,12 @@
 @media (max-width: 768px){
 	.hmpro-nav .hmpro-menu{flex-wrap:wrap;gap:14px;}
 	/* On mobile, allow columns to flow naturally (centered nav is hidden anyway) */
-	.hmpro-header-builder .hmpro-builder-col.hmpro-align-left{
+	.hmpro-header-builder .hmpro-region-header_main .hmpro-builder-col.hmpro-align-left{
 		flex: 0 0 auto;
 		max-width: 100%;
 		min-width: 0;
 	}
-	.hmpro-header-builder .hmpro-builder-col.hmpro-align-right{
+	.hmpro-header-builder .hmpro-region-header_main .hmpro-builder-col.hmpro-align-right{
 		flex: 0 0 auto;
 		max-width: 100%;
 		min-width: 0;
