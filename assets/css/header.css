@@ -115,6 +115,13 @@
 	flex:1 1 auto;
 	min-width:0;
 }
+/* Lock left logo column width so increasing logo height never pushes the menu */
+.hmpro-header-builder .hmpro-builder-col.hmpro-align-left{
+	flex: 0 0 var(--hmpro-logo-slot-width);
+	max-width: var(--hmpro-logo-slot-width);
+	min-width: var(--hmpro-logo-slot-width);
+	overflow:hidden;
+}
 
 /* Make top-level header menus a single horizontal line when space allows */
 .hmpro-header-builder .hmpro-primary-nav > ul,
@@ -131,6 +138,7 @@
   height:auto !important;
 	display:block;
 	object-fit:contain;
+	max-width: 100%;
 }
 
 /*
@@ -141,13 +149,15 @@
  * the navigation layout.
  */
 .hmpro-context-header .hmpro-logo-wrap{
-	max-width: var(--hmpro-logo-slot-width);
+	width: 100%;
+	max-width: 100%;
 	display:flex;
 	align-items:center;
 	overflow:hidden;
 }
 .hmpro-context-header .hmpro-logo-wrap .hmpro-logo{
 	max-width:100%;
+	width:100%;
 	display:block;
 }
 .hmpro-context-header .hmpro-logo-wrap .hmpro-logo img{
@@ -214,7 +224,12 @@
 
 @media (max-width: 768px){
 	.hmpro-nav .hmpro-menu{flex-wrap:wrap;gap:14px;}
-	.hmpro-context-header .hmpro-logo-wrap{max-width: 180px;}
+	/* keep slot smaller on mobile so center area stays usable */
+	.hmpro-header-builder .hmpro-builder-col.hmpro-align-left{
+		flex: 0 0 170px;
+		max-width: 170px;
+		min-width: 170px;
+	}
 }
 
 /* =========================================================
