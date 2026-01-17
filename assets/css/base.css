@@ -131,3 +131,10 @@ a:hover {
 .hmpro-social--gap-small{gap:8px;}
 .hmpro-social--gap-normal{gap:12px;}
 .hmpro-social--gap-large{gap:16px;}
+
+/* Title visibility toggle fallback (if any template outputs titles) */
+.hmpro-hide-title .entry-title,
+.hmpro-hide-title .page-title,
+.hmpro-hide-title .wp-block-post-title{
+	display:none !important;
+}

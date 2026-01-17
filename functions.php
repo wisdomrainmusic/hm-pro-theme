@@ -29,6 +29,7 @@ require_once HMPRO_PATH . '/inc/admin/mega-menu-ajax.php';
 require_once HMPRO_PATH . '/inc/admin/presets-page.php';
 require_once HMPRO_PATH . '/inc/admin/preset-edit.php';
 require_once HMPRO_PATH . '/inc/admin/builder-pages.php';
+require_once HMPRO_PATH . '/inc/admin/title-visibility.php';
 
 add_action( 'admin_enqueue_scripts', function () {
 	wp_enqueue_style(

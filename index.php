@@ -21,7 +21,12 @@ get_header();
 				?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 					<header class="entry-header">
-						<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+						<?php
+						// Astra-like title visibility toggle (per page/post).
+						if ( ! function_exists( 'hmpro_is_title_hidden' ) || ! hmpro_is_title_hidden( get_the_ID() ) ) {
+							the_title( '<h1 class="entry-title">', '</h1>' );
+						}
+						?>
 					</header>
 					<div class="entry-content">
 						<?php the_content(); ?>
