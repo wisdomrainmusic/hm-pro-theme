@@ -129,8 +129,29 @@
   max-height: var(--hmpro-logo-max-height);
   width:auto !important;
   height:auto !important;
-  display:block;
+	display:block;
 	object-fit:contain;
+}
+
+/*
+ * Logo slot locking
+ * When the Customizer increases logo max-height, the image's intrinsic width can also grow,
+ * causing the left header column to expand and the menu to shift. By constraining the logo
+ * to a fixed slot width, we allow the logo to scale within that space without affecting
+ * the navigation layout.
+ */
+.hmpro-context-header .hmpro-logo-wrap{
+	max-width: var(--hmpro-logo-slot-width);
+	display:flex;
+	align-items:center;
+	overflow:hidden;
+}
+.hmpro-context-header .hmpro-logo-wrap .hmpro-logo{
+	max-width:100%;
+	display:block;
+}
+.hmpro-context-header .hmpro-logo-wrap .hmpro-logo img{
+	max-width:100%;
 }
 .hmpro-logo-text{
 	font-weight:600;
@@ -193,6 +214,7 @@
 
 @media (max-width: 768px){
 	.hmpro-nav .hmpro-menu{flex-wrap:wrap;gap:14px;}
+	.hmpro-context-header .hmpro-logo-wrap{max-width: 180px;}
 }
 
 /* =========================================================

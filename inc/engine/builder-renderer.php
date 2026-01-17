@@ -453,6 +453,10 @@ function hmpro_builder_comp_mega_column_menu( array $set ) {
 function hmpro_builder_comp_logo() {
 	$home = home_url( '/' );
 
+	// Constrain logo growth to a dedicated slot so changing logo max-height in the
+	// Customizer does not push/shift the header navigation.
+	echo '<div class="hmpro-logo-wrap">';
+
 	if ( function_exists( 'get_custom_logo' ) && has_custom_logo() ) {
 		$logo = get_custom_logo(); // returns <a class="custom-logo-link"><img class="custom-logo"></a>
 		if ( is_string( $logo ) && '' !== $logo ) {
@@ -460,14 +464,17 @@ function hmpro_builder_comp_logo() {
 				$logo = preg_replace( '/class=("|\')custom-logo-link(.*?)("|\')/i', 'class=$1custom-logo-link hmpro-logo$2$3', $logo );
 			}
 			echo $logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo '</div>';
 			return;
 		}
+		echo '</div>';
 		return;
 	}
 
 	echo '<a class="hmpro-logo hmpro-logo-text" href="' . esc_url( $home ) . '" rel="home">';
 	echo esc_html( get_bloginfo( 'name' ) );
 	echo '</a>';
+	echo '</div>';
 }
 
 /**

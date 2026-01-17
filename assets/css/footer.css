@@ -125,6 +125,21 @@ footer,
   max-height: var(--hmpro-footer-logo-max-height);
 }
 
+/* Keep footer logo within its column when logo size is increased */
+.hmpro-footer-builder .hmpro-logo-wrap{
+	max-width: 100%;
+	overflow: hidden;
+	display:flex;
+	align-items:center;
+}
+.hmpro-footer-builder .hmpro-logo-wrap .hmpro-logo{
+	max-width: 100%;
+	display:block;
+}
+.hmpro-footer-builder .hmpro-logo-wrap .hmpro-logo img{
+	max-width:100%;
+}
+
 @media (max-width: 768px){
 	.hmpro-footer-builder .hmpro-builder-row{
 		flex-direction: column;
