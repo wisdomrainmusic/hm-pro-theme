@@ -8,23 +8,8 @@ if ( ! class_exists( 'WooCommerce' ) ) {
 	return;
 }
 
-/**
- * Reduce the default hover zoom strength.
- * Woo uses jquery.zoom; magnify > 1 increases the perceived zoom.
- */
-add_filter( 'woocommerce_single_product_zoom_options', function ( $options ) {
-	if ( ! is_array( $options ) ) {
-		$options = [];
-	}
-
-	// Keep zoom subtle (default can feel aggressive on large portrait images).
-	$options['magnify']  = isset( $options['magnify'] ) ? min( 1.25, (float) $options['magnify'] ) : 1.15;
-	$options['duration'] = 120;
-	$options['touch']    = false;
-	$options['on']       = 'mouseover';
-
-	return $options;
-} );
+// Disable zoom completely (zoom overlay is what creates the "insane" scale on hover).
+add_filter( 'woocommerce_single_product_zoom_enabled', '__return_false' );
 
 /**
  * Ensure product gallery slider shows navigation arrows.
@@ -41,3 +26,24 @@ add_filter( 'woocommerce_single_product_carousel_options', function ( $options )
 
 	return $options;
 } );
+
+/**
+ * Force arrows at runtime as well (some setups override the PHP options before init).
+ * We inject BEFORE wc-single-product initializes the gallery.
+ */
+add_action( 'wp_enqueue_scripts', function () {
+	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+		return;
+	}
+
+	if ( wp_script_is( 'wc-single-product', 'registered' ) ) {
+		$js = <<<JS
+if (typeof wc_single_product_params !== 'undefined' && wc_single_product_params.flexslider) {
+	wc_single_product_params.flexslider.directionNav = true;
+	wc_single_product_params.flexslider.prevText = '';
+	wc_single_product_params.flexslider.nextText = '';
+}
+JS;
+		wp_add_inline_script( 'wc-single-product', $js, 'before' );
+	}
+}, 20 );
