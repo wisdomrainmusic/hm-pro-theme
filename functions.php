@@ -8,6 +8,7 @@ define( 'HMPRO_PATH', get_template_directory() );
 define( 'HMPRO_URL', get_template_directory_uri() );
 
 require_once HMPRO_PATH . '/inc/core/setup.php';
+require_once HMPRO_PATH . '/inc/core/widgets.php';
 require_once HMPRO_PATH . '/inc/core/enqueue.php';
 require_once HMPRO_PATH . '/inc/core/customizer.php';
 
