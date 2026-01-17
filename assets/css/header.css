@@ -205,7 +205,8 @@
 .hmpro-header-account-cta{
 	position:absolute;
 	right:14px;
-	top:10px;
+	/* Move CTA down so it doesn't sit on top of Header Builder elements (e.g. social icons) */
+	top:56px;
 	z-index:30;
 }
 .hmpro-header-account-cta .hmpro-account-link{
@@ -237,7 +238,6 @@
 	backdrop-filter: blur(6px);
 	cursor:pointer;
 	color:#222;
-	display:flex;
 	align-items:center;
 	justify-content:center;
 }
@@ -261,6 +261,14 @@
 	pointer-events:none;
 	opacity:0;
 	transition: opacity .18s ease;
+}
+
+/* Mobile-only visibility rules (prevents hamburger from showing on desktop) */
+@media (max-width: 768px){
+	.hmpro-mobile-menu-toggle{ display:flex; }
+
+	/* On mobile we already show account CTA inside the drawer header */
+	.hmpro-header-account-cta{ display:none; }
 }
 .hmpro-mobile-drawer.is-open{
 	pointer-events:auto;
