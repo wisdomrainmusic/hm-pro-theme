@@ -46,12 +46,17 @@ add_action( 'wp_footer', function () {
  * - header/footer: existing components
  * - mega: includes mega_column_menu + image
  */
-function hmpro_builder_render_layout_rows( array $rows, $context = 'header' ) {
+function hmpro_builder_render_layout_rows( array $rows, $context = 'header', $region_key = '' ) {
 	if ( empty( $rows ) ) {
 		return;
 	}
 
-	echo '<div class="hmpro-builder-region hmpro-builder-region-generic hmpro-context-' . esc_attr( $context ) . '">';
+	$region_class = '';
+	if ( is_string( $region_key ) && '' !== $region_key ) {
+		$region_class = ' hmpro-region-' . sanitize_html_class( $region_key );
+	}
+
+	echo '<div class="hmpro-builder-region hmpro-builder-region-generic hmpro-context-' . esc_attr( $context ) . $region_class . '">';
 
 	foreach ( $rows as $row ) {
 		if ( ! is_array( $row ) || empty( $row['columns'] ) || ! is_array( $row['columns'] ) ) {
@@ -111,7 +116,7 @@ function hmpro_builder_render_region( $area, $region_key ) {
 	if ( empty( $rows ) ) {
 		return;
 	}
-	hmpro_builder_render_layout_rows( $rows, $area );
+	hmpro_builder_render_layout_rows( $rows, $area, $region_key );
 }
 
 function hmpro_builder_render_component( $comp, $context = 'header' ) {
