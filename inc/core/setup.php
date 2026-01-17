@@ -92,6 +92,12 @@ add_action( 'after_setup_theme', function () {
 	add_theme_support( 'responsive-embeds' );
 	add_theme_support( 'woocommerce' );
 
+	// WooCommerce single product gallery features.
+	// Enables FlexSlider carousel, PhotoSwipe lightbox and zoom.
+	add_theme_support( 'wc-product-gallery-slider' );
+	add_theme_support( 'wc-product-gallery-lightbox' );
+	add_theme_support( 'wc-product-gallery-zoom' );
+
 	register_nav_menus( [
 		// Legacy keys (older header fallback expects these).
 		// Keep for backward compatibility, but builder renderer will prefer 'primary/topbar/footer'
