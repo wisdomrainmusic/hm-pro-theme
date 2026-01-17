@@ -271,31 +271,50 @@
 /* Desktop two-column layout */
 @media (min-width: 992px) {
 	.woocommerce-checkout form.checkout {
+		/*
+		 * Use an explicit two-area grid so the right sidebar can stay
+		 * locked to the top (Astra-like) even when the left column grows.
+		 */
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) 420px;
-		gap: 28px;
+		grid-template-areas: "details review";
+		column-gap: 48px;
+		row-gap: 28px;
 		align-items: start;
 	}
 
 	/* Left column */
 	.woocommerce-checkout #customer_details {
-		grid-column: 1 / 2;
-		grid-row: 1;
+		grid-area: details;
+		min-width: 0;
 	}
 
 	/* Right column */
 	.woocommerce-checkout #order_review,
 	.woocommerce-checkout #order_review_heading {
-		grid-column: 2 / 3;
+		grid-area: review;
 	}
 
 	/* Force order review to start from top (Astra-like) */
 	.woocommerce-checkout #order_review {
-		grid-row: 1;
+		/* Ensure the summary starts at the top and remains visible on scroll */
 		align-self: start;
 		margin-top: 0 !important;
+		padding-top: 0;
 		position: sticky;
-		top: 18px;
+		/* leave room for WP admin bar / sticky headers */
+		top: 110px;
+		z-index: 2;
+		clear: none !important;
+	}
+
+	/* Fallback: some Woo setups wrap the review in this class */
+	.woocommerce-checkout .woocommerce-checkout-review-order {
+		position: sticky;
+		/* leave room for WP admin bar / sticky headers */
+		top: 110px;
+		align-self: start;
+		z-index: 2;
 	}
 
 	/* Woo prints heading in DOM later; hide it and render a heading inside the card */
