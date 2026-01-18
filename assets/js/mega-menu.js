@@ -6,6 +6,7 @@
   var OPEN_CLASS = "hmpro-mega-open";
   var ITEM_SELECTOR = "li.hmpro-li-has-mega";
   var LINK_SELECTOR = "a";
+  var TOGGLE_SELECTOR = ".hmpro-mega-toggle";
 
   function isClickMode() {
     return document.body.classList.contains(BODY_CLASS_CLICK);
@@ -50,11 +51,25 @@
 
     // Click inside an open mega panel should not close it.
     if (item) {
-      // Only toggle when clicking the top-level link of the mega parent item.
-      var link = e.target.closest(ITEM_SELECTOR + " > " + LINK_SELECTOR);
-      if (link) {
+      // Prefer toggling ONLY from the caret toggle element.
+      var toggle = e.target.closest(TOGGLE_SELECTOR);
+      if (toggle) {
         e.preventDefault();
         toggleItem(item);
+        return;
+      }
+
+      // Fallback: if the link is a dead placeholder (#), treat it as a toggle.
+      var link = e.target.closest(ITEM_SELECTOR + " > " + LINK_SELECTOR);
+      if (link) {
+        var href = (link.getAttribute("href") || "").trim();
+        if (href === "" || href === "#" || href.toLowerCase() === "javascript:void(0)") {
+          e.preventDefault();
+          toggleItem(item);
+        } else {
+          // Navigating away: close other open panels to avoid a stuck state.
+          closeAll();
+        }
       }
       return;
     }

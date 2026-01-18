@@ -720,3 +720,72 @@ body.hmpro-mega-click .hmpro-mega-wrap {
 	font-size: 0.88em;
 	opacity: 0.84;
 }
+
+/* =========================================================
+   Mega Menu – Final fixes (centered panel + stable click mode)
+   - Ensure panel opens centered relative to the full page
+   - In click mode, disable hover-open so caret toggling can close cleanly
+   ========================================================= */
+
+/* Avoid random positioned ancestors affecting the mega panel */
+#site-header .hmpro-primary-nav li.hmpro-li-has-mega{
+	position: static !important;
+}
+
+/* Center the mega panel to the viewport (header is full width) */
+#site-header .hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel{
+	display: none;
+	position: absolute !important;
+	top: 100% !important;
+	left: 50% !important;
+	right: auto !important;
+	transform: translateX(-50%) !important;
+	width: 100vw !important;
+	max-width: 100vw !important;
+	box-sizing: border-box;
+	z-index: 999999;
+}
+
+/* Hover mode (default) */
+#site-header .hmpro-primary-nav li.hmpro-li-has-mega:hover > .hmpro-mega-panel,
+#site-header .hmpro-primary-nav li.hmpro-li-has-mega:focus-within > .hmpro-mega-panel{
+	display: block;
+}
+
+/* Click mode: never open on hover */
+body.hmpro-mega-click #site-header .hmpro-primary-nav li.hmpro-li-has-mega:hover > .hmpro-mega-panel,
+body.hmpro-mega-click #site-header .hmpro-primary-nav li.hmpro-li-has-mega:focus-within > .hmpro-mega-panel{
+	display: none !important;
+}
+
+/* Click mode: only open via .hmpro-mega-open */
+body.hmpro-mega-click #site-header .hmpro-primary-nav li.hmpro-li-has-mega.hmpro-mega-open > .hmpro-mega-panel{
+	display: block !important;
+}
+
+/* Replace pseudo caret with a real toggle caret for mega items */
+#site-header .hmpro-primary-nav li.hmpro-li-has-mega > a:after{
+	content: none !important;
+}
+
+#site-header .hmpro-primary-nav .hmpro-mega-toggle{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: 6px;
+	width: 16px;
+	height: 16px;
+	line-height: 1;
+	cursor: pointer;
+	user-select: none;
+}
+
+#site-header .hmpro-primary-nav .hmpro-mega-toggle:before{
+	content: "▾";
+	font-size: 12px;
+}
+
+/* Visual feedback in click mode */
+body.hmpro-mega-click #site-header .hmpro-primary-nav li.hmpro-li-has-mega.hmpro-mega-open > a .hmpro-mega-toggle:before{
+	content: "▴";
+}
