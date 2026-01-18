@@ -131,8 +131,12 @@ add_filter( 'walker_nav_menu_start_el', function ( $item_output, $item, $depth, 
 		$panel .= '</div>';
 	}
 
-	// Append panel inside the <li> by injecting after </a>.
-	$item_output = str_replace( '</a>', '</a>' . $panel, $item_output );
+	// Add a real toggle target inside the anchor so click-to-open can be bound to the caret only.
+	// (Pseudo-element carets cannot be targeted reliably in JS.)
+	$toggle = '<span class="hmpro-mega-toggle" aria-hidden="true"></span>';
+
+	// Append toggle + panel inside the <li> by injecting before and after </a>.
+	$item_output = str_replace( '</a>', $toggle . '</a>' . $panel, $item_output );
 
 	return $item_output;
 }, 10, 4 );
