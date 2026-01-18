@@ -86,6 +86,49 @@ a:hover {
 	color: var(--hm-primary);
 }
 
+/* =========================================================
+   Global Media Reset (Astra-like)
+   - Prevent layout shift when images load
+   - Keep Elementor + custom widgets stable
+   ========================================================= */
+
+img,
+picture,
+video,
+canvas,
+svg {
+	max-width: 100%;
+}
+
+/* Most CLS cases happen because images are inline by default */
+img,
+picture img {
+	display: block;
+	height: auto;
+}
+
+/* If width/height attributes exist, preserve intrinsic ratio */
+img[width][height] {
+	height: auto;
+}
+
+/* Elementor sometimes outputs images inside inline contexts */
+.elementor img {
+	height: auto;
+}
+
+/* Avoid unexpected stretching in modern layouts */
+img {
+	object-fit: cover;
+}
+
+/* Respect cases where object-fit should not be cover (icons/logos) */
+.hmpro-logo img,
+.custom-logo-link img,
+.hmpro-social__icon {
+	object-fit: contain;
+}
+
 .hmpro-btn{
 	display:inline-flex;
 	align-items:center;
