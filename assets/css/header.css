@@ -34,16 +34,6 @@ body.hmpro-transparent-header-home .site-header a{
 	color: inherit;
 }
 
-/* When scrolled: return to normal (let existing header bg/colors apply) */
-body.hmpro-transparent-header-home.hmpro-transparent-header-scrolled .hmpro-site-header,
-body.hmpro-transparent-header-home.hmpro-transparent-header-scrolled header.site-header,
-body.hmpro-transparent-header-home.hmpro-transparent-header-scrolled .site-header{
-	position: sticky;
-	top: 0;
-	background: inherit;
-	color: inherit;
-}
-
 /* Offset so content doesn't hide under header (optional) */
 body.hmpro-transparent-header-home.hmpro-transparent-header-offset{
 	padding-top: 110px;
@@ -60,8 +50,6 @@ body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
 	z-index: 9999;
 	background: transparent !important;
 }
-
-/* (Optional) when scrolled you already toggle a body class; keep your solid-on-scroll rule */
 
 .hmpro-th-hero{
 	position: relative;
