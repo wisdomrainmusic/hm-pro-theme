@@ -1,3 +1,92 @@
+✅ CHECKPOINT – Header & Hero Banner Refactor (Jan 2026)
+Summary
+
+This checkpoint finalizes a major refactor around the header, transparent header logic, and hero banner behavior.
+The previous scroll-based transparent header approach was intentionally removed in favor of a clean, Customizer-driven Hero Banner system that works independently of Elementor.
+
+What Was Tried
+
+Astra-like transparent header with menu overlay on hero
+
+Scroll-based state switching (transparent → opaque)
+
+Header overlay logic dependent on page structure
+
+Result
+
+These approaches introduced unnecessary complexity and unclear UX behavior in a custom theme context.
+
+Final Decision
+
+The transparent header scroll logic was fully removed.
+
+Instead, the theme now uses:
+
+A Customizer-controlled Hero Banner (image or video)
+
+Fixed, predictable header layout
+
+No scroll-based header state changes
+
+This results in a simpler, more stable, and more maintainable architecture.
+
+Current System (Active)
+
+Hero Banner is rendered above page content
+
+Configurable from Customizer
+
+Elementor is not required
+
+Header remains consistent across scroll states
+
+Customizer Features
+
+Hero background image
+
+Optional background video (mp4 / webm)
+
+Adjustable hero height (px)
+
+Overlay darkness control
+
+Optional title & description fields
+
+Mobile-safe behavior (video muted / optional fallback image)
+
+Removed / Deprecated
+
+Scroll-to-opaque header option
+
+Scroll offset / threshold controls
+
+Header scroll JS logic
+
+Transparent header color state switching
+
+These options were removed because they produced no meaningful or reliable UX benefit in the current theme architecture.
+
+Why This Matters
+
+Reduces CSS/JS complexity
+
+Prevents layout edge cases
+
+Makes demos more predictable
+
+Keeps the theme flexible for Elementor and non-Elementor users
+
+Establishes a solid base for future hero + CTA enhancements
+
+Next Possible Enhancements
+
+Hero content alignment (center / left)
+
+CTA button support in Hero
+
+Per-page hero override (optional)
+
+Preset hero styles for demos
 HM Pro Theme — Surgical Checkpoint (Developer)
 Repository snapshot
 Theme root: hm-pro-theme-main/
