@@ -50,52 +50,18 @@ body.hmpro-transparent-header-home.hmpro-transparent-header-offset{
 }
 
 /* ---------------------------------------------------------
-   Header background hero (behind Topbar + Main header)
+   Overlay header on homepage hero (Astra-like)
    --------------------------------------------------------- */
-body.hmpro-transparent-header-home .hmpro-header{
-	position: relative;
-}
-
-body.hmpro-transparent-header-home .hmpro-header-bg-hero{
-	position: absolute;
+body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
+	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
-	/* Only cover header area; no extra banner above */
-	bottom: 0;
-	background-size: cover;
-	background-position: center center;
-	background-repeat: no-repeat;
-	overflow: hidden;
-	z-index: 0;
-}
-
-body.hmpro-transparent-header-home .hmpro-header-bg-hero .hmpro-th-hero__video{
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	object-position: center center;
-	z-index: 0;
-}
-body.hmpro-transparent-header-home .hmpro-header-bg-hero .hmpro-th-hero__overlay{
-	position: absolute;
-	inset: 0;
-	background: rgba(0, 0, 0, var(--hmpro-hero-overlay, .3));
-	z-index: 1;
-}
-
-/* Ensure Topbar/Main content is above background hero */
-body.hmpro-transparent-header-home .hmpro-header > *:not(.hmpro-header-bg-hero){
-	position: relative;
-	z-index: 2;
-}
-
-/* Transparent overlay behavior (Astra-like): header itself remains visually transparent */
-body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
+	z-index: 9999;
 	background: transparent !important;
 }
+
+/* (Optional) when scrolled you already toggle a body class; keep your solid-on-scroll rule */
 
 .hmpro-th-hero{
 	position: relative;

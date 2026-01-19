@@ -63,12 +63,6 @@ function hmpro_icon_close() {
 	<?php do_action( 'hmpro/header/builder/before' ); ?>
 
 	<header id="site-header" class="hmpro-header-builder">
-		<?php
-		// Inject hero as HEADER BACKGROUND (behind topbar + mainbar) – no extra banner area above.
-		if ( function_exists( 'hmpro_render_th_hero_bg_layer' ) ) {
-			hmpro_render_th_hero_bg_layer();
-		}
-		?>
 		<?php hmpro_render_builder_region( 'header_top', 'header' ); ?>
 		<?php hmpro_render_builder_region( 'header_main', 'header' ); ?>
 		<?php hmpro_render_builder_region( 'header_bottom', 'header' ); ?>
