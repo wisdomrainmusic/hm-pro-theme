@@ -39,6 +39,13 @@ do_action( 'hmpro/header/before' );
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
+<?php
+// If transparent header is enabled on homepage, inject hero media behind header so it starts at top (Astra-like).
+if ( function_exists( 'hmpro_render_th_hero_media_layer' ) ) {
+	hmpro_render_th_hero_media_layer();
+}
+?>
+
 <?php $hmpro_account_url = home_url( '/hesabim/' ); ?>
 
 <?php
