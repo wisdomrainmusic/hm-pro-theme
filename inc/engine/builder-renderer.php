@@ -670,8 +670,29 @@ function hmpro_builder_comp_cart() {
 		return;
 	}
 	$count = ( function_exists( 'WC' ) && WC()->cart ) ? (int) WC()->cart->get_cart_contents_count() : 0;
-	echo '<a class="hmpro-cart" href="' . esc_url( $url ) . '">';
-	echo esc_html__( 'Cart', 'hmpro' ) . ' <span class="hmpro-cart-count">' . esc_html( (string) $count ) . '</span>';
+
+	$classes = 'hmpro-cart';
+	if ( $count <= 0 ) {
+		$classes .= ' hmpro-cart--empty';
+	}
+
+	echo '<a class="' . esc_attr( $classes ) . '" href="' . esc_url( $url ) . '" aria-label="' . esc_attr__( 'Cart', 'hmpro' ) . '">';
+
+	// Icon (inline SVG; uses currentColor so it matches header text color).
+	echo '<span class="hmpro-cart-icon" aria-hidden="true">';
+	echo '<svg viewBox="0 0 24 24" width="22" height="22" focusable="false" aria-hidden="true">';
+	echo '<path fill="currentColor" d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.2 14h9.9c.75 0 1.4-.41 1.75-1.03l3.24-5.88A1 1 0 0 0 21.2 6H6.21L5.27 4H2a1 1 0 1 0 0 2h2l3.6 7.59-1.35 2.44C5.52 17.37 6.48 19 8 19h12a1 1 0 1 0 0-2H8l1.2-2z"/>';
+	echo '</svg>';
+	echo '</span>';
+
+	// Badge only when count > 0 (prevents "Cart 0" ugliness).
+	if ( $count > 0 ) {
+		echo '<span class="hmpro-cart-count" aria-hidden="true">' . esc_html( (string) $count ) . '</span>';
+		echo '<span class="screen-reader-text">' . esc_html( sprintf( __( '%d items in cart', 'hmpro' ), $count ) ) . '</span>';
+	} else {
+		echo '<span class="screen-reader-text">' . esc_html__( 'Cart is empty', 'hmpro' ) . '</span>';
+	}
+
 	echo '</a>';
 }
 
