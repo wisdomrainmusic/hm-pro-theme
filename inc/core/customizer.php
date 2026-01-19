@@ -175,6 +175,30 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'mime_type'   => 'image',
 	] ) );
 
+	$wp_customize->add_setting( 'hmpro_th_hero_use_video', [
+		'default'           => 0,
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_th_hero_use_video', [
+		'label'       => __( 'Hero arkaplanda video kullan (opsiyonel)', 'hm-pro-theme' ),
+		'description' => __( 'MP4/WebM video seçerseniz arkaplanda otomatik döngü oynar. Mobilde çalışması için ses kapalı (muted) oynatılır. Video yoksa görsele düşer.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'type'        => 'checkbox',
+	] );
+
+	$wp_customize->add_setting( 'hmpro_th_hero_video', [
+		'default'           => '',
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Media_Control( $wp_customize, 'hmpro_th_hero_video', [
+		'label'       => __( 'Hero video dosyası (mp4/webm)', 'hm-pro-theme' ),
+		'description' => __( 'Örnek: şömine, şelale, manzara döngüsü. Kısa ve optimize video kullanın.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'mime_type'   => 'video',
+	] ) );
+
 	$wp_customize->add_setting( 'hmpro_th_hero_height', [
 		'default'           => 520,
 		'sanitize_callback' => function ( $v ) {
