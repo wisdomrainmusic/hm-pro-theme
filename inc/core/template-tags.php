@@ -1,7 +1,7 @@
 <?php
 
-// Renders ONLY the hero media layer (no inner content). Used behind header.
-function hmpro_render_th_hero_media_layer() {
+// Renders ONLY the hero media layer (no inner content). Must be placed INSIDE header.
+function hmpro_render_th_hero_bg_layer() {
 	if ( ! is_front_page() ) {
 		return;
 	}
@@ -24,11 +24,9 @@ function hmpro_render_th_hero_media_layer() {
 	}
 
 	$style = '--hmpro-hero-h:' . $height . 'px; --hmpro-hero-overlay:' . ( $overlay / 100 ) . ';';
-	if ( ! $vid_url && $img_url ) {
-		$style .= ' background-image:url(' . esc_url( $img_url ) . ');';
-	}
+	if ( ! $vid_url && $img_url ) $style .= ' background-image:url(' . esc_url( $img_url ) . ');';
 
-	echo '<div class="hmpro-th-hero-layer" style="' . esc_attr( $style ) . '">';
+	echo '<div class="hmpro-header-bg-hero" aria-hidden="true" style="' . esc_attr( $style ) . '">';
 	if ( $vid_url ) {
 		$poster = $img_url ? $img_url : '';
 		echo '<video class="hmpro-th-hero__video" autoplay muted loop playsinline preload="metadata" ' . ( $poster ? 'poster="' . esc_url( $poster ) . '"' : '' ) . '>';
