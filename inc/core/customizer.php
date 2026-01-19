@@ -66,7 +66,8 @@ add_action( 'customize_register', function ( $wp_customize ) {
 	] );
 
 	$wp_customize->add_control( 'hmpro_enable_mega_menu_v2', [
-		'label'   => __( 'Enable Mega Menu v2 (Canvas Layout)', 'hm-pro-theme' ),
+		'label'       => __( 'Mega Menü v2 (Canvas Düzen) Etkinleştir', 'hm-pro-theme' ),
+		'description' => __( 'Deneyseldir. Sadece Mega Menü v2 (Canvas) ön yüz çıktısını açar/kapatır. Header Builder yerleşimini veya mevcut menü yapınızı değiştirmez. Sorun yaşarsanız kapatıp kaydedin.', 'hm-pro-theme' ),
 		'section' => 'title_tagline',
 		'type'    => 'checkbox',
 	] );
