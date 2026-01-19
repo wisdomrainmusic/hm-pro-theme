@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_action( 'customize_register', function ( $wp_customize ) {
+	// NOTE: UI-only settings; frontend wiring happens via body classes + CSS/JS.
 	$wp_customize->add_setting( 'hmpro_logo_max_height', [
 		'default'           => 56,
 		'sanitize_callback' => 'absint',
@@ -71,5 +72,92 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'section' => 'title_tagline',
 		'type'    => 'checkbox',
 	] );
+
+	// ----------------------------
+	// Transparent Header (Homepage)
+	// ----------------------------
+	$wp_customize->add_section( 'hmpro_header_transparent', [
+		'title'    => __( 'Şeffaf Header', 'hm-pro-theme' ),
+		'priority' => 35,
+	] );
+
+	$wp_customize->add_setting( 'hmpro_transparent_header_home', [
+		'default'           => 0,
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_transparent_header_home', [
+		'label'       => __( 'Ana sayfada şeffaf header kullan', 'hm-pro-theme' ),
+		'description' => __( 'Sadece ana sayfada header içerik üstüne biner. Diğer sayfalar etkilenmez.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'type'        => 'checkbox',
+	] );
+
+	$wp_customize->add_setting( 'hmpro_transparent_header_scroll_solid', [
+		'default'           => 1,
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_transparent_header_scroll_solid', [
+		'label'       => __( 'Aşağı kayınca opak header’a geç', 'hm-pro-theme' ),
+		'description' => __( 'Kaydırma eşiği geçilince şeffaf mod kapanır ve normal header görünümü devreye girer.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'type'        => 'checkbox',
+	] );
+
+	$wp_customize->add_setting( 'hmpro_transparent_header_threshold', [
+		'default'           => 60,
+		'sanitize_callback' => function ( $v ) {
+			$v = absint( $v );
+			if ( $v < 0 ) {
+				$v = 0;
+			}
+			if ( $v > 300 ) {
+				$v = 300;
+			}
+			return $v;
+		},
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_transparent_header_threshold', [
+		'label'       => __( 'Kaydırma eşiği (px)', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'type'        => 'number',
+		'input_attrs' => [ 'min' => 0, 'max' => 300, 'step' => 1 ],
+	] );
+
+	$wp_customize->add_setting( 'hmpro_transparent_header_text_color', [
+		'default'           => '#ffffff',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_transparent_header_text_color', [
+		'label'   => __( 'Şeffaf mod metin rengi', 'hm-pro-theme' ),
+		'section' => 'hmpro_header_transparent',
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_transparent_header_offset', [
+		'default'           => 1,
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_transparent_header_offset', [
+		'label'       => __( 'İçerik boşluğu ekle (önerilir)', 'hm-pro-theme' ),
+		'description' => __( 'Header içerik üstüne bindiği için, sayfa başına otomatik üst boşluk ekler.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'type'        => 'checkbox',
+	] );
+
+	$wp_customize->add_setting( 'hmpro_transparent_header_logo', [
+		'default'           => '',
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Media_Control( $wp_customize, 'hmpro_transparent_header_logo', [
+		'label'       => __( 'Şeffaf mod logo (opsiyonel)', 'hm-pro-theme' ),
+		'description' => __( 'Şeffaf modda farklı (örn. beyaz) logo göstermek isterseniz seçin. Boş bırakılırsa normal logo kullanılır.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'mime_type'   => 'image',
+	] ) );
 
 } );
