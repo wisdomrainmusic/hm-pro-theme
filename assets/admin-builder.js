@@ -1,6 +1,7 @@
 (function () {
 	'use strict';
 
+	// Admin UI only: keep builder data intact, improve labels in canvas cards.
 	/**
 	 * Backward compatibility:
 	 * NOTE: We are restoring a dedicated Footer Menu widget.
@@ -174,8 +175,27 @@
 	}
 
 	function titleize(type) {
-		var t = (type || '').toString();
-		return t.charAt(0).toUpperCase() + t.slice(1);
+		var t = (type || '').toString().toLowerCase();
+
+		// Friendly names (admin UI only)
+		var map = {
+			'logo': 'Logo',
+			'menu': 'Menu',
+			'footer_menu': 'Footer Menu',
+			'search': 'Search',
+			'social_icon_button': 'Social Icon Button',
+			'cart': 'Cart',
+			'button': 'Button',
+			'html': 'HTML',
+			'spacer': 'Spacer'
+		};
+
+		if (map[t]) return map[t];
+
+		// Fallback: convert snake_case / kebab-case into Title Case
+		t = t.replace(/[_-]+/g, ' ').trim();
+		if (!t) return 'Item';
+		return t.replace(/\b\w/g, function (m) { return m.toUpperCase(); });
 	}
 
 	function render() {
@@ -209,6 +229,9 @@
 
 				var label = document.createElement('div');
 				label.className = 'hmpro-label';
+
+				// Used by CSS ::before to show component name (instead of generic "Item")
+				label.setAttribute('data-label', titleize(compType));
 
 				var pill = document.createElement('span');
 				pill.className = 'hmpro-pill';

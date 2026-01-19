@@ -293,12 +293,15 @@
 	display:none !important;
 }
 
-/* Optional: leave a tiny neutral placeholder so cards don't look "empty" */
+/* Show real component name on cards (admin UI only) */
 .hmpro-label::before{
-	content:"Item";
+	content: attr(data-label);
 	font-size:12px;
 	opacity:.55;
 }
+
+/* If data-label is missing for any reason, keep cards readable */
+.hmpro-label:not([data-label])::before{ content:"Item"; }
 
 /* Ensure actions always sit nicely to the right */
 .hmpro-label{
