@@ -11,6 +11,7 @@ require_once HMPRO_PATH . '/inc/core/setup.php';
 require_once HMPRO_PATH . '/inc/core/widgets.php';
 require_once HMPRO_PATH . '/inc/core/enqueue.php';
 require_once HMPRO_PATH . '/inc/core/customizer.php';
+require_once HMPRO_PATH . '/inc/core/template-tags.php';
 
 // WooCommerce tweaks (single product gallery UX).
 require_once HMPRO_PATH . '/inc/woocommerce/gallery-tweaks.php';

@@ -49,6 +49,38 @@ body.hmpro-transparent-header-home.hmpro-transparent-header-offset{
 	padding-top: 110px;
 }
 
+/* ---------------------------------------------------------
+   Customizer Hero Banner (Transparent Header)
+   --------------------------------------------------------- */
+.hmpro-th-hero{
+	position: relative;
+	min-height: var(--hmpro-hero-h, 520px);
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+.hmpro-th-hero__overlay{
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, var(--hmpro-hero-overlay, .3));
+}
+.hmpro-th-hero__inner{
+	position: relative;
+	z-index: 1;
+	min-height: var(--hmpro-hero-h, 520px);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 120px 24px 40px;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+.hmpro-th-hero__title,
+.hmpro-th-hero__text{
+	color: #fff;
+}
+
 /* Anchor mega dropdown to the full header width, not the nav component width */
 #site-header,
 .site-header {

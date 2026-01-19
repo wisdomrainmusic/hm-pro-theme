@@ -160,4 +160,85 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'mime_type'   => 'image',
 	] ) );
 
+	// ----------------------------
+	// Homepage Hero Banner (for transparent header)
+	// ----------------------------
+	$wp_customize->add_setting( 'hmpro_th_hero_image', [
+		'default'           => '',
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Media_Control( $wp_customize, 'hmpro_th_hero_image', [
+		'label'       => __( 'Ana sayfa Hero Banner görseli', 'hm-pro-theme' ),
+		'description' => __( 'Şeffaf header’ın arkasında tam genişlik bir hero banner oluşturur. Elementor kullanmadan çalışır.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'mime_type'   => 'image',
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_th_hero_height', [
+		'default'           => 520,
+		'sanitize_callback' => function ( $v ) {
+			$v = absint( $v );
+			if ( $v < 240 ) {
+				$v = 240;
+			}
+			if ( $v > 1200 ) {
+				$v = 1200;
+			}
+			return $v;
+		},
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_th_hero_height', [
+		'label'       => __( 'Hero yüksekliği (px)', 'hm-pro-theme' ),
+		'description' => __( 'Öneri: 520–820 arası. Büyük logo kullanıyorsanız biraz artırın.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'type'        => 'number',
+		'input_attrs' => [ 'min' => 240, 'max' => 1200, 'step' => 10 ],
+	] );
+
+	$wp_customize->add_setting( 'hmpro_th_hero_overlay', [
+		'default'           => 30,
+		'sanitize_callback' => function ( $v ) {
+			$v = absint( $v );
+			if ( $v < 0 ) {
+				$v = 0;
+			}
+			if ( $v > 80 ) {
+				$v = 80;
+			}
+			return $v;
+		},
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_th_hero_overlay', [
+		'label'       => __( 'Overlay karartma (%)', 'hm-pro-theme' ),
+		'description' => __( 'Metin okunurluğu için arka plana karartma ekler.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'type'        => 'number',
+		'input_attrs' => [ 'min' => 0, 'max' => 80, 'step' => 5 ],
+	] );
+
+	$wp_customize->add_setting( 'hmpro_th_hero_title', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_text_field',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_th_hero_title', [
+		'label'   => __( 'Hero başlık (opsiyonel)', 'hm-pro-theme' ),
+		'section' => 'hmpro_header_transparent',
+		'type'    => 'text',
+	] );
+
+	$wp_customize->add_setting( 'hmpro_th_hero_text', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_textarea_field',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_th_hero_text', [
+		'label'   => __( 'Hero açıklama (opsiyonel)', 'hm-pro-theme' ),
+		'section' => 'hmpro_header_transparent',
+		'type'    => 'textarea',
+	] );
+
 } );
