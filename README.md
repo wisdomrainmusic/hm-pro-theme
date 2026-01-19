@@ -1,311 +1,154 @@
-# HM Pro Theme
-📌 CHECKPOINT — HM Pro Theme
-Phase: Header Builder + Social Icon System (COMPLETED)
-
-Status: ✅ Stable & Production-Ready
-
-## Checkpoint — UI Builders (Header, Mega Menu, Footer)
-
-Status: ✅ Stable & Production-Ready
-
-What’s working:
-- Header Builder fully functional and stable
-- Mega Menu Builder working with 4-column architecture
-- Footer Builder extended to 4 columns and manageable in admin
-- All existing components preserved without regression
-- Responsive behavior verified
-- Layout save/load verified across builders
-# CHECKPOINT — HM Pro Theme (Tema Motoru) + Demo Kurulum Mimarisi
-
-## Amaç
-HM Pro Theme, ajans içi hızlı kurulum için “motor tema”dır.
-Demolar tema içine gömülmez. Demolar ve kurulum akışı ayrı bir eklenti ile yönetilir.
-
-## Tema Motoru (Mevcut Yapı) — Kritik Veri Noktaları
-
-### Header/Footer Builder
-- Option Keys:
-  - hmpro_header_layout
-  - hmpro_footer_layout
-- Kaynak: /inc/engine/builder-storage.php
-
-### Preset Sistemi (Renk/Font)
-- Option Keys:
-  - hmpro_presets
-  - hmpro_active_preset
-- CSS Engine: /inc/engine/css-engine.php (CSS variable basar)
-- Preset CSV Import/Export: /inc/engine/import-export.php
-
-### Mega Menu Sistemi
-- CPT: hm_mega_menu
-- Post Meta:
-  - _hmpro_mega_layout
-  - _hmpro_mega_settings
-- Menu Item Meta (Appearance > Menus):
-  - _hmpro_mega_menu_id
-- Kaynaklar:
-  - /inc/engine/mega-menu-library.php
-  - /inc/engine/mega-menu-menuitem-meta.php
-
-### Tema Admin Menüsü
-- HM Pro Theme üst menüsü ve builder/preset/mega menu sayfaları:
-  - /inc/admin/admin-menu.php
-  - /inc/admin/builder-pages.php
-  - /inc/admin/presets-page.php
-  - /inc/admin/mega-menu-builder-page.php
-
-### Gömülü Araçlar
-- Tools loader: /inc/tools/tools-loader.php
-- Embedded: Category Importer, Slug Menu Builder, Product Importer, HM Menu Controller
-
-## Demo Kurulum Eklentisi (Plan)
-Tema şişmemesi için demolar ayrı eklentide tutulur.
-
-### Kararlar
-- Dil: Türkçe
-- Kategori ve menüler otomatik üretilmez; manuel hazırlanır, paketlenir, aynen uygulanır.
-- Her demoda “Kurumsal + Yardım” sayfaları zorunludur.
-- HızlıMağazaPro = showcase (önizleme), müşteri sitesi = kurulum (apply).
-- Müşteri sitesinde demo uygulanınca eklenti kaldırılır, demo klasörleri kalmaz.
-
-### Demo Paketinin Çekirdek İçeriği
-- Sayfalar (Kurumsal + Yardım + demo özel sayfalar)
-- Kategoriler (product_cat ağaç)
-- Menüler + menu locations
-- Mega Menüler (hm_mega_menu CPT + meta)
-- Nav menu item mega binding (_hmpro_mega_menu_id) — import sırasında ID remap gerekir
-- Header/Footer layout option’ları
-- Preset option’ları (opsiyonel ama önerilir)
-
-### En Kritik Teknik Not
-Mega menü bağları ID’ye bağlıdır:
-- Menü item meta: _hmpro_mega_menu_id
-Import sırasında hm_mega_menu yeni ID aldığı için eski ID -> yeni ID map yapılmalıdır (en sağlam eşleştirme mega menü slug üzerinden).
-
-## Sonraki Adım
-HM Pro Demo Kurulum Eklentisi için commit planı:
-A) Eklenti iskeleti + mod (showcase/kurulum)
-B) Demo paket formatı + listeleme
-C) Export (mevcut siteden demo paketi üret)
-D) Apply (demo paketini müşteri sitesine kur)
-E) Showcase preview (gezilebilir demo, yazma aksiyonları kapalı)
-F) Temizlik/kaldırma akışı
-
-This checkpoint marks a stable UI builders milestone.
-
-Header Builder
-
-Sections (Top / Main / Bottom) stabil
-
-Zones (Left / Center / Right) drag & drop sorunsuz
-
-Layout save / reload güvenilir
-
-Frontend render birebir uyumlu
-
-Active Header Components
-
-Logo
-
-Menu
-
-Button
-
-Search
-
-Placeholder: Ara…
-
-Button label: Ara
-
-Preset-aware accent styling
-
-Search query (?s=) doğrulandı
-
-Cart
-
-HTML
-
-Spacer
-
-Social Icon Button (NEW)
-
-Social Icon Button (Final)
-
-Broken “Social” component tamamen kaldırıldı
-
-Her ikon = tek component (button-like persistence)
-
-SVG preset sistemi aktif:
-
-facebook
-
-instagram
-
-x (twitter)
-
-youtube (contrast play restored)
-
-tiktok
-
-whatsapp
-
-telegram
-
-SVG’ler manuel repo içinden yükleniyor
-
-Inline SVG + currentColor
-
-Chameleon color system:
-
-Tema preset accent rengine otomatik uyum
-
-Transparent / pill mode destekli
-
-İkonlar tam ortalı, responsive, hover polish tamam
-
-UI / UX Fixes
-
-Search button visibility bug fixed
-
-Admin menu routing fixed:
-
-HM Pro Theme → Dashboard
-
-Presets → ayrı sayfa
-
-Debug mode tamamen kapatıldı
-
-CSS + preset entegrasyonu stabil
-
-Overall
-
-Header phase tamamlandı
-
-Görsel kalite: premium
-
-Kod mimarisi: temiz & genişletilebilir
-
-🔒 REPO CHECKPOINT NOTU (kısa versiyon)
-
-Header Builder phase completed.
-Social system rebuilt with Social Icon Button (SVG presets, theme-aware colors).
-Search UI fixed, admin routing cleaned.
-Stable baseline for footer phase.
-
-
-
-
-
-## Checkpoint — Presets + Typography Engine (Phase 1)
-
-Status: Completed ✅
-
-What’s working:
-- Preset system (CRUD): create/edit/delete (active preset protected)
-- Active preset switch (Set Active) with notice feedback
-- CSV import + template download (robust delimiter + admin routing fix)
-- Palette preview dots in preset list (premium UI)
-- CSS variable engine (base + WooCommerce friendly, no !important)
-- Typography engine:
-  - Font tokens → Google Fonts loader (loads only selected fonts)
-  - :root font variables (body + heading)
-  - Typography Presets (1-click apply):
-    - Modern Store (inter / poppins)
-    - Editorial / Fashion (inter / playfair_display)
-    - Soft Elegant (lato / poppins)
-    - Signature Brand (inter / dancing_script)
-  - “Aa” mini preview on preset buttons
-
-Screens:
-- Admin presets UI: assets/img/admin-presets-ui.png
-- Frontend signature typography: assets/img/frontend-signature-typography.png
-
-Next planned:
-- Phase 2: Header/Footer Builder expansion + WooCommerce components styling pack
-- Phase 3: Demo Engine integration into theme (category/menu importer, starter demos)
-
-Premium WooCommerce-focused WordPress theme with built-in preset & palette engine.
-
-## Theme Screenshot
-
-The WordPress theme preview image (`screenshot.png`) is intentionally excluded
-from version control.
-
-Please add `screenshot.png` manually to the theme root directory before
-uploading the theme to WordPress.
-
-Recommended size: 1200x900px (PNG)
-
-## Status
-- Commit 002: base theme + token-ready CSS
-
-- ## Project Status — Checkpoint
-
-### Current State
-HM Pro Theme is successfully installed and activated as a valid WordPress theme.
-
-Completed:
-- Valid WordPress theme structure (style.css, index.php, header.php, footer.php)
-- Token-based CSS foundation using CSS variables (--hm-*)
-- Admin menu: HM Pro Theme → Presets
-- Presets admin page UI shell (no logic yet)
-- WooCommerce theme support enabled
-- Clean activation with no PHP errors
-
-### What Exists Now
-- Theme scaffold and frontend rendering
-- Admin UI for future preset & palette system
-- CSS tokens ready to be driven by presets
-
-### What Is NOT Implemented Yet
-- Preset CRUD (add/edit/delete)
-- Active preset logic
-- CSS engine to output preset variables
-- CSV import/export
-- WooCommerce detailed styling
-- Elementor widget integrations
-
-### Next Milestones
-1. Preset data model stored in wp_options
-2. Active preset selection + runtime CSS output
-3. Preset editor (admin UI)
-4. CSV import/export for presets
-5. WooCommerce & Elementor token binding
-
-Last updated: Commit 003 (Admin Presets UI shell)
-
----
-
-## Development Checkpoint — Preset System Online
-
-### Current Status
-The HM Pro Theme preset system is now functional at the data and admin level.
-
-### What Works
-- Theme installs and activates correctly as a valid WordPress theme
-- Admin panel: HM Pro Theme → Presets
-- Preset list renders correctly in admin
-- Sample presets can be seeded for testing
-- Presets are stored in wp_options
-- Active preset state changes correctly via admin actions
-- Admin notices confirm preset activation
-- Active preset persists across page reloads
-
-### Expected Behavior (Confirmed)
-- Changing the active preset updates the stored state
-- UI correctly reflects the active preset (Active / Set Active)
-- No PHP errors or admin warnings
-
-### Known Limitations (Planned)
-- Frontend visual changes are minimal because CSS Engine is not yet implemented
-- Preset values are not yet injected into :root CSS variables
-- WooCommerce and Elementor components are not yet bound to preset tokens
-
-### Next Steps
-1. Implement CSS Engine to output active preset as CSS variables (:root)
-2. Bind theme base styles to preset tokens for visible frontend changes
-3. Extend preset editor (add/edit/delete)
-4. Add CSV import/export for presets
-5. Integrate WooCommerce & Elementor styling
-
-Checkpoint reached at: Commit 005 (Preset activation working)
+HM Pro Theme — Surgical Checkpoint (Developer)
+Repository snapshot
+Theme root: hm-pro-theme-main/
+Version constant: HMPRO_VERSION = 0.1.0 (functions.php)
+Entry points:
+functions.php loads core + engine + admin modules
+header.php renders either Builder Header or Legacy Header fallback
+footer.php (builder-driven)
+High-level architecture
+1) Core
+inc/core/setup.php
+Theme supports: custom-logo, title-tag, post-thumbnails, responsive-embeds, woocommerce, wc gallery features
+Registers nav menu locations:
+primary, topbar, footer, mobile_menu
+legacy: hm_primary, hm_footer
+Builder region helpers:
+hmpro_get_builder_regions()
+hmpro_has_builder_layout(), hmpro_header_builder_has_layout()
+inc/core/enqueue.php
+Enqueues style.css via get_stylesheet_uri() (hmpro-style)
+NOTE: functions.php also enqueues base/header/footer/mega-menu/woo styles.
+2) Admin UI
+inc/admin/admin-menu.php
+Adds parent: hmpro-theme
+Subpages: Presets, Header Builder, Footer Builder, Mega Menu Builder, Importers, etc.
+assets/admin-builder.js + assets/admin-builder.css
+Builder admin UI (drag/drop, component settings, save)
+inc/admin/title-visibility.php
+Registers post meta: _hmpro_hide_title (REST enabled)
+Classic editor metabox + Gutenberg document panel toggle
+Adds body_class: hmpro-hide-title
+CSS fallback in assets/css/base.css
+3) Builder engine (Header/Footer)
+inc/engine/builder-storage.php
+Options:
+hmpro_header_layout
+hmpro_footer_layout
+Schema:
+schema_version: 1
+regions: { region_key => [rows] }
+Sanitization:
+Allowlisted component types + settings keys
+URL normalization for social URLs
+SVG sanitization via wp_kses for custom icons
+inc/engine/builder-renderer.php
+Hooks used by templates:
+do_action('hmpro/header/render_region', region_key)
+do_action('hmpro/footer/render_region', region_key)
+Component renderers:
+hmpro_builder_comp_logo/menu/search/cart/button/html/spacer/footer_menu/footer_info/social/social_icon_button
+HTML block uses do_shortcode() + custom kses allowlist (scripts blocked)
+Social icon preset loader:
+hmpro_load_social_svg_preset() searches assets/icon/social/ then assets/icons/social/
+4) Mega Menu engine
+inc/engine/mega-menu-library.php
+Registers CPT: hm_mega_menu
+Stores layout/meta:
+_hmpro_mega_layout
+_hmpro_mega_settings
+inc/engine/mega-menu-menuitem-meta.php
+Adds dropdown field to nav menu items
+Saves binding meta: _hmpro_mega_menu_id (nav_menu_item post meta)
+Frontend injection via walker_nav_menu_start_el
+Adds li classes: hmpro-li-has-mega + hmpro-mega-id-{id}
+assets/js/mega-menu.js
+Interaction mode can be set via customizer:
+theme_mod: hmpro_mega_menu_interaction (hover|click)
+body_class adds hmpro-mega-click when click mode enabled
+5) Presets + CSS engine
+inc/engine/presets.php
+Options:
+hmpro_presets
+hmpro_active_preset
+inc/engine/css-engine.php
+Prints CSS variables (accent, contrast, etc.)
+inc/engine/typography.php
+Typography utilities (variable application)
+6) Embedded tools (inside theme)
+inc/tools/tools-loader.php
+Embeds modules:
+category-importer
+slug-menu-builder
+product-importer
+hm-menu-controller
+hm-basic-ceviri-inline
+Moves HM Basic Translate page under HM Pro Theme menu.
+7) WooCommerce tweaks
+inc/woocommerce/gallery-tweaks.php
+inc/woocommerce/checkout-tweaks.php
+Template behavior
+Header (header.php)
+If builder layout exists → renders builder regions + adds two extra UI elements:
+Desktop persistent account CTA (absolute positioned)
+Mobile hamburger toggle + right-side drawer
+If builder layout missing → legacy header fallback (hm_primary menu location).
+Mobile drawer
+Markup is always present when builder header is active.
+Visibility controlled by CSS media query (max-width: 768px) and JS (assets/js/mobile-header.js).
+Critical issues / risks (actionable)
+Text domain inconsistency
+style.css declares Text Domain: hm-pro-theme
+load_theme_textdomain() is called with 'hmpro'
+Strings use both 'hmpro' and 'hm-pro-theme'
+Impact: translation and string management becomes fragmented.
+Fix: pick ONE domain (recommend: hm-pro-theme) and refactor.
+Language consistency
+Mixed Turkish/English strings across admin + frontend.
+Impact: conflicts with “English-only site/admin” preference; also makes demo packaging harder.
+Fix: normalize UI strings and defaults (placeholder, button labels, menu labels).
+Hardcoded My Account path
+header.php uses home_url('/hesabim/')
+Impact: breaks if slug differs, or on non-TR installs.
+Fix:
+if WooCommerce active: get_permalink( wc_get_page_id('myaccount') )
+else: fallback to wp_login_url() / wp_registration_url()
+Missing preset asset
+LinkedIn SVG is referenced in allowed presets but assets/icon/social/linkedin.svg is absent.
+Impact: fallback badge appears (not fatal) but inconsistent.
+Fix: add linkedin.svg or remove from preset list.
+Duplicate conditional branch in builder-storage sanitization
+builder-storage.php contains duplicated menu_id/depth/width/height handling.
+Impact: not a security issue; increases maintenance risk.
+Fix: clean up branches and add unit-ish tests (payload samples).
+Duplicate style enqueues
+inc/core/enqueue.php enqueues style.css; functions.php enqueues base/header/footer/mega-menu/woo styles.
+Impact: not fatal; but can cause override confusion and extra requests.
+Fix: either merge style.css into base.css or keep style.css minimal and document CSS layering.
+Recommended “next commit” plan (surgical, low risk)
+Normalize text domain + strings
+Set load_theme_textdomain('hm-pro-theme')
+Replace __('...', 'hmpro') usages
+Convert Turkish strings to English (or wrap with translations consistently)
+Fix My Account link resolution
+Create helper:
+hmpro_get_account_url()
+Use WooCommerce lookup if available, fallback otherwise.
+Add linkedin.svg or remove LinkedIn from presets
+Refactor builder-storage sanitizer
+Remove duplicate branches
+Keep allowlists identical
+Add sample payload tests (even as PHP arrays in a dev-only file or wp-cli command)
+Export/import readiness notes
+If you want a demo installer to fully reproduce a site, the following must be packaged and remapped:
+Options:
+hmpro_header_layout
+hmpro_footer_layout
+hmpro_presets
+hmpro_active_preset
+CPT + meta:
+hm_mega_menu posts + _hmpro_mega_layout + _hmpro_mega_settings
+Nav menu bindings:
+nav_menu_item meta: _hmpro_mega_menu_id
+IMPORTANT: mega menu IDs change after import; must remap old->new.
+Best remap key: mega menu slug (post_name) or a stable custom GUID meta.
