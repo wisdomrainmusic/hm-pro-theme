@@ -73,6 +73,7 @@ body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
 	inset: 0;
 	background: rgba(0, 0, 0, var(--hmpro-hero-overlay, .3));
 	z-index: 1;
+	pointer-events: none;
 }
 .hmpro-th-hero__inner{
 	position: relative;
@@ -86,9 +87,40 @@ body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
 	max-width: 1200px;
 	margin: 0 auto;
 }
+.hmpro-th-hero__content{
+	font-family: var(--hmpro-hero-font, inherit);
+	transform: translate(var(--hmpro-hero-group-x, 0px), var(--hmpro-hero-group-y, 0px)) scale(var(--hmpro-hero-group-scale, 1));
+	transform-origin: left top;
+}
 .hmpro-th-hero__title,
 .hmpro-th-hero__text{
-	color: #fff;
+	color: var(--hmpro-hero-text-color, #fff);
+}
+.hmpro-th-hero__title{
+	color: var(--hmpro-hero-title-color, #fff);
+	font-size: var(--hmpro-hero-title-size, 44px);
+	line-height: 1.1;
+	margin: 0 0 12px;
+}
+.hmpro-th-hero__text{
+	font-size: var(--hmpro-hero-text-size, 18px);
+	margin: 0 0 18px;
+	max-width: 720px;
+}
+.hmpro-th-hero__btn{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	background: var(--hmpro-hero-btn-bg, #d4af37);
+	color: var(--hmpro-hero-btn-color, #111);
+	padding: 12px 18px;
+	border-radius: 999px;
+	text-decoration: none;
+	font-weight: 600;
+}
+.hmpro-th-hero__btn:hover{
+	filter: brightness(0.95);
 }
 
 /* Anchor mega dropdown to the full header width, not the nav component width */
