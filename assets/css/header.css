@@ -198,6 +198,47 @@
 	gap:8px;
 	align-items:center;
 }
+
+/* ---------------------------------------------------------
+   Cart component (Header Builder)
+   - Icon-only cart with badge count
+   - Hide badge when empty
+   --------------------------------------------------------- */
+.hmpro-cart{
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	color: inherit;
+	line-height: 1;
+}
+
+.hmpro-cart-icon{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.hmpro-cart-count{
+	position: absolute;
+	top: -6px;
+	right: -8px;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 5px;
+	border-radius: 999px;
+	font-size: 11px;
+	line-height: 18px;
+	text-align: center;
+	background: currentColor;
+	color: #fff;
+	transform: scale(0.95);
+}
+
+.hmpro-cart--empty .hmpro-cart-count{
+	display:none;
+}
 .hmpro-search-field{
 	padding:8px 10px;
 	border:1px solid rgba(0,0,0,.2);
