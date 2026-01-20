@@ -14,6 +14,7 @@
 		TextControl,
 		TextareaControl,
 		RangeControl,
+		__experimentalNumberControl: NumberControl,
 		Button,
 		ButtonGroup,
 		Notice,
@@ -28,6 +29,10 @@
 		const s = String( val ).trim().replace( ',', '.' );
 		const n = parseFloat( s );
 		return Number.isFinite( n ) ? n : fallback;
+	}
+
+	function formatFloatForInput( n ) {
+		return ( n === null || n === undefined ) ? '' : String( n );
 	}
 
 	function normalizeInt( val, fallback ) {
@@ -383,32 +388,57 @@
 									wp.element.createElement(
 										PanelBody,
 										{ title: __( 'Content Group', 'hm-pro-theme' ), initialOpen: false },
-										wp.element.createElement( TextControl, {
+										wp.element.createElement( NumberControl, {
 											label: __( 'Content group scale (desktop)', 'hm-pro-theme' ),
 											help: __( 'Title + subtitle + button scale together. Example: 1,25', 'hm-pro-theme' ),
-											value: ( t.contentScale !== undefined && t.contentScale !== null ) ? String( t.contentScale ) : '1',
+											value: formatFloatForInput( normalizeFloat( t.contentScale, 1 ) ),
+											min: 0.5,
+											max: 2.5,
+											step: 0.05,
+											spinControls: 'native',
 											onChange: function ( val ) {
+												// val can arrive as string; allow comma in UI
 												const n = normalizeFloat( val, 1 );
 												updateTile( idx, { contentScale: n } );
-											}
+											},
+											onBlur: function ( e ) {
+												const n = normalizeFloat( e?.target?.value, 1 );
+												updateTile( idx, { contentScale: n } );
+											},
 										} ),
-										wp.element.createElement( TextControl, {
+										wp.element.createElement( NumberControl, {
 											label: __( 'Mobile content group scale (optional)', 'hm-pro-theme' ),
 											help: __( 'Only on mobile/tablet. If 0, desktop scale is used.', 'hm-pro-theme' ),
-											value: ( t.contentScaleMobile !== undefined && t.contentScaleMobile !== null ) ? String( t.contentScaleMobile ) : '0',
+											value: formatFloatForInput( normalizeFloat( t.contentScaleMobile, 0 ) ),
+											min: 0,
+											max: 2.5,
+											step: 0.05,
+											spinControls: 'native',
 											onChange: function ( val ) {
 												const n = normalizeFloat( val, 0 );
 												updateTile( idx, { contentScaleMobile: n } );
-											}
+											},
+											onBlur: function ( e ) {
+												const n = normalizeFloat( e?.target?.value, 0 );
+												updateTile( idx, { contentScaleMobile: n } );
+											},
 										} ),
-										wp.element.createElement( TextControl, {
+										wp.element.createElement( NumberControl, {
 											label: __( 'Mobile/Tablet content top offset (px)', 'hm-pro-theme' ),
 											help: __( 'Mobile/tablet only. Move content up (-) or down (+).', 'hm-pro-theme' ),
-											value: ( t.mobileOffsetY !== undefined && t.mobileOffsetY !== null ) ? String( t.mobileOffsetY ) : '0',
+											value: String( normalizeInt( t.mobileOffsetY, 0 ) ),
+											min: -400,
+											max: 400,
+											step: 1,
+											spinControls: 'native',
 											onChange: function ( val ) {
 												const n = normalizeInt( val, 0 );
 												updateTile( idx, { mobileOffsetY: n } );
-											}
+											},
+											onBlur: function ( e ) {
+												const n = normalizeInt( e?.target?.value, 0 );
+												updateTile( idx, { mobileOffsetY: n } );
+											},
 										} )
 									),
 									wp.element.createElement(
