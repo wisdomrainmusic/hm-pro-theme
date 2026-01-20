@@ -1,0 +1,35 @@
+.hmpro-product-tabs {
+  --hmpro-pft-columns: 4;
+  --hmpro-pft-gap: 20px;
+  --hmpro-pft-tabs-align: center;
+  padding: 24px 0;
+}
+
+.hmpro-product-tabs__tabs {
+  display: flex;
+  justify-content: var(--hmpro-pft-tabs-align);
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.hmpro-product-tabs__tab {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: inherit;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.hmpro-product-tabs__tab.is-active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.hmpro-product-tabs__panel,
+.hmpro-product-tabs__notice {
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  padding: 20px;
+  border-radius: 12px;
+}
