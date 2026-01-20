@@ -148,3 +148,39 @@ function hmpro_enqueue_elementor_global_vars() {
 		wp_add_inline_style( 'elementor-editor', $css );
 	}
 }
+
+/**
+ * Elementor typography bridge.
+ *
+ * Some Elementor widgets may end up with hard-coded font-family rules in generated CSS.
+ * We keep this bridge narrow (headings + basic text widgets) to avoid changing other modules.
+ */
+add_action( 'wp_head', 'hmpro_output_elementor_typography_bridge', 22 );
+// Also print at the very end of the page to win against late-loaded/generated Elementor CSS.
+add_action( 'wp_footer', 'hmpro_output_elementor_typography_bridge', 999 );
+
+function hmpro_output_elementor_typography_bridge() {
+	// Only print if Elementor is present.
+	if ( ! did_action( 'elementor/loaded' ) && ! class_exists( '\\Elementor\\Plugin' ) ) {
+		return;
+	}
+
+	// Use the theme-level variables already computed from the active preset.
+	// Keep selectors focused to Elementor output but wide enough to override generated per-element rules.
+	$css  = '';
+
+	// Headings.
+	$css .= 'body .elementor .elementor-heading-title{font-family:var(--hm-heading-font)!important;}';
+	$css .= 'body .elementor h1,body .elementor h2,body .elementor h3,body .elementor h4,body .elementor h5,body .elementor h6{font-family:var(--hm-heading-font)!important;}';
+	$css .= 'body .elementor .elementor-widget-heading .elementor-heading-title{font-family:var(--hm-heading-font)!important;}';
+	$css .= 'body .elementor .elementor-widget-theme-post-title .elementor-heading-title{font-family:var(--hm-heading-font)!important;}';
+	$css .= 'body .elementor .elementor-widget-icon-box .elementor-icon-box-title,body .elementor .elementor-widget-icon-box .elementor-icon-box-title *{font-family:var(--hm-heading-font)!important;}';
+
+	// Body / UI text.
+	$css .= 'body .elementor .elementor-widget-text-editor,body .elementor .elementor-widget-text-editor *{font-family:var(--hm-body-font)!important;}';
+	$css .= 'body .elementor p,body .elementor li,body .elementor a,body .elementor span{font-family:var(--hm-body-font)!important;}';
+	$css .= 'body .elementor .elementor-widget-button .elementor-button{font-family:var(--hm-body-font)!important;}';
+	$css .= 'body .elementor .elementor-widget-icon-box .elementor-icon-box-description,body .elementor .elementor-widget-icon-box .elementor-icon-box-description *{font-family:var(--hm-body-font)!important;}';
+
+	echo '<style id="hmpro-elementor-typo-bridge">' . $css . '</style>';
+}

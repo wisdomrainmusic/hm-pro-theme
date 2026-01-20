@@ -53,7 +53,12 @@ body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
 
 .hmpro-th-hero{
 	position: relative;
-	min-height: var(--hmpro-hero-h, 520px);
+	/*
+	 * Fixed height provides predictable Customizer behavior.
+	 * When content is larger, it will be visually clipped (Astra-like hero).
+	 */
+	height: var(--hmpro-hero-h, 520px);
+	min-height: 0;
 	background-size: cover;
 	background-position: center center;
 	background-repeat: no-repeat;
@@ -78,7 +83,8 @@ body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
 .hmpro-th-hero__inner{
 	position: relative;
 	z-index: 2;
-	min-height: var(--hmpro-hero-h, 520px);
+	height: 100%;
+	min-height: 0;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -88,15 +94,19 @@ body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
 	margin: 0 auto;
 }
 .hmpro-th-hero__content{
-	font-family: var(--hmpro-hero-font, inherit);
-	transform: translate(var(--hmpro-hero-group-x, 0px), var(--hmpro-hero-group-y, 0px)) scale(var(--hmpro-hero-group-scale, 1));
+	font-family: var(--hmpro-hero-text-font, var(--hm-body-font));
+	transform: translate3d(var(--hmpro-hero-group-x, 0px), var(--hmpro-hero-group-y, 0px), 0) scale(var(--hmpro-hero-group-scale, 1));
 	transform-origin: left top;
+	will-change: transform;
 }
 .hmpro-th-hero__title,
 .hmpro-th-hero__text{
+	/* Override global heading/body typography rules (base.css) */
+	font-family: var(--hmpro-hero-text-font, var(--hm-body-font));
 	color: var(--hmpro-hero-text-color, #fff);
 }
 .hmpro-th-hero__title{
+	font-family: var(--hmpro-hero-title-font, var(--hm-heading-font));
 	color: var(--hmpro-hero-title-color, #fff);
 	font-size: var(--hmpro-hero-title-size, 44px);
 	line-height: 1.1;
@@ -121,6 +131,191 @@ body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
 }
 .hmpro-th-hero__btn:hover{
 	filter: brightness(0.95);
+}
+
+/* ---------------------------------------------------------
+   Header Background Banner (Top + Main)
+   - Uses Hero-like CSS variables
+   - Renders inside #site-header when enabled
+   --------------------------------------------------------- */
+
+#site-header.hmpro-hb-enabled{
+	min-height: var(--hmpro-hb-h, 320px);
+	margin-bottom: var(--hmpro-hb-after-gap, 0px);
+}
+
+.hmpro-hb-banner{
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	min-height: var(--hmpro-hb-h, 320px);
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+	overflow: hidden;
+	z-index: 0;
+}
+
+/* Slider / gallery support (fade) */
+.hmpro-hb-banner--slider{
+	background-image: none !important;
+}
+.hmpro-hb-slides{
+	position:absolute;
+	inset:0;
+	z-index:0;
+}
+.hmpro-hb-slide{
+	position:absolute;
+	inset:0;
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+	opacity:0;
+	transition: opacity 700ms ease;
+}
+.hmpro-hb-slide.is-active{
+	opacity:1;
+}
+
+.hmpro-hb-banner__video{
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center center;
+	z-index: 0;
+}
+
+.hmpro-hb-banner__overlay{
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, var(--hmpro-hb-overlay, .3));
+	z-index: 1;
+	pointer-events: none;
+}
+
+.hmpro-hb-banner__inner{
+	position: relative;
+	z-index: 2;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 120px 24px 40px;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.hmpro-hb-banner__content{
+	font-family: var(--hmpro-hb-text-font, var(--hm-body-font));
+	transform: translate3d(var(--hmpro-hb-group-x, 0px), var(--hmpro-hb-group-y, 0px), 0) scale(var(--hmpro-hb-group-scale, 1));
+	transform-origin: left top;
+	will-change: transform;
+}
+
+.hmpro-hb-banner__title,
+.hmpro-hb-banner__text{
+	font-family: var(--hmpro-hb-text-font, var(--hm-body-font));
+	color: var(--hmpro-hb-text-color, #fff);
+}
+
+.hmpro-hb-banner__title{
+	font-family: var(--hmpro-hb-title-font, var(--hm-heading-font));
+	color: var(--hmpro-hb-title-color, #fff);
+	font-size: var(--hmpro-hb-title-size, 34px);
+	line-height: 1.1;
+	margin: 0 0 10px;
+}
+
+.hmpro-hb-banner__text{
+	font-size: var(--hmpro-hb-text-size, 16px);
+	margin: 0 0 16px;
+	max-width: 720px;
+}
+
+.hmpro-hb-banner__btn{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	background: var(--hmpro-hb-btn-bg, #d4af37);
+	color: var(--hmpro-hb-btn-color, #111);
+	padding: 12px 18px;
+	border-radius: 999px;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.hmpro-hb-banner__btn:hover{
+	filter: brightness(0.95);
+}
+
+/* Ensure header regions sit above the banner */
+#site-header.hmpro-hb-enabled .hmpro-builder-region,
+#site-header.hmpro-hb-enabled .hmpro-mobile-menu-toggle{
+	position: relative;
+	z-index: 3;
+}
+
+/* Let the banner show through. Region wrappers may have their own backgrounds set via Customizer.
+   When header banner is enabled, we prefer a transparent base so the background image/video is visible. */
+#site-header.hmpro-hb-enabled .hmpro-builder-region,
+#site-header.hmpro-hb-enabled .hmpro-builder-region .hmpro-region,
+#site-header.hmpro-hb-enabled .hmpro-builder-region .hmpro-region-inner{
+	background: transparent !important;
+}
+
+@media (max-width: 1024px){
+	.hmpro-hb-banner__inner{
+		justify-content: flex-start;
+	}
+	.hmpro-hb-banner__content{
+		margin-top: var(--hmpro-hb-group-top-m, 0px);
+		transform: translate3d(0, 0, 0) scale(var(--hmpro-hb-group-scale, 1));
+	}
+}
+
+@media (max-width: 768px){
+	#site-header.hmpro-hb-enabled{ min-height: var(--hmpro-hb-h-m, var(--hmpro-hb-h, 320px)); }
+	.hmpro-hb-banner{ min-height: var(--hmpro-hb-h-m, var(--hmpro-hb-h, 320px)); }
+	.hmpro-hb-banner--hide-mobile{ display: none; }
+	#site-header.hmpro-hb-hide-mobile{ min-height: 0; }
+	.hmpro-hb-banner__inner{ padding: 88px 16px 28px; max-width: 100%; }
+	.hmpro-hb-banner__content{
+		margin-top: var(--hmpro-hb-group-top-m, 0px);
+		transform: translate3d(0, 0, 0) scale(var(--hmpro-hb-group-scale-m, var(--hmpro-hb-group-scale, 1)));
+	}
+}
+
+/* Tablet + Mobile: keep hero content anchored (no X/Y offsets) to prevent CTA drifting off-screen. */
+@media (max-width: 1024px){
+	.hmpro-th-hero__inner{
+		/* On smaller screens, vertical centering causes the content group to drift when scaled.
+		   Anchor the group to the top (within padding) for stable positioning. */
+		justify-content: flex-start;
+	}
+	.hmpro-th-hero__content{
+		margin-top: var(--hmpro-hero-group-top-m, 0px);
+		transform: translate3d(0, 0, 0) scale(var(--hmpro-hero-group-scale, 1));
+	}
+}
+
+/* Mobile hero optimization (Customizer)
+   - Optional mobile height via --hmpro-hero-h-m
+   - Optional hide via .hmpro-th-hero--hide-mobile
+*/
+@media (max-width: 768px){
+	.hmpro-th-hero{ height: var(--hmpro-hero-h-m, var(--hmpro-hero-h, 520px)); }
+	.hmpro-th-hero--hide-mobile{ display: none; }
+	.hmpro-th-hero__inner{ padding: 88px 16px 28px; max-width: 100%; }
+	.hmpro-th-hero__content{
+		margin-top: var(--hmpro-hero-group-top-m, 0px);
+		transform: translate3d(0, 0, 0) scale(var(--hmpro-hero-group-scale-m, var(--hmpro-hero-group-scale, 1)));
+	}
 }
 
 /* Anchor mega dropdown to the full header width, not the nav component width */

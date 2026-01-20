@@ -154,6 +154,93 @@ function hmpro_set_active_preset_id( $preset_id ) {
 }
 
 /**
+ * ---------------------------------------------
+ * Header/Top Bar + Footer Customizer color sync
+ * ---------------------------------------------
+ *
+ * Presets provide global palette defaults.
+ * Customizer controls can override Top Bar / Footer colors.
+ *
+ * Rules:
+ * - If user has NOT set a customizer value (theme_mod is empty), we may seed/sync from the active preset.
+ * - If user has set a value, we never overwrite it.
+ */
+
+function hmpro_hex_luminance( $hex ) {
+	$hex = ltrim( (string) $hex, '#' );
+	if ( 3 === strlen( $hex ) ) {
+		$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+	}
+	if ( 6 !== strlen( $hex ) || ! ctype_xdigit( $hex ) ) {
+		return 0;
+	}
+	$r = hexdec( substr( $hex, 0, 2 ) ) / 255;
+	$g = hexdec( substr( $hex, 2, 2 ) ) / 255;
+	$b = hexdec( substr( $hex, 4, 2 ) ) / 255;
+
+	// Convert sRGB to linear.
+	$r = ( $r <= 0.03928 ) ? ( $r / 12.92 ) : pow( ( ( $r + 0.055 ) / 1.055 ), 2.4 );
+	$g = ( $g <= 0.03928 ) ? ( $g / 12.92 ) : pow( ( ( $g + 0.055 ) / 1.055 ), 2.4 );
+	$b = ( $b <= 0.03928 ) ? ( $b / 12.92 ) : pow( ( ( $b + 0.055 ) / 1.055 ), 2.4 );
+
+	return ( 0.2126 * $r ) + ( 0.7152 * $g ) + ( 0.0722 * $b );
+}
+
+function hmpro_pick_contrast_color( $bg_hex, $dark = '#111111', $light = '#ffffff' ) {
+	$l = hmpro_hex_luminance( $bg_hex );
+	// Threshold tuned for UI readability.
+	return ( $l > 0.55 ) ? $dark : $light;
+}
+
+function hmpro_sync_header_footer_color_mods_from_preset_if_empty( $preset_id ) {
+	$preset = hmpro_get_preset_by_id( $preset_id );
+	if ( ! $preset ) {
+		return;
+	}
+
+	$footer_bg = sanitize_hex_color( $preset['footer'] ?? '' );
+	if ( empty( $footer_bg ) ) {
+		$footer_bg = sanitize_hex_color( $preset['dark'] ?? '' );
+	}
+
+	$footer_txt = hmpro_pick_contrast_color( $footer_bg );
+
+	$map = [
+		'hmpro_footer_bg_color'   => $footer_bg,
+		'hmpro_footer_text_color' => $footer_txt,
+		// Top Bar defaults to Footer palette (premium theme convention).
+		'hmpro_topbar_bg_color'   => $footer_bg,
+		'hmpro_topbar_text_color' => $footer_txt,
+		// Search field readability inside Top Bar.
+		'hmpro_topbar_search_text_color'        => $footer_txt,
+		'hmpro_topbar_search_placeholder_color' => $footer_txt,
+	];
+
+	foreach ( $map as $mod_key => $value ) {
+		$current = (string) get_theme_mod( $mod_key, '' );
+		if ( '' === trim( $current ) && '' !== trim( (string) $value ) ) {
+			set_theme_mod( $mod_key, $value );
+		}
+	}
+}
+
+/**
+ * Seed default header/footer colors once on first run.
+ */
+function hmpro_seed_header_footer_colors_once() {
+	$flag_key = 'hmpro_builder_colors_initialized';
+	if ( get_option( $flag_key ) ) {
+		return;
+	}
+
+	$preset_id = hmpro_get_active_preset_id();
+	hmpro_sync_header_footer_color_mods_from_preset_if_empty( $preset_id );
+	update_option( $flag_key, 1, false );
+}
+
+add_action( 'after_setup_theme', 'hmpro_seed_header_footer_colors_once', 20 );
+
+/**
  * Seed a few sample presets for testing.
  */
 function hmpro_seed_sample_presets() {

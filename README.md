@@ -1,4 +1,112 @@
-✅ CHECKPOINT – Header & Hero Banner Refactor (Jan 2026)
+✅ Session Check: Header, Presets \& Hero Mobile Optimization (Fixed17)
+
+
+
+This update finalizes a major stability and UX improvement pass across header styling, preset behavior, and hero banner responsiveness.
+
+
+
+Header \& Preset System
+
+
+
+Header Top Bar and Footer colors are now fully integrated with Presets.
+
+
+
+Presets apply Top Bar / Footer colors only if Customizer overrides are empty.
+
+
+
+Customizer includes a Reset button to clear Header/Footer color overrides and return to preset defaults.
+
+
+
+Search input text and placeholder colors are configurable for Top Bar to ensure readability on dark backgrounds.
+
+
+
+Desktop-only “Login / Register” CTA removed; CTA is now managed via Header Builder components.
+
+
+
+Mobile hamburger menu CTA remains intact.
+
+
+
+Hero Banner (Desktop, Tablet, Mobile)
+
+
+
+Desktop Hero content supports extended X/Y positioning up to ±1200px.
+
+
+
+Mobile and Tablet:
+
+
+
+Hero content X/Y positioning is disabled to prevent layout breakage.
+
+
+
+Content is anchored to the top (no vertical centering shift).
+
+
+
+Separate Mobile Hero Content Scale setting added.
+
+
+
+Mobile/Tablet Hero Content Top Offset added for fine alignment control.
+
+
+
+Optional Mobile Hero hide toggle available.
+
+
+
+Mobile Hero height is configurable independently from desktop.
+
+
+
+Result
+
+
+
+Hero content no longer shifts unpredictably on mobile/tablet when scaling.
+
+
+
+Buttons remain visible across all breakpoints.
+
+
+
+Preset + Customizer interaction is predictable and fail-safe.
+
+
+
+Overall behavior now matches premium theme standards (Astra / Kadence-level UX).
+
+
+
+Status
+
+
+
+System stable.
+
+
+
+No breaking changes to existing layouts.
+
+
+
+Ready for demo packaging and further feature development.
+
+
+
+✅ CHECKPOINT – Header \& Hero Banner Refactor (Jan 2026)
 Summary
 
 This checkpoint finalizes a major refactor around the header, transparent header logic, and hero banner behavior.
@@ -50,7 +158,7 @@ Adjustable hero height (px)
 
 Overlay darkness control
 
-Optional title & description fields
+Optional title \& description fields
 
 Mobile-safe behavior (video muted / optional fallback image)
 
@@ -90,154 +198,155 @@ Preset hero styles for demos
 HM Pro Theme — Surgical Checkpoint (Developer)
 Repository snapshot
 Theme root: hm-pro-theme-main/
-Version constant: HMPRO_VERSION = 0.1.0 (functions.php)
+Version constant: HMPRO\_VERSION = 0.1.0 (functions.php)
 Entry points:
 functions.php loads core + engine + admin modules
 header.php renders either Builder Header or Legacy Header fallback
 footer.php (builder-driven)
 High-level architecture
-1) Core
-inc/core/setup.php
-Theme supports: custom-logo, title-tag, post-thumbnails, responsive-embeds, woocommerce, wc gallery features
-Registers nav menu locations:
-primary, topbar, footer, mobile_menu
-legacy: hm_primary, hm_footer
-Builder region helpers:
-hmpro_get_builder_regions()
-hmpro_has_builder_layout(), hmpro_header_builder_has_layout()
-inc/core/enqueue.php
-Enqueues style.css via get_stylesheet_uri() (hmpro-style)
-NOTE: functions.php also enqueues base/header/footer/mega-menu/woo styles.
-2) Admin UI
-inc/admin/admin-menu.php
-Adds parent: hmpro-theme
-Subpages: Presets, Header Builder, Footer Builder, Mega Menu Builder, Importers, etc.
-assets/admin-builder.js + assets/admin-builder.css
-Builder admin UI (drag/drop, component settings, save)
-inc/admin/title-visibility.php
-Registers post meta: _hmpro_hide_title (REST enabled)
-Classic editor metabox + Gutenberg document panel toggle
-Adds body_class: hmpro-hide-title
-CSS fallback in assets/css/base.css
-3) Builder engine (Header/Footer)
-inc/engine/builder-storage.php
-Options:
-hmpro_header_layout
-hmpro_footer_layout
-Schema:
-schema_version: 1
-regions: { region_key => [rows] }
-Sanitization:
-Allowlisted component types + settings keys
-URL normalization for social URLs
-SVG sanitization via wp_kses for custom icons
-inc/engine/builder-renderer.php
-Hooks used by templates:
-do_action('hmpro/header/render_region', region_key)
-do_action('hmpro/footer/render_region', region_key)
-Component renderers:
-hmpro_builder_comp_logo/menu/search/cart/button/html/spacer/footer_menu/footer_info/social/social_icon_button
-HTML block uses do_shortcode() + custom kses allowlist (scripts blocked)
-Social icon preset loader:
-hmpro_load_social_svg_preset() searches assets/icon/social/ then assets/icons/social/
-4) Mega Menu engine
-inc/engine/mega-menu-library.php
-Registers CPT: hm_mega_menu
-Stores layout/meta:
-_hmpro_mega_layout
-_hmpro_mega_settings
-inc/engine/mega-menu-menuitem-meta.php
-Adds dropdown field to nav menu items
-Saves binding meta: _hmpro_mega_menu_id (nav_menu_item post meta)
-Frontend injection via walker_nav_menu_start_el
-Adds li classes: hmpro-li-has-mega + hmpro-mega-id-{id}
-assets/js/mega-menu.js
-Interaction mode can be set via customizer:
-theme_mod: hmpro_mega_menu_interaction (hover|click)
-body_class adds hmpro-mega-click when click mode enabled
-5) Presets + CSS engine
-inc/engine/presets.php
-Options:
-hmpro_presets
-hmpro_active_preset
-inc/engine/css-engine.php
-Prints CSS variables (accent, contrast, etc.)
-inc/engine/typography.php
-Typography utilities (variable application)
-6) Embedded tools (inside theme)
-inc/tools/tools-loader.php
-Embeds modules:
-category-importer
-slug-menu-builder
-product-importer
-hm-menu-controller
-hm-basic-ceviri-inline
-Moves HM Basic Translate page under HM Pro Theme menu.
-7) WooCommerce tweaks
-inc/woocommerce/gallery-tweaks.php
-inc/woocommerce/checkout-tweaks.php
-Template behavior
-Header (header.php)
-If builder layout exists → renders builder regions + adds two extra UI elements:
-Desktop persistent account CTA (absolute positioned)
-Mobile hamburger toggle + right-side drawer
-If builder layout missing → legacy header fallback (hm_primary menu location).
-Mobile drawer
-Markup is always present when builder header is active.
-Visibility controlled by CSS media query (max-width: 768px) and JS (assets/js/mobile-header.js).
-Critical issues / risks (actionable)
-Text domain inconsistency
-style.css declares Text Domain: hm-pro-theme
-load_theme_textdomain() is called with 'hmpro'
-Strings use both 'hmpro' and 'hm-pro-theme'
-Impact: translation and string management becomes fragmented.
-Fix: pick ONE domain (recommend: hm-pro-theme) and refactor.
-Language consistency
-Mixed Turkish/English strings across admin + frontend.
-Impact: conflicts with “English-only site/admin” preference; also makes demo packaging harder.
-Fix: normalize UI strings and defaults (placeholder, button labels, menu labels).
-Hardcoded My Account path
-header.php uses home_url('/hesabim/')
-Impact: breaks if slug differs, or on non-TR installs.
-Fix:
-if WooCommerce active: get_permalink( wc_get_page_id('myaccount') )
-else: fallback to wp_login_url() / wp_registration_url()
-Missing preset asset
-LinkedIn SVG is referenced in allowed presets but assets/icon/social/linkedin.svg is absent.
-Impact: fallback badge appears (not fatal) but inconsistent.
-Fix: add linkedin.svg or remove from preset list.
-Duplicate conditional branch in builder-storage sanitization
-builder-storage.php contains duplicated menu_id/depth/width/height handling.
-Impact: not a security issue; increases maintenance risk.
-Fix: clean up branches and add unit-ish tests (payload samples).
-Duplicate style enqueues
-inc/core/enqueue.php enqueues style.css; functions.php enqueues base/header/footer/mega-menu/woo styles.
-Impact: not fatal; but can cause override confusion and extra requests.
-Fix: either merge style.css into base.css or keep style.css minimal and document CSS layering.
-Recommended “next commit” plan (surgical, low risk)
-Normalize text domain + strings
-Set load_theme_textdomain('hm-pro-theme')
-Replace __('...', 'hmpro') usages
-Convert Turkish strings to English (or wrap with translations consistently)
-Fix My Account link resolution
-Create helper:
-hmpro_get_account_url()
-Use WooCommerce lookup if available, fallback otherwise.
-Add linkedin.svg or remove LinkedIn from presets
-Refactor builder-storage sanitizer
-Remove duplicate branches
-Keep allowlists identical
-Add sample payload tests (even as PHP arrays in a dev-only file or wp-cli command)
-Export/import readiness notes
-If you want a demo installer to fully reproduce a site, the following must be packaged and remapped:
-Options:
-hmpro_header_layout
-hmpro_footer_layout
-hmpro_presets
-hmpro_active_preset
-CPT + meta:
-hm_mega_menu posts + _hmpro_mega_layout + _hmpro_mega_settings
-Nav menu bindings:
-nav_menu_item meta: _hmpro_mega_menu_id
-IMPORTANT: mega menu IDs change after import; must remap old->new.
-Best remap key: mega menu slug (post_name) or a stable custom GUID meta.
+
+1. Core
+   inc/core/setup.php
+   Theme supports: custom-logo, title-tag, post-thumbnails, responsive-embeds, woocommerce, wc gallery features
+   Registers nav menu locations:
+   primary, topbar, footer, mobile\_menu
+   legacy: hm\_primary, hm\_footer
+   Builder region helpers:
+   hmpro\_get\_builder\_regions()
+   hmpro\_has\_builder\_layout(), hmpro\_header\_builder\_has\_layout()
+   inc/core/enqueue.php
+   Enqueues style.css via get\_stylesheet\_uri() (hmpro-style)
+   NOTE: functions.php also enqueues base/header/footer/mega-menu/woo styles.
+2. Admin UI
+   inc/admin/admin-menu.php
+   Adds parent: hmpro-theme
+   Subpages: Presets, Header Builder, Footer Builder, Mega Menu Builder, Importers, etc.
+   assets/admin-builder.js + assets/admin-builder.css
+   Builder admin UI (drag/drop, component settings, save)
+   inc/admin/title-visibility.php
+   Registers post meta: \_hmpro\_hide\_title (REST enabled)
+   Classic editor metabox + Gutenberg document panel toggle
+   Adds body\_class: hmpro-hide-title
+   CSS fallback in assets/css/base.css
+3. Builder engine (Header/Footer)
+   inc/engine/builder-storage.php
+   Options:
+   hmpro\_header\_layout
+   hmpro\_footer\_layout
+   Schema:
+   schema\_version: 1
+   regions: { region\_key => \[rows] }
+   Sanitization:
+   Allowlisted component types + settings keys
+   URL normalization for social URLs
+   SVG sanitization via wp\_kses for custom icons
+   inc/engine/builder-renderer.php
+   Hooks used by templates:
+   do\_action('hmpro/header/render\_region', region\_key)
+   do\_action('hmpro/footer/render\_region', region\_key)
+   Component renderers:
+   hmpro\_builder\_comp\_logo/menu/search/cart/button/html/spacer/footer\_menu/footer\_info/social/social\_icon\_button
+   HTML block uses do\_shortcode() + custom kses allowlist (scripts blocked)
+   Social icon preset loader:
+   hmpro\_load\_social\_svg\_preset() searches assets/icon/social/ then assets/icons/social/
+4. Mega Menu engine
+   inc/engine/mega-menu-library.php
+   Registers CPT: hm\_mega\_menu
+   Stores layout/meta:
+   \_hmpro\_mega\_layout
+   \_hmpro\_mega\_settings
+   inc/engine/mega-menu-menuitem-meta.php
+   Adds dropdown field to nav menu items
+   Saves binding meta: \_hmpro\_mega\_menu\_id (nav\_menu\_item post meta)
+   Frontend injection via walker\_nav\_menu\_start\_el
+   Adds li classes: hmpro-li-has-mega + hmpro-mega-id-{id}
+   assets/js/mega-menu.js
+   Interaction mode can be set via customizer:
+   theme\_mod: hmpro\_mega\_menu\_interaction (hover|click)
+   body\_class adds hmpro-mega-click when click mode enabled
+5. Presets + CSS engine
+   inc/engine/presets.php
+   Options:
+   hmpro\_presets
+   hmpro\_active\_preset
+   inc/engine/css-engine.php
+   Prints CSS variables (accent, contrast, etc.)
+   inc/engine/typography.php
+   Typography utilities (variable application)
+6. Embedded tools (inside theme)
+   inc/tools/tools-loader.php
+   Embeds modules:
+   category-importer
+   slug-menu-builder
+   product-importer
+   hm-menu-controller
+   hm-basic-ceviri-inline
+   Moves HM Basic Translate page under HM Pro Theme menu.
+7. WooCommerce tweaks
+   inc/woocommerce/gallery-tweaks.php
+   inc/woocommerce/checkout-tweaks.php
+   Template behavior
+   Header (header.php)
+   If builder layout exists → renders builder regions + adds two extra UI elements:
+   Desktop persistent account CTA (absolute positioned)
+   Mobile hamburger toggle + right-side drawer
+   If builder layout missing → legacy header fallback (hm\_primary menu location).
+   Mobile drawer
+   Markup is always present when builder header is active.
+   Visibility controlled by CSS media query (max-width: 768px) and JS (assets/js/mobile-header.js).
+   Critical issues / risks (actionable)
+   Text domain inconsistency
+   style.css declares Text Domain: hm-pro-theme
+   load\_theme\_textdomain() is called with 'hmpro'
+   Strings use both 'hmpro' and 'hm-pro-theme'
+   Impact: translation and string management becomes fragmented.
+   Fix: pick ONE domain (recommend: hm-pro-theme) and refactor.
+   Language consistency
+   Mixed Turkish/English strings across admin + frontend.
+   Impact: conflicts with “English-only site/admin” preference; also makes demo packaging harder.
+   Fix: normalize UI strings and defaults (placeholder, button labels, menu labels).
+   Hardcoded My Account path
+   header.php uses home\_url('/hesabim/')
+   Impact: breaks if slug differs, or on non-TR installs.
+   Fix:
+   if WooCommerce active: get\_permalink( wc\_get\_page\_id('myaccount') )
+   else: fallback to wp\_login\_url() / wp\_registration\_url()
+   Missing preset asset
+   LinkedIn SVG is referenced in allowed presets but assets/icon/social/linkedin.svg is absent.
+   Impact: fallback badge appears (not fatal) but inconsistent.
+   Fix: add linkedin.svg or remove from preset list.
+   Duplicate conditional branch in builder-storage sanitization
+   builder-storage.php contains duplicated menu\_id/depth/width/height handling.
+   Impact: not a security issue; increases maintenance risk.
+   Fix: clean up branches and add unit-ish tests (payload samples).
+   Duplicate style enqueues
+   inc/core/enqueue.php enqueues style.css; functions.php enqueues base/header/footer/mega-menu/woo styles.
+   Impact: not fatal; but can cause override confusion and extra requests.
+   Fix: either merge style.css into base.css or keep style.css minimal and document CSS layering.
+   Recommended “next commit” plan (surgical, low risk)
+   Normalize text domain + strings
+   Set load\_theme\_textdomain('hm-pro-theme')
+   Replace \_\_('...', 'hmpro') usages
+   Convert Turkish strings to English (or wrap with translations consistently)
+   Fix My Account link resolution
+   Create helper:
+   hmpro\_get\_account\_url()
+   Use WooCommerce lookup if available, fallback otherwise.
+   Add linkedin.svg or remove LinkedIn from presets
+   Refactor builder-storage sanitizer
+   Remove duplicate branches
+   Keep allowlists identical
+   Add sample payload tests (even as PHP arrays in a dev-only file or wp-cli command)
+   Export/import readiness notes
+   If you want a demo installer to fully reproduce a site, the following must be packaged and remapped:
+   Options:
+   hmpro\_header\_layout
+   hmpro\_footer\_layout
+   hmpro\_presets
+   hmpro\_active\_preset
+   CPT + meta:
+   hm\_mega\_menu posts + \_hmpro\_mega\_layout + \_hmpro\_mega\_settings
+   Nav menu bindings:
+   nav\_menu\_item meta: \_hmpro\_mega\_menu\_id
+   IMPORTANT: mega menu IDs change after import; must remap old->new.
+   Best remap key: mega menu slug (post\_name) or a stable custom GUID meta.

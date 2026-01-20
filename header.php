@@ -62,17 +62,46 @@ function hmpro_icon_close() {
 
 	<?php do_action( 'hmpro/header/builder/before' ); ?>
 
-	<header id="site-header" class="hmpro-header-builder">
+	<?php
+	$hmpro_hb_enabled = function_exists( 'hmpro_header_bg_banner_is_enabled' ) && hmpro_header_bg_banner_is_enabled();
+	$hmpro_hb_hide_m = $hmpro_hb_enabled && (int) get_theme_mod( 'hmpro_hb_hide_mobile', 0 ) === 1;
+	$hmpro_hb_classes = 'hmpro-header-builder';
+	if ( $hmpro_hb_enabled ) {
+		$hmpro_hb_classes .= ' hmpro-hb-enabled';
+	}
+	if ( $hmpro_hb_hide_m ) {
+		$hmpro_hb_classes .= ' hmpro-hb-hide-mobile';
+	}
+	?>
+	<?php
+	$hmpro_hb_header_style = '';
+	if ( $hmpro_hb_enabled ) {
+		$gap = absint( get_theme_mod( 'hmpro_hb_after_gap', 0 ) );
+		if ( $gap > 200 ) {
+			$gap = 200;
+		}
+		$hmpro_hb_header_style = ' style="--hmpro-hb-after-gap:' . esc_attr( (string) $gap ) . 'px;"';
+	}
+	?>
+	<header id="site-header" class="<?php echo esc_attr( $hmpro_hb_classes ); ?>"<?php echo $hmpro_hb_header_style; ?>>
+		<?php
+		// Header Background Banner (Top + Main) lives inside the header wrapper.
+		if ( $hmpro_hb_enabled && function_exists( 'hmpro_render_header_bg_banner' ) ) {
+			hmpro_render_header_bg_banner();
+		}
+		?>
 		<?php hmpro_render_builder_region( 'header_top', 'header' ); ?>
 		<?php hmpro_render_builder_region( 'header_main', 'header' ); ?>
 		<?php hmpro_render_builder_region( 'header_bottom', 'header' ); ?>
 
-		<!-- Desktop persistent account CTA (Woo /hesabim) -->
-		<div class="hmpro-header-account-cta">
-			<a class="hmpro-account-link" href="<?php echo esc_url( $hmpro_account_url ); ?>">
-				<?php echo esc_html__( 'Giriş Yap / Kayıt Ol', 'hm-pro-theme' ); ?>
-			</a>
-		</div>
+		<?php
+		/**
+		 * NOTE:
+		 * The account CTA is intentionally NOT injected as a fixed desktop element.
+		 * Use Header Builder components (HTML/Button) to place the CTA inside header_top/header_main.
+		 * Mobile CTA remains inside the drawer for a consistent UX.
+		 */
+		?>
 
 		<!-- Mobile hamburger toggle -->
 		<button
