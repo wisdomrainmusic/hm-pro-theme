@@ -20,6 +20,8 @@ $limits = array(
 	'four_mosaic_left'   => 4,
 	'four_mosaic_right'  => 4,
 	'six_grid'           => 6,
+	'six_mosaic_left'    => 6,
+	'six_mosaic_right'   => 6,
 );
 $max_tiles = isset( $limits[ $preset ] ) ? (int) $limits[ $preset ] : 6;
 
@@ -38,6 +40,8 @@ $areas_map = array(
 	'four_mosaic_left'   => array( 'a', 'b', 'c', 'd' ),
 	'four_mosaic_right'  => array( 'a', 'b', 'c', 'd' ),
 	'six_grid'           => array( 'a', 'b', 'c', 'd', 'e', 'f' ),
+	'six_mosaic_left'    => array( 'a', 'b', 'c', 'd', 'e', 'f' ),
+	'six_mosaic_right'   => array( 'a', 'b', 'c', 'd', 'e', 'f' ),
 );
 $areas = isset( $areas_map[ $preset ] ) ? $areas_map[ $preset ] : array( 'a','b','c','d','e','f' );
 
