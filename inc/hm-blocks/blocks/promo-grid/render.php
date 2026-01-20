@@ -124,6 +124,16 @@ foreach ( $tiles as $tile ) {
 	$offset_y  = isset( $tile['offsetY'] ) ? (int) $tile['offsetY'] : 0;
 	$maxw      = isset( $tile['contentMaxWidth'] ) ? (int) $tile['contentMaxWidth'] : 520;
 	$pad       = isset( $tile['contentPadding'] ) ? (int) $tile['contentPadding'] : 18;
+	// Locale-safe floats: "1,25" -> "1.25"
+	$scale_d     = isset( $tile['contentScale'] ) ? (float) str_replace( ',', '.', (string) $tile['contentScale'] ) : 1.0;
+	$scale_m_raw = isset( $tile['contentScaleMobile'] ) ? (float) str_replace( ',', '.', (string) $tile['contentScaleMobile'] ) : 0.0;
+	$scale_m     = ( $scale_m_raw > 0 ) ? $scale_m_raw : $scale_d;
+	$mob_off_y   = isset( $tile['mobileOffsetY'] ) ? (int) $tile['mobileOffsetY'] : 0;
+	$title_color       = isset( $tile['titleColor'] ) ? sanitize_text_field( $tile['titleColor'] ) : '';
+	$subtitle_color    = isset( $tile['subtitleColor'] ) ? sanitize_text_field( $tile['subtitleColor'] ) : '';
+	$button_bg_color   = isset( $tile['buttonBgColor'] ) ? sanitize_text_field( $tile['buttonBgColor'] ) : '';
+	$button_text_color = isset( $tile['buttonTextColor'] ) ? sanitize_text_field( $tile['buttonTextColor'] ) : '';
+	$title_font_size   = isset( $tile['titleFontSize'] ) ? (int) $tile['titleFontSize'] : 0;
 
 	$tile_tag = ! empty( $link_url ) ? 'a' : 'div';
 
@@ -138,7 +148,25 @@ foreach ( $tiles as $tile ) {
 		'--hm-pg-offset-y:' . $offset_y . 'px',
 		'--hm-pg-content-maxw:' . $maxw . 'px',
 		'--hm-pg-content-pad:' . $pad . 'px',
+		'--hm-pg-content-scale:' . $scale_d,
+		'--hm-pg-content-scale-m:' . $scale_m,
+		'--hm-pg-mobile-offset-y:' . $mob_off_y . 'px',
 	);
+	if ( $title_color ) {
+		$tile_style[] = '--hm-pg-title-color:' . $title_color;
+	}
+	if ( $subtitle_color ) {
+		$tile_style[] = '--hm-pg-subtitle-color:' . $subtitle_color;
+	}
+	if ( $button_bg_color ) {
+		$tile_style[] = '--hm-pg-btn-bg:' . $button_bg_color;
+	}
+	if ( $button_text_color ) {
+		$tile_style[] = '--hm-pg-btn-color:' . $button_text_color;
+	}
+	if ( $title_font_size > 0 ) {
+		$tile_style[] = '--hm-pg-title-size:' . $title_font_size . 'px';
+	}
 
 	$rel_parts = array();
 	if ( $new_tab ) {

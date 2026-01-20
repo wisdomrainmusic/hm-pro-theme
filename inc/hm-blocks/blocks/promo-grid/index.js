@@ -17,7 +17,23 @@
 		Button,
 		ButtonGroup,
 		Notice,
+		BaseControl,
+		ColorPalette,
 	} = wp.components;
+
+	// Normalize decimals from locale inputs: "1,25" -> 1.25
+	function normalizeFloat( val, fallback ) {
+		if ( val === null || val === undefined ) return fallback;
+		if ( typeof val === 'number' && Number.isFinite( val ) ) return val;
+		const s = String( val ).trim().replace( ',', '.' );
+		const n = parseFloat( s );
+		return Number.isFinite( n ) ? n : fallback;
+	}
+
+	function normalizeInt( val, fallback ) {
+		const n = parseInt( String( val ).replace( ',', '.' ), 10 );
+		return Number.isFinite( n ) ? n : fallback;
+	}
 
 	const PRESETS = [
 		{ label: 'Two Equal', value: 'two_equal' },
@@ -86,6 +102,14 @@
 			linkUrl: '',
 			newTab: false,
 			nofollow: false,
+			titleColor: '',
+			subtitleColor: '',
+			buttonBgColor: '',
+			buttonTextColor: '',
+			titleFontSize: 0,
+			contentScale: 1,
+			contentScaleMobile: 0,
+			mobileOffsetY: 0,
 			overlay: true,
 			position: 'bottom-left',
 			offsetX: 0,
@@ -356,6 +380,85 @@
 										value: t.buttonText,
 										onChange: function ( v ) { updateTile( idx, { buttonText: v } ); }
 									} ),
+									wp.element.createElement(
+										PanelBody,
+										{ title: __( 'Content Group', 'hm-pro-theme' ), initialOpen: false },
+										wp.element.createElement( TextControl, {
+											label: __( 'Content group scale (desktop)', 'hm-pro-theme' ),
+											help: __( 'Title + subtitle + button scale together. Example: 1,25', 'hm-pro-theme' ),
+											value: ( t.contentScale !== undefined && t.contentScale !== null ) ? String( t.contentScale ) : '1',
+											onChange: function ( val ) {
+												const n = normalizeFloat( val, 1 );
+												updateTile( idx, { contentScale: n } );
+											}
+										} ),
+										wp.element.createElement( TextControl, {
+											label: __( 'Mobile content group scale (optional)', 'hm-pro-theme' ),
+											help: __( 'Only on mobile/tablet. If 0, desktop scale is used.', 'hm-pro-theme' ),
+											value: ( t.contentScaleMobile !== undefined && t.contentScaleMobile !== null ) ? String( t.contentScaleMobile ) : '0',
+											onChange: function ( val ) {
+												const n = normalizeFloat( val, 0 );
+												updateTile( idx, { contentScaleMobile: n } );
+											}
+										} ),
+										wp.element.createElement( TextControl, {
+											label: __( 'Mobile/Tablet content top offset (px)', 'hm-pro-theme' ),
+											help: __( 'Mobile/tablet only. Move content up (-) or down (+).', 'hm-pro-theme' ),
+											value: ( t.mobileOffsetY !== undefined && t.mobileOffsetY !== null ) ? String( t.mobileOffsetY ) : '0',
+											onChange: function ( val ) {
+												const n = normalizeInt( val, 0 );
+												updateTile( idx, { mobileOffsetY: n } );
+											}
+										} )
+									),
+									wp.element.createElement(
+										PanelBody,
+										{
+											title: __( 'Typography & Colors', 'hm-pro-theme' ),
+											initialOpen: false
+										},
+										wp.element.createElement(
+											BaseControl,
+											{ label: __( 'Title color', 'hm-pro-theme' ) },
+											wp.element.createElement( ColorPalette, {
+												value: t.titleColor || undefined,
+												onChange: function ( val ) { updateTile( idx, { titleColor: val || '' } ); }
+											} )
+										),
+										wp.element.createElement(
+											BaseControl,
+											{ label: __( 'Subtitle color', 'hm-pro-theme' ) },
+											wp.element.createElement( ColorPalette, {
+												value: t.subtitleColor || undefined,
+												onChange: function ( val ) { updateTile( idx, { subtitleColor: val || '' } ); }
+											} )
+										),
+										wp.element.createElement(
+											BaseControl,
+											{ label: __( 'Button background', 'hm-pro-theme' ) },
+											wp.element.createElement( ColorPalette, {
+												value: t.buttonBgColor || undefined,
+												onChange: function ( val ) { updateTile( idx, { buttonBgColor: val || '' } ); }
+											} )
+										),
+										wp.element.createElement(
+											BaseControl,
+											{ label: __( 'Button text color', 'hm-pro-theme' ) },
+											wp.element.createElement( ColorPalette, {
+												value: t.buttonTextColor || undefined,
+												onChange: function ( val ) { updateTile( idx, { buttonTextColor: val || '' } ); }
+											} )
+										),
+										wp.element.createElement( RangeControl, {
+											label: __( 'Title font size (px)', 'hm-pro-theme' ),
+											value: Number( t.titleFontSize || 0 ),
+											min: 0,
+											max: 96,
+											step: 1,
+											allowReset: true,
+											onChange: function ( val ) { updateTile( idx, { titleFontSize: Number( val || 0 ) } ); }
+										} )
+									),
 									wp.element.createElement( TextControl, {
 										label: __( 'Link URL', 'hm-pro-theme' ),
 										value: t.linkUrl,
@@ -459,6 +562,21 @@
 											'--hm-pg-offset-y': ( t.offsetY || 0 ) + 'px',
 											'--hm-pg-content-maxw': ( t.contentMaxWidth || 520 ) + 'px',
 											'--hm-pg-content-pad': ( t.contentPadding || 18 ) + 'px',
+											'--hm-pg-content-scale': String( normalizeFloat( t.contentScale, 1 ) ),
+											// If mobile scale is 0, fall back to desktop scale (Header Banner rule)
+											'--hm-pg-content-scale-m': String(
+												( normalizeFloat( t.contentScaleMobile, 0 ) > 0 )
+													? normalizeFloat( t.contentScaleMobile, 0 )
+													: normalizeFloat( t.contentScale, 1 )
+											),
+											'--hm-pg-mobile-offset-y': ( normalizeInt( t.mobileOffsetY, 0 ) ) + 'px',
+											'--hm-pg-title-color': t.titleColor || '',
+											'--hm-pg-subtitle-color': t.subtitleColor || '',
+											'--hm-pg-btn-bg': t.buttonBgColor || '',
+											'--hm-pg-btn-color': t.buttonTextColor || '',
+											'--hm-pg-title-size': ( t.titleFontSize && Number( t.titleFontSize ) > 0 )
+												? Number( t.titleFontSize ) + 'px'
+												: '',
 										};
 
 										return wp.element.createElement(

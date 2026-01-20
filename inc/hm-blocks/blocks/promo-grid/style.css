@@ -10,7 +10,15 @@
   --hm-pg-offset-y: 0px;
   --hm-pg-content-maxw: 520px;
   --hm-pg-content-pad: 18px;
-  color: var(--hm-color-text);
+
+  /* "Header Banner" style guarantees:
+     If theme vars are missing (editor contexts), we still stay readable. */
+  --hm-pg-text-color: var(--hm-color-bg, #ffffff);
+  --hm-pg-overlay-color: var(--hm-color-text, #000000);
+  --hm-pg-btn-bg: var(--hm-color-bg, #ffffff);
+  --hm-pg-btn-color: var(--hm-color-text, #111111);
+
+  color: var(--hm-color-text, #111111);
 }
 
 .hmpro-promo-grid.hmpro-pg--fullwidth {
@@ -42,8 +50,8 @@
   height: auto;
   min-height: var(--hm-pg-tile-minh, 340px);
   color: inherit;
-  border-radius: var(--hm-radius);
-  box-shadow: var(--hm-shadow);
+  border-radius: var(--hm-radius, 16px);
+  box-shadow: var(--hm-shadow, 0 10px 30px rgba(0,0,0,.10));
   text-decoration: none;
 }
 
@@ -77,7 +85,7 @@
      not the overlay container, to avoid overly aggressive edge offsets. */
   padding: 18px;
   box-sizing: border-box;
-  color: var(--hm-color-bg);
+  color: var(--hm-pg-text-color, #ffffff);
   pointer-events: none;
 }
 
@@ -85,7 +93,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--hm-color-text);
+  background: var(--hm-pg-overlay-color, #000000);
   opacity: var(--hm-pg-overlay-opacity, 0.35);
   transition: opacity 0.35s ease;
 }
@@ -102,8 +110,20 @@
   gap: 8px;
   max-width: var(--hm-pg-content-maxw, 520px);
   padding: var(--hm-pg-content-pad, 18px);
-  transform: translate(var(--hm-pg-offset-x, 0px), var(--hm-pg-offset-y, 0px));
+  transform: translate(var(--hm-pg-offset-x, 0px), var(--hm-pg-offset-y, 0px)) scale(var(--hm-pg-content-scale, 1));
   pointer-events: auto;
+}
+
+/* Mobile/Tablet: use mobile scale + optional Y offset */
+@media (max-width: 1024px) {
+  .hmpro-pg__content {
+    transform:
+      translate(
+        var(--hm-pg-offset-x, 0px),
+        calc(var(--hm-pg-offset-y, 0px) + var(--hm-pg-mobile-offset-y, 0px))
+      )
+      scale(var(--hm-pg-content-scale-m, var(--hm-pg-content-scale, 1)));
+  }
 }
 
 .hmpro-pg__tile-position-top-left .hmpro-pg__overlay { justify-content: flex-start; align-items: flex-start; }
@@ -127,10 +147,11 @@
 .hmpro-pg__content--bottom-right { justify-content: flex-end; align-items: flex-end; text-align: right; }
 
 .hmpro-pg__title {
-  font-size: 22px;
+  font-size: var(--hm-pg-title-size, 22px);
   font-weight: 700;
   line-height: 1.3;
   margin: 0;
+  color: var(--hm-pg-title-color, var(--hm-pg-text-color, #ffffff));
 }
 
 .hmpro-pg__subtitle {
@@ -138,6 +159,7 @@
   line-height: 1.5;
   font-size: 15px;
   opacity: 0.95;
+  color: var(--hm-pg-subtitle-color, var(--hm-pg-text-color, #ffffff));
 }
 
 .hmpro-pg__button {
@@ -148,9 +170,9 @@
   font-weight: 600;
   font-size: 14px;
   line-height: 1.2;
-  background: var(--hm-color-bg);
-  color: var(--hm-color-text);
-  border-radius: calc(var(--hm-radius) * 0.5);
+  background: var(--hm-pg-btn-bg, #ffffff);
+  color: var(--hm-pg-btn-color, #111111);
+  border-radius: calc(var(--hm-radius, 16px) * 0.5);
   text-decoration: none;
   transition: filter 0.25s ease;
 }
