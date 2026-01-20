@@ -94,7 +94,7 @@ body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
 	margin: 0 auto;
 }
 .hmpro-th-hero__content{
-	font-family: var(--hmpro-hero-font, inherit);
+	font-family: var(--hmpro-hero-text-font, var(--hm-body-font));
 	transform: translate3d(var(--hmpro-hero-group-x, 0px), var(--hmpro-hero-group-y, 0px), 0) scale(var(--hmpro-hero-group-scale, 1));
 	transform-origin: left top;
 	will-change: transform;
@@ -102,10 +102,11 @@ body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
 .hmpro-th-hero__title,
 .hmpro-th-hero__text{
 	/* Override global heading/body typography rules (base.css) */
-	font-family: var(--hmpro-hero-font, inherit);
+	font-family: var(--hmpro-hero-text-font, var(--hm-body-font));
 	color: var(--hmpro-hero-text-color, #fff);
 }
 .hmpro-th-hero__title{
+	font-family: var(--hmpro-hero-title-font, var(--hm-heading-font));
 	color: var(--hmpro-hero-title-color, #fff);
 	font-size: var(--hmpro-hero-title-size, 44px);
 	line-height: 1.1;

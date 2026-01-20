@@ -22,6 +22,11 @@ require_once HMPRO_PATH . '/inc/engine/presets.php';
 require_once HMPRO_PATH . '/inc/engine/css-engine.php';
 require_once HMPRO_PATH . '/inc/engine/import-export.php';
 require_once HMPRO_PATH . '/inc/engine/typography.php';
+
+// Integrations (optional).
+// NOTE: We intentionally do NOT write into Elementor Kit meta/settings.
+// Doing so is version-sensitive and can break Elementor CSS generation.
+// Instead, we bridge typography via CSS variables + safe selectors.
 require_once HMPRO_PATH . '/inc/engine/builder-storage.php';
 require_once HMPRO_PATH . '/inc/engine/builder-renderer.php';
 require_once HMPRO_PATH . '/inc/engine/mega-menu-library.php';

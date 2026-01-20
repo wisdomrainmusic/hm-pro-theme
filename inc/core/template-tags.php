@@ -8,9 +8,13 @@ function hmpro_render_transparent_header_hero() {
 		return;
 	}
 
-	$image_id  = absint( get_theme_mod( 'hmpro_th_hero_image', 0 ) );
+	$hero_image_raw = get_theme_mod( 'hmpro_th_hero_image', 0 );
+	$image_id        = is_numeric( $hero_image_raw ) ? absint( $hero_image_raw ) : 0;
+	$image_url_raw   = ( ! $image_id && is_string( $hero_image_raw ) ) ? trim( $hero_image_raw ) : '';
 	$use_video = (int) get_theme_mod( 'hmpro_th_hero_use_video', 0 ) === 1;
-	$video_id  = absint( get_theme_mod( 'hmpro_th_hero_video', 0 ) );
+	$hero_video_raw = get_theme_mod( 'hmpro_th_hero_video', 0 );
+	$video_id        = is_numeric( $hero_video_raw ) ? absint( $hero_video_raw ) : 0;
+	$video_url_raw   = ( ! $video_id && is_string( $hero_video_raw ) ) ? trim( $hero_video_raw ) : '';
 
 	$height  = absint( get_theme_mod( 'hmpro_th_hero_height', 520 ) );
 	$overlay = absint( get_theme_mod( 'hmpro_th_hero_overlay', 30 ) );
@@ -43,11 +47,27 @@ function hmpro_render_transparent_header_hero() {
 	$offset_y = (int) get_theme_mod( 'hmpro_th_hero_group_y', 0 );
 
 	$img_url = $image_id ? wp_get_attachment_image_url( $image_id, 'full' ) : '';
+	if ( ! $img_url && $image_url_raw !== '' ) {
+		$img_url = esc_url_raw( $image_url_raw );
+	}
 	$vid_url = ( $use_video && $video_id ) ? wp_get_attachment_url( $video_id ) : '';
+	if ( ! $vid_url && $use_video && $video_url_raw !== '' ) {
+		$vid_url = esc_url_raw( $video_url_raw );
+	}
 
 	// Require at least one media source (video or image)
 	if ( ! $vid_url && ! $img_url ) {
 		return;
+	}
+
+	// Hero font logic:
+	// - Default: inherit from active preset (heading for title, body for text)
+	// - Override: if user picks a specific font-family, apply to both title and text
+	$hero_title_font = 'var(--hm-heading-font)';
+	$hero_text_font  = 'var(--hm-body-font)';
+	if ( $font_family !== '' && $font_family !== 'inherit' ) {
+		$hero_title_font = $font_family;
+		$hero_text_font  = $font_family;
 	}
 
 	$style  = '--hmpro-hero-h:' . $height . 'px;';
@@ -56,7 +76,8 @@ function hmpro_render_transparent_header_hero() {
 	$style .= ' --hmpro-hero-text-color:' . $text_color . ';';
 	$style .= ' --hmpro-hero-btn-bg:' . $btn_bg . ';';
 	$style .= ' --hmpro-hero-btn-color:' . $btn_color . ';';
-	$style .= ' --hmpro-hero-font:' . $font_family . ';';
+	$style .= ' --hmpro-hero-title-font:' . $hero_title_font . ';';
+	$style .= ' --hmpro-hero-text-font:' . $hero_text_font . ';';
 	$style .= ' --hmpro-hero-title-size:' . $title_size . 'px;';
 	$style .= ' --hmpro-hero-text-size:' . $text_size . 'px;';
 	$style .= ' --hmpro-hero-group-scale:' . $scale . ';';

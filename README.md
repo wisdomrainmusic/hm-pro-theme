@@ -1,76 +1,70 @@
+
+Bu checkout’ta mutlaka yer alması gerekenler (özet maddeler):
+
+
+
+Elementor Active Kit / page\_settings’e doğrudan yazımın yasaklandığı
+
+
+
+Typography presetlerin CSS variable + late-override bridge ile çözüldüğü
+
+
+
+Hero Banner’ın:
+
+
+
+preset fontlarını varsayılan olarak aldığı
+
+
+
+Customizer’dan bağımsız override edebildiği
+
+
+
+Customizer Hero X/Y offset alanlarının:
+
+
+
+sanitize edildiği
+
+
+
+TR sayı formatı (virgül) kaynaklı publish crash’inin çözüldüğü
+
+
+
+Final stabil sürüm referansı:
+
+
+
+Base: fixed7
+
+Patch: fixed9 (Hero X/Y sanitize only)
+
+
+
+
+
+İstersen ben sana README’ye birebir yapıştırmalık, kısa ve temiz bir “checkpoint block” da yazabilirim; ama şu haliyle bile yazılması %100 doğru karar.
+
+
+
+Bu kayıt, ileride:
+
+
+
+“Niye Elementor’a dokunmuyoruz?”
+
+
+
+“Niye hero X/Y böyle sanitize?”
+
+
+
+“Niye preset fontları CSS’ten geliyor?”
 ✅ CHECKPOINT – Header \& Hero Banner Refactor (Jan 2026)
-
-Hero Typography \& Preset Interaction – Known Limitation
-
-
-
-Hero Banner tipografi ayarları (font-family, font-size) Customizer üzerinden hero alanına özel uygulanır.
-
-
-
-Tema Typography Preset sistemi (inc/engine/typography.php) global selector’lar (h1, h2, p) üzerinden çalıştığı için:
-
-
-
-Hero başlık ve açıklama, aktif preset tarafından override edilebilir.
-
-
-
-Hero içindeki buton presetlerden bağımsız çalışır (beklenen davranış).
-
-
-
-Bu durum bilinçli olarak bu checkpoint’te çözülmemiştir.
-
-
-
-Bir sonraki fazda ele alınacak seçenekler:
-
-
-
-Hero typography için preset-aware bir override katmanı
-
-
-
-Ya da hero’nun preset sisteminden tamamen izole edilmesi (scope-based typography)
-
-
-
-Status:
-
-Known / Accepted limitation – does not affect stability.
-
-
-
-İstersen bir de şu tek satırlık netleştirme eklenebilir
-
-
-
-Why transparent header was not replicated exactly like Astra
-
-
-
-Astra’nın transparent header sistemi page builder markup’ına ve container hierarchy’sine bağımlıdır.
-
-
-
-HM Pro Theme’de header ve hero bilinçli olarak ayrı katmanlar olarak tasarlanmıştır.
-
-
-
-Bu sayede:
-
-
-
-Elementor zorunluluğu yok
-
-
-
-Demo davranışları öngörülebilir
-
-
-
-Header her zaman stabil kalır
 Summary
 
 This checkpoint finalizes a major refactor around the header, transparent header logic, and hero banner behavior.

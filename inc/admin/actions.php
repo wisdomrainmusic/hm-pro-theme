@@ -184,21 +184,25 @@ function hmpro_handle_admin_actions() {
 
 	// Apply a typography combo to the currently active preset.
 	if ( 'apply_typography_preset' === $action ) {
-		if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'hmpro_apply_typography' ) ) {
-			$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
-			wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => 'nonce_failed' ], $back ) );
+		// Nonce is generated via wp_nonce_url() on the Presets page.
+		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
+		if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'hmpro_apply_typography' ) ) {
+			wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => 'nonce_failed' ], admin_url( 'admin.php?page=hmpro-presets' ) ) );
 			exit;
 		}
 
 		$key = isset( $_GET['preset_key'] ) ? sanitize_key( wp_unslash( $_GET['preset_key'] ) ) : '';
-		$all = hmpro_typography_presets();
+		$all = function_exists( 'hmpro_typography_presets' ) ? hmpro_typography_presets() : [];
 		if ( empty( $key ) || empty( $all[ $key ] ) ) {
-			$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
-			wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => 'typo_invalid' ], $back ) );
+			wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => 'typo_invalid' ], admin_url( 'admin.php?page=hmpro-presets' ) ) );
 			exit;
 		}
 
 		$active_id = hmpro_get_active_preset_id();
+		if ( ! hmpro_get_preset_by_id( $active_id ) ) {
+			wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => 'preset_not_found' ], admin_url( 'admin.php?page=hmpro-presets' ) ) );
+			exit;
+		}
 		$data      = [
 			'body_font'    => hmpro_normalize_font_token( $all[ $key ]['body_font'] ?? 'system' ),
 			'heading_font' => hmpro_normalize_font_token( $all[ $key ]['heading_font'] ?? 'system' ),
@@ -206,8 +210,10 @@ function hmpro_handle_admin_actions() {
 
 		$ok = hmpro_update_preset( $active_id, $data );
 
-		$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-presets' );
-		$back = remove_query_arg( [ 'hmpro_action', 'preset_key', '_wpnonce' ], $back );
+		// NOTE: We do not write into Elementor Kit settings here.
+		// Typography bridging is handled via CSS variables and safe selectors in the theme.
+
+		$back = admin_url( 'admin.php?page=hmpro-presets' );
 		wp_safe_redirect( add_query_arg( [ 'hmpro_notice' => ( $ok ? 'typo_applied' : 'typo_failed' ) ], $back ) );
 		exit;
 	}

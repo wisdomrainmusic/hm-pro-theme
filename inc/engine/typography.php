@@ -76,8 +76,28 @@ function hmpro_enqueue_active_preset_fonts() {
 	$body_token    = hmpro_normalize_font_token( $preset['body_font'] ?? 'system' );
 	$heading_token = hmpro_normalize_font_token( $preset['heading_font'] ?? 'system' );
 
+	// Also enqueue the Hero Banner font if user selected a specific family in Customizer.
+	$hero_token = 'system';
+	$hero_ff    = (string) get_theme_mod( 'hmpro_th_hero_font_family', 'inherit' );
+	if ( $hero_ff !== '' && $hero_ff !== 'inherit' ) {
+		$ff = strtolower( $hero_ff );
+		if ( false !== strpos( $ff, 'dancing script' ) ) {
+			$hero_token = 'dancing_script';
+		} elseif ( false !== strpos( $ff, 'playfair' ) ) {
+			$hero_token = 'playfair_display';
+		} elseif ( false !== strpos( $ff, 'open sans' ) ) {
+			$hero_token = 'open_sans';
+		} elseif ( false !== strpos( $ff, 'poppins' ) ) {
+			$hero_token = 'poppins';
+		} elseif ( false !== strpos( $ff, 'lato' ) ) {
+			$hero_token = 'lato';
+		} elseif ( false !== strpos( $ff, 'inter' ) ) {
+			$hero_token = 'inter';
+		}
+	}
+
 	$families = [];
-	foreach ( [ $body_token, $heading_token ] as $token ) {
+	foreach ( [ $body_token, $heading_token, $hero_token ] as $token ) {
 		if ( empty( $reg[ $token ] ) || empty( $reg[ $token ]['google'] ) ) {
 			continue;
 		}

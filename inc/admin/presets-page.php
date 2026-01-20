@@ -73,16 +73,15 @@ function hmpro_render_presets_page() {
 		<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 20px;">
 			<?php
 			$typos = function_exists( 'hmpro_typography_presets' ) ? hmpro_typography_presets() : [];
-			$nonce = wp_create_nonce( 'hmpro_apply_typography' );
 			foreach ( $typos as $key => $t ) :
-				$url = add_query_arg(
+				$base = add_query_arg(
 					[
 						'hmpro_action' => 'apply_typography_preset',
 						'preset_key'   => $key,
-						'_wpnonce'     => $nonce,
 					],
 					admin_url( 'admin.php?page=hmpro-presets' )
 				);
+				$url = wp_nonce_url( $base, 'hmpro_apply_typography' );
 				$label = isset( $t['label'] ) ? $t['label'] : $key;
 				$body  = isset( $t['body_font'] ) ? $t['body_font'] : 'system';
 				$head  = isset( $t['heading_font'] ) ? $t['heading_font'] : 'system';

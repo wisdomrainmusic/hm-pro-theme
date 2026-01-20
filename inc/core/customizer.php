@@ -3,6 +3,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Sanitize media control values.
+ *
+ * WP_Customize_Media_Control usually stores an attachment ID, but in some edge cases
+ * (migrations, older exports, or manual input) a URL may be passed.
+ *
+ * We accept either:
+ * - a positive integer attachment ID
+ * - a safe URL string (will be normalized + stored as URL)
+ */
+function hmpro_sanitize_media_id_or_url( $value ) {
+	if ( is_numeric( $value ) ) {
+		return absint( $value );
+	}
+
+	$value = trim( (string) $value );
+	if ( $value === '' ) {
+		return '';
+	}
+
+	// Try to map URL back to an attachment ID when possible.
+	$maybe_id = attachment_url_to_postid( $value );
+	if ( $maybe_id ) {
+		return absint( $maybe_id );
+	}
+
+	return esc_url_raw( $value );
+}
+
 add_action( 'customize_register', function ( $wp_customize ) {
 	// NOTE: UI-only settings; frontend wiring happens via body classes + CSS/JS.
 	$wp_customize->add_setting( 'hmpro_logo_max_height', [
@@ -108,7 +137,7 @@ add_action( 'customize_register', function ( $wp_customize ) {
 
 	$wp_customize->add_setting( 'hmpro_transparent_header_logo', [
 		'default'           => '',
-		'sanitize_callback' => 'absint',
+		'sanitize_callback' => 'hmpro_sanitize_media_id_or_url',
 		'transport'         => 'refresh',
 	] );
 	$wp_customize->add_control( new WP_Customize_Media_Control( $wp_customize, 'hmpro_transparent_header_logo', [
@@ -123,7 +152,7 @@ add_action( 'customize_register', function ( $wp_customize ) {
 	// ----------------------------
 	$wp_customize->add_setting( 'hmpro_th_hero_image', [
 		'default'           => '',
-		'sanitize_callback' => 'absint',
+		'sanitize_callback' => 'hmpro_sanitize_media_id_or_url',
 		'transport'         => 'refresh',
 	] );
 	$wp_customize->add_control( new WP_Customize_Media_Control( $wp_customize, 'hmpro_th_hero_image', [
@@ -147,7 +176,7 @@ add_action( 'customize_register', function ( $wp_customize ) {
 
 	$wp_customize->add_setting( 'hmpro_th_hero_video', [
 		'default'           => '',
-		'sanitize_callback' => 'absint',
+		'sanitize_callback' => 'hmpro_sanitize_media_id_or_url',
 		'transport'         => 'refresh',
 	] );
 	$wp_customize->add_control( new WP_Customize_Media_Control( $wp_customize, 'hmpro_th_hero_video', [
@@ -395,7 +424,27 @@ add_action( 'customize_register', function ( $wp_customize ) {
 
 	$wp_customize->add_setting( 'hmpro_th_hero_group_x', [
 		'default'           => 0,
-		'sanitize_callback' => 'intval',
+		'sanitize_callback' => function ( $v ) {
+			// Be strict: Customizer values may arrive as strings; also tolerate comma decimals.
+			if ( is_array( $v ) || is_object( $v ) ) {
+				return 0;
+			}
+			$v = (string) $v;
+			$v = trim( $v );
+			if ( $v === '' ) {
+				return 0;
+			}
+			// Convert Turkish decimal comma to dot and then cast.
+			$v = str_replace( ',', '.', $v );
+			$int = (int) round( (float) $v );
+			if ( $int < -600 ) {
+				$int = -600;
+			}
+			if ( $int > 600 ) {
+				$int = 600;
+			}
+			return $int;
+		},
 		// postMessage gives instant preview and avoids edge cases where refresh doesn't reflect the value.
 		'transport'         => 'postMessage',
 	] );
@@ -409,7 +458,26 @@ add_action( 'customize_register', function ( $wp_customize ) {
 
 	$wp_customize->add_setting( 'hmpro_th_hero_group_y', [
 		'default'           => 0,
-		'sanitize_callback' => 'intval',
+		'sanitize_callback' => function ( $v ) {
+			// Be strict: Customizer values may arrive as strings; also tolerate comma decimals.
+			if ( is_array( $v ) || is_object( $v ) ) {
+				return 0;
+			}
+			$v = (string) $v;
+			$v = trim( $v );
+			if ( $v === '' ) {
+				return 0;
+			}
+			$v = str_replace( ',', '.', $v );
+			$int = (int) round( (float) $v );
+			if ( $int < -600 ) {
+				$int = -600;
+			}
+			if ( $int > 600 ) {
+				$int = 600;
+			}
+			return $int;
+		},
 		// postMessage gives instant preview and avoids edge cases where refresh doesn't reflect the value.
 		'transport'         => 'postMessage',
 	] );
