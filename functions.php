@@ -35,6 +35,9 @@ require_once HMPRO_PATH . '/inc/engine/mega-menu-menuitem-meta.php';
 
 require_once HMPRO_PATH . '/inc/tools/tools-loader.php';
 
+// HM Pro Gutenberg blocks (landing-page only). Woo templates are untouched.
+require_once HMPRO_PATH . '/inc/hm-blocks/hm-blocks.php';
+
 require_once HMPRO_PATH . '/inc/admin/admin-menu.php';
 require_once HMPRO_PATH . '/inc/admin/actions.php';
 require_once HMPRO_PATH . '/inc/admin/mega-menu-ajax.php';
