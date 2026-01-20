@@ -72,7 +72,10 @@
   inset: 0;
   z-index: 1;
   display: flex;
-  padding: var(--hm-pg-content-pad, 18px);
+  /* Keep edge spacing consistent (Elementor-like).
+     The user-facing "Content padding" control is applied to the content box,
+     not the overlay container, to avoid overly aggressive edge offsets. */
+  padding: 18px;
   box-sizing: border-box;
   color: var(--hm-color-bg);
   pointer-events: none;
@@ -98,6 +101,7 @@
   flex-direction: column;
   gap: 8px;
   max-width: var(--hm-pg-content-maxw, 520px);
+  padding: var(--hm-pg-content-pad, 18px);
   transform: translate(var(--hm-pg-offset-x, 0px), var(--hm-pg-offset-y, 0px));
   pointer-events: auto;
 }
