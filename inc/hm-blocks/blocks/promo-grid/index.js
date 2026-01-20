@@ -443,6 +443,14 @@
 								? safeTiles.map( function ( tile, idx ) {
 										const t = Object.assign( createEmptyTile(), tile || {} );
 										if ( ! t.show ) return null;
+
+										// Elementor-like editor placeholders (do NOT persist to attributes).
+										const phTitle = 'Tile ' + ( idx + 1 ) + ' Title';
+										const phSubtitle = 'Add subtitle here';
+										const phBtn = 'Learn More';
+										const titleText = t.title ? t.title : phTitle;
+										const subtitleText = t.subtitle ? t.subtitle : phSubtitle;
+										const buttonText = t.buttonText ? t.buttonText : phBtn;
 										const overlayClass = [ 'hmpro-pg__overlay', ( t.overlay ? '' : 'is-disabled' ) ]
 											.filter( Boolean ).join( ' ' );
 
@@ -470,7 +478,7 @@
 														{ className: 'hmpro-pg__media' },
 														wp.element.createElement( 'img', {
 															src: t.imageUrl,
-															alt: t.title || '',
+															alt: titleText || '',
 															loading: 'lazy'
 														} )
 												  )
@@ -481,9 +489,9 @@
 												wp.element.createElement(
 													'div',
 													{ className: 'hmpro-pg__content hmpro-pg__content--' + ( t.position || 'bottom-left' ) },
-													t.title ? wp.element.createElement( 'div', { className: 'hmpro-pg__title' }, t.title ) : null,
-													t.subtitle ? wp.element.createElement( 'div', { className: 'hmpro-pg__subtitle' }, t.subtitle ) : null,
-													t.buttonText ? wp.element.createElement( 'span', { className: 'hmpro-pg__button' }, t.buttonText ) : null
+													wp.element.createElement( 'div', { className: 'hmpro-pg__title' }, titleText ),
+													wp.element.createElement( 'div', { className: 'hmpro-pg__subtitle' }, subtitleText ),
+													wp.element.createElement( 'span', { className: 'hmpro-pg__button' }, buttonText )
 												)
 											)
 										);
