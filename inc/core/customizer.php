@@ -34,6 +34,110 @@ function hmpro_sanitize_media_id_or_url( $value ) {
 
 add_action( 'customize_register', function ( $wp_customize ) {
 	// NOTE: UI-only settings; frontend wiring happens via body classes + CSS/JS.
+
+	// --------------------------------------------------
+	// Header/Top Bar + Footer color controls
+	// --------------------------------------------------
+	$hmpro_header_section = 'hmpro_header_settings';
+	if ( ! $wp_customize->get_section( $hmpro_header_section ) ) {
+		$wp_customize->add_section( $hmpro_header_section, [
+			'title'    => __( 'Header & Navigation', 'hm-pro-theme' ),
+			'priority' => 30,
+		] );
+	}
+
+	$wp_customize->add_setting( 'hmpro_topbar_bg_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_topbar_bg_color', [
+		'label'       => __( 'Top Bar Background Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies to Header Builder: Top region (header_top). Leave empty to use default styling.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_topbar_text_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_topbar_text_color', [
+		'label'       => __( 'Top Bar Text/Link Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies to text + links inside header_top. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	// Top Bar Search field colors (improves readability on dark top bars).
+	$wp_customize->add_setting( 'hmpro_topbar_search_text_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_topbar_search_text_color', [
+		'label'       => __( 'Search Input Text Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies to the search input text inside header_top. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_topbar_search_placeholder_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_topbar_search_placeholder_color', [
+		'label'       => __( 'Search Placeholder Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies to the search placeholder text inside header_top (e.g., “Ara…”). Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_footer_bg_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_footer_bg_color', [
+		'label'       => __( 'Footer Background Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies to the Footer Builder wrapper (#site-footer). Leave empty to use default styling.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_footer_text_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_footer_text_color', [
+		'label'       => __( 'Footer Text/Link Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies to text + links inside footer builder. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	// Reset button (Header Top + Footer colors)
+	if ( class_exists( 'WP_Customize_Control' ) && ! class_exists( 'HMPRO_Reset_Colors_Control' ) ) {
+		class HMPRO_Reset_Colors_Control extends WP_Customize_Control {
+			public $type = 'hmpro_reset_colors';
+			public function render_content() {
+				$nonce = wp_create_nonce( 'hmpro_reset_header_footer_colors' );
+				?>
+				<span class="customize-control-title"><?php esc_html_e( 'Reset Header/Footer Colors', 'hm-pro-theme' ); ?></span>
+				<p class="description"><?php esc_html_e( 'Clears the Top Bar + Footer color overrides and returns to theme preset defaults.', 'hm-pro-theme' ); ?></p>
+				<button type="button" class="button" id="hmpro-reset-hf-colors" data-nonce="<?php echo esc_attr( $nonce ); ?>">
+					<?php esc_html_e( 'Reset to Defaults', 'hm-pro-theme' ); ?>
+				</button>
+				<?php
+			}
+		}
+	}
+
+	$wp_customize->add_setting( 'hmpro_reset_hf_colors_dummy', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_text_field',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new HMPRO_Reset_Colors_Control( $wp_customize, 'hmpro_reset_hf_colors_dummy', [
+		'section' => $hmpro_header_section,
+	] ) );
 	$wp_customize->add_setting( 'hmpro_logo_max_height', [
 		'default'           => 56,
 		'sanitize_callback' => 'absint',
@@ -208,6 +312,41 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'section'     => 'hmpro_header_transparent',
 		'type'        => 'number',
 		'input_attrs' => [ 'min' => 50, 'max' => 1400, 'step' => 10 ],
+	] );
+
+	// Mobile behavior
+	$wp_customize->add_setting( 'hmpro_th_hero_hide_mobile', [
+		'default'           => 0,
+		'sanitize_callback' => function ( $v ) {
+			return (int) ( $v ? 1 : 0 );
+		},
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_th_hero_hide_mobile', [
+		'label'       => __( 'Mobilde Hero Banner gizle', 'hm-pro-theme' ),
+		'description' => __( 'Mobilde hero alanını kapatır (daha hızlı ve daha az kaydırma).', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'type'        => 'checkbox',
+	] );
+
+	$wp_customize->add_setting( 'hmpro_th_hero_height_mobile', [
+		'default'           => 0,
+		'sanitize_callback' => function ( $v ) {
+			$v = absint( $v );
+			// 0 means "auto" (inherit desktop height rules)
+			if ( $v > 1400 ) {
+				$v = 1400;
+			}
+			return $v;
+		},
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_th_hero_height_mobile', [
+		'label'       => __( 'Mobil Hero yüksekliği (px)', 'hm-pro-theme' ),
+		'description' => __( '0 bırakırsanız masaüstü yüksekliğini baz alır. Öneri: 260–420.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'type'        => 'number',
+		'input_attrs' => [ 'min' => 0, 'max' => 1400, 'step' => 10 ],
 	] );
 
 	$wp_customize->add_setting( 'hmpro_th_hero_overlay', [
@@ -422,6 +561,70 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'input_attrs' => [ 'min' => 0.5, 'max' => 2.0, 'step' => 0.05 ],
 	] );
 
+	// Mobile-only scale (optional). If 0, inherit desktop scale.
+	$wp_customize->add_setting( 'hmpro_th_hero_group_scale_mobile', [
+		'default'           => 0,
+		'sanitize_callback' => function ( $v ) {
+			// 0 means inherit.
+			if ( $v === '' || $v === null ) {
+				return 0;
+			}
+			$v = (float) $v;
+			if ( $v <= 0 ) {
+				return 0;
+			}
+			if ( $v < 0.5 ) {
+				$v = 0.5;
+			}
+			if ( $v > 2.0 ) {
+				$v = 2.0;
+			}
+			return $v;
+		},
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_th_hero_group_scale_mobile', [
+		'label'       => __( 'Mobil hero içerik grubu ölçek (opsiyonel)', 'hm-pro-theme' ),
+		'description' => __( 'Sadece mobilde başlık + açıklama + buton grubunu büyütür/küçültür. 0 bırakırsanız masaüstü ölçeğini baz alır.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'type'        => 'number',
+		'input_attrs' => [ 'min' => 0, 'max' => 2.0, 'step' => 0.05 ],
+	] );
+
+	// Mobile/Tablet-only top offset for the hero content group (optional).
+	// Helps keep the CTA visible when mobile height is small and the group is anchored.
+	$wp_customize->add_setting( 'hmpro_th_hero_group_top_mobile', [
+		'default'           => 0,
+		'sanitize_callback' => function ( $v ) {
+			// Allow negative values to "pull" content up.
+			if ( is_array( $v ) || is_object( $v ) ) {
+				return 0;
+			}
+			$v = (string) $v;
+			$v = trim( $v );
+			if ( $v === '' ) {
+				return 0;
+			}
+			$v = str_replace( ',', '.', $v );
+			$int = (int) round( (float) $v );
+			if ( $int < -200 ) {
+				$int = -200;
+			}
+			if ( $int > 200 ) {
+				$int = 200;
+			}
+			return $int;
+		},
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_th_hero_group_top_mobile', [
+		'label'       => __( 'Mobil/Tablet Hero içerik üst ofset (px)', 'hm-pro-theme' ),
+		'description' => __( 'Sadece mobil/tablet görünümde içerik grubunu yukarı (-) / aşağı (+) kaydırır. Buton kayboluyorsa -10 / -20 gibi küçük değerler deneyin.', 'hm-pro-theme' ),
+		'section'     => 'hmpro_header_transparent',
+		'type'        => 'number',
+		'input_attrs' => [ 'min' => -200, 'max' => 200, 'step' => 2 ],
+	] );
+
 	$wp_customize->add_setting( 'hmpro_th_hero_group_x', [
 		'default'           => 0,
 		'sanitize_callback' => function ( $v ) {
@@ -437,11 +640,11 @@ add_action( 'customize_register', function ( $wp_customize ) {
 			// Convert Turkish decimal comma to dot and then cast.
 			$v = str_replace( ',', '.', $v );
 			$int = (int) round( (float) $v );
-			if ( $int < -600 ) {
-				$int = -600;
+			if ( $int < -1200 ) {
+				$int = -1200;
 			}
-			if ( $int > 600 ) {
-				$int = 600;
+			if ( $int > 1200 ) {
+				$int = 1200;
 			}
 			return $int;
 		},
@@ -450,10 +653,10 @@ add_action( 'customize_register', function ( $wp_customize ) {
 	] );
 	$wp_customize->add_control( 'hmpro_th_hero_group_x', [
 		'label'       => __( 'Hero içerik X kaydırma (px)', 'hm-pro-theme' ),
-		'description' => __( 'Sağa (+) / sola (-) kaydırır.', 'hm-pro-theme' ),
+		'description' => __( 'Sadece masaüstünde (desktop) sağa (+) / sola (-) kaydırır. Mobil/tablet görünümde sabitlenir.', 'hm-pro-theme' ),
 		'section'     => 'hmpro_header_transparent',
 		'type'        => 'number',
-		'input_attrs' => [ 'min' => -600, 'max' => 600, 'step' => 5 ],
+		'input_attrs' => [ 'min' => -1200, 'max' => 1200, 'step' => 5 ],
 	] );
 
 	$wp_customize->add_setting( 'hmpro_th_hero_group_y', [
@@ -470,11 +673,11 @@ add_action( 'customize_register', function ( $wp_customize ) {
 			}
 			$v = str_replace( ',', '.', $v );
 			$int = (int) round( (float) $v );
-			if ( $int < -600 ) {
-				$int = -600;
+			if ( $int < -1200 ) {
+				$int = -1200;
 			}
-			if ( $int > 600 ) {
-				$int = 600;
+			if ( $int > 1200 ) {
+				$int = 1200;
 			}
 			return $int;
 		},
@@ -483,10 +686,10 @@ add_action( 'customize_register', function ( $wp_customize ) {
 	] );
 	$wp_customize->add_control( 'hmpro_th_hero_group_y', [
 		'label'       => __( 'Hero içerik Y kaydırma (px)', 'hm-pro-theme' ),
-		'description' => __( 'Aşağı (+) / yukarı (-) kaydırır.', 'hm-pro-theme' ),
+		'description' => __( 'Sadece masaüstünde (desktop) aşağı (+) / yukarı (-) kaydırır. Mobil/tablet görünümde sabitlenir.', 'hm-pro-theme' ),
 		'section'     => 'hmpro_header_transparent',
 		'type'        => 'number',
-		'input_attrs' => [ 'min' => -600, 'max' => 600, 'step' => 5 ],
+		'input_attrs' => [ 'min' => -1200, 'max' => 1200, 'step' => 5 ],
 	] );
 
 } );
@@ -497,4 +700,37 @@ add_action( 'customize_preview_init', function () {
 	$path = get_template_directory() . '/assets/js/customizer-preview.js';
 	$ver = file_exists( $path ) ? (string) filemtime( $path ) : null;
 	wp_enqueue_script( 'hmpro-customizer-preview', $src, [ 'customize-preview' ], $ver, true );
+} );
+
+// Customizer controls UI script (reset button).
+add_action( 'customize_controls_enqueue_scripts', function () {
+	$src  = get_template_directory_uri() . '/assets/js/customizer-reset.js';
+	$path = get_template_directory() . '/assets/js/customizer-reset.js';
+	$ver  = file_exists( $path ) ? (string) filemtime( $path ) : null;
+
+	wp_enqueue_script( 'hmpro-customizer-reset', $src, [ 'customize-controls', 'jquery', 'wp-util' ], $ver, true );
+	wp_localize_script( 'hmpro-customizer-reset', 'HMPROCustomizerReset', [
+		'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+		'action'  => 'hmpro_reset_header_footer_colors',
+	] );
+} );
+
+// AJAX: reset Top Bar + Footer color overrides.
+add_action( 'wp_ajax_hmpro_reset_header_footer_colors', function () {
+	$nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+	if ( ! wp_verify_nonce( $nonce, 'hmpro_reset_header_footer_colors' ) ) {
+		wp_send_json_error( [ 'message' => 'Invalid nonce' ], 403 );
+	}
+
+	remove_theme_mod( 'hmpro_topbar_bg_color' );
+	remove_theme_mod( 'hmpro_topbar_text_color' );
+	remove_theme_mod( 'hmpro_topbar_search_text_color' );
+	remove_theme_mod( 'hmpro_topbar_search_placeholder_color' );
+	remove_theme_mod( 'hmpro_footer_bg_color' );
+	remove_theme_mod( 'hmpro_footer_text_color' );
+
+	// Allow defaults to be re-seeded from the active preset.
+	delete_option( 'hmpro_builder_colors_initialized' );
+
+	wp_send_json_success( [ 'ok' => true ] );
 } );

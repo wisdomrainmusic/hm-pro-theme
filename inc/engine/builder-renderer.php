@@ -27,10 +27,52 @@ add_action(
 );
 
 add_action( 'wp_head', function () {
-	$height = absint( get_theme_mod( 'hmpro_logo_max_height', 56 ) );
+	$height        = absint( get_theme_mod( 'hmpro_logo_max_height', 56 ) );
 	$mobile_height = absint( get_theme_mod( 'hmpro_mobile_logo_max_height', 64 ) );
 	$footer_height = absint( get_theme_mod( 'hmpro_footer_logo_max_height', 96 ) );
-	echo '<style>:root{--hmpro-logo-max-height:' . $height . 'px;--hmpro-logo-max-height-mobile:' . $mobile_height . 'px;--hmpro-footer-logo-max-height:' . $footer_height . 'px;}</style>';
+
+	// Optional colors (leave empty to preserve existing styling).
+	$top_bg   = sanitize_hex_color( get_theme_mod( 'hmpro_topbar_bg_color', '' ) );
+	$top_text = sanitize_hex_color( get_theme_mod( 'hmpro_topbar_text_color', '' ) );
+	$top_search_text = sanitize_hex_color( get_theme_mod( 'hmpro_topbar_search_text_color', '' ) );
+	$top_search_ph   = sanitize_hex_color( get_theme_mod( 'hmpro_topbar_search_placeholder_color', '' ) );
+	$foot_bg  = sanitize_hex_color( get_theme_mod( 'hmpro_footer_bg_color', '' ) );
+	$foot_txt = sanitize_hex_color( get_theme_mod( 'hmpro_footer_text_color', '' ) );
+
+	$css = ':root{--hmpro-logo-max-height:' . $height . 'px;--hmpro-logo-max-height-mobile:' . $mobile_height . 'px;--hmpro-footer-logo-max-height:' . $footer_height . 'px;}';
+
+	// Header Builder: Top region (Top Bar)
+	if ( $top_bg ) {
+		$css .= '.hmpro-region-header_top{background:' . $top_bg . ';}';
+	}
+	if ( $top_text ) {
+		$css .= '.hmpro-region-header_top,.hmpro-region-header_top a,.hmpro-region-header_top .hmpro-builder-comp{color:' . $top_text . ';}';
+		$css .= '.hmpro-region-header_top svg{color:' . $top_text . ';}';
+	}
+
+	// Top Bar Search input readability (text + placeholder).
+	if ( $top_search_text ) {
+		$css .= '.hmpro-region-header_top .hmpro-search-field{color:' . $top_search_text . ';}';
+	}
+	if ( $top_search_ph ) {
+		$css .= '.hmpro-region-header_top .hmpro-search-field::placeholder{color:' . $top_search_ph . ';}';
+		$css .= '.hmpro-region-header_top .hmpro-search-field::-webkit-input-placeholder{color:' . $top_search_ph . ';}';
+		$css .= '.hmpro-region-header_top .hmpro-search-field::-moz-placeholder{color:' . $top_search_ph . ';opacity:1;}';
+		$css .= '.hmpro-region-header_top .hmpro-search-field:-ms-input-placeholder{color:' . $top_search_ph . ';}';
+		$css .= '.hmpro-region-header_top .hmpro-search-field::-ms-input-placeholder{color:' . $top_search_ph . ';}';
+	}
+
+	// Footer Builder wrapper + regions
+	if ( $foot_bg ) {
+		$css .= '#site-footer.hmpro-footer-builder{background:' . $foot_bg . ';}';
+		$css .= '#site-footer.hmpro-footer-builder .hmpro-builder-region{background:transparent;}';
+	}
+	if ( $foot_txt ) {
+		$css .= '#site-footer.hmpro-footer-builder,#site-footer.hmpro-footer-builder a,#site-footer.hmpro-footer-builder .hmpro-builder-comp{color:' . $foot_txt . ';}';
+		$css .= '#site-footer.hmpro-footer-builder svg{color:' . $foot_txt . ';}';
+	}
+
+	echo '<style>' . $css . '</style>';
 }, 20 );
 
 add_action( 'wp_footer', function () {

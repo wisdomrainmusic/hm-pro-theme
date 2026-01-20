@@ -305,6 +305,12 @@ function hmpro_handle_admin_actions() {
 
 	$ok = hmpro_set_active_preset_id( $preset_id );
 
+	// Sync Header Builder Top Bar / Footer color defaults from preset
+	// only if the user hasn't overridden them in Customizer.
+	if ( $ok && function_exists( 'hmpro_sync_header_footer_color_mods_from_preset_if_empty' ) ) {
+		hmpro_sync_header_footer_color_mods_from_preset_if_empty( $preset_id );
+	}
+
 	$back = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=hmpro-theme' );
 	$back = remove_query_arg( [ 'hmpro_action', 'preset', '_wpnonce' ], $back );
 

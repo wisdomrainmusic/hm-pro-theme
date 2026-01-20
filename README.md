@@ -1,69 +1,111 @@
-
-Bu checkout’ta mutlaka yer alması gerekenler (özet maddeler):
-
-
-
-Elementor Active Kit / page\_settings’e doğrudan yazımın yasaklandığı
+✅ Session Check: Header, Presets \& Hero Mobile Optimization (Fixed17)
 
 
 
-Typography presetlerin CSS variable + late-override bridge ile çözüldüğü
+This update finalizes a major stability and UX improvement pass across header styling, preset behavior, and hero banner responsiveness.
 
 
 
-Hero Banner’ın:
+Header \& Preset System
 
 
 
-preset fontlarını varsayılan olarak aldığı
+Header Top Bar and Footer colors are now fully integrated with Presets.
 
 
 
-Customizer’dan bağımsız override edebildiği
+Presets apply Top Bar / Footer colors only if Customizer overrides are empty.
 
 
 
-Customizer Hero X/Y offset alanlarının:
+Customizer includes a Reset button to clear Header/Footer color overrides and return to preset defaults.
 
 
 
-sanitize edildiği
+Search input text and placeholder colors are configurable for Top Bar to ensure readability on dark backgrounds.
 
 
 
-TR sayı formatı (virgül) kaynaklı publish crash’inin çözüldüğü
+Desktop-only “Login / Register” CTA removed; CTA is now managed via Header Builder components.
 
 
 
-Final stabil sürüm referansı:
+Mobile hamburger menu CTA remains intact.
 
 
 
-Base: fixed7
-
-Patch: fixed9 (Hero X/Y sanitize only)
+Hero Banner (Desktop, Tablet, Mobile)
 
 
 
-
-
-İstersen ben sana README’ye birebir yapıştırmalık, kısa ve temiz bir “checkpoint block” da yazabilirim; ama şu haliyle bile yazılması %100 doğru karar.
-
-
-
-Bu kayıt, ileride:
+Desktop Hero content supports extended X/Y positioning up to ±1200px.
 
 
 
-“Niye Elementor’a dokunmuyoruz?”
+Mobile and Tablet:
 
 
 
-“Niye hero X/Y böyle sanitize?”
+Hero content X/Y positioning is disabled to prevent layout breakage.
 
 
 
-“Niye preset fontları CSS’ten geliyor?”
+Content is anchored to the top (no vertical centering shift).
+
+
+
+Separate Mobile Hero Content Scale setting added.
+
+
+
+Mobile/Tablet Hero Content Top Offset added for fine alignment control.
+
+
+
+Optional Mobile Hero hide toggle available.
+
+
+
+Mobile Hero height is configurable independently from desktop.
+
+
+
+Result
+
+
+
+Hero content no longer shifts unpredictably on mobile/tablet when scaling.
+
+
+
+Buttons remain visible across all breakpoints.
+
+
+
+Preset + Customizer interaction is predictable and fail-safe.
+
+
+
+Overall behavior now matches premium theme standards (Astra / Kadence-level UX).
+
+
+
+Status
+
+
+
+System stable.
+
+
+
+No breaking changes to existing layouts.
+
+
+
+Ready for demo packaging and further feature development.
+
+
+
 ✅ CHECKPOINT – Header \& Hero Banner Refactor (Jan 2026)
 Summary
 

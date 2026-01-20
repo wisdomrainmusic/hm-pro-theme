@@ -133,6 +133,33 @@ body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
 	filter: brightness(0.95);
 }
 
+/* Tablet + Mobile: keep hero content anchored (no X/Y offsets) to prevent CTA drifting off-screen. */
+@media (max-width: 1024px){
+	.hmpro-th-hero__inner{
+		/* On smaller screens, vertical centering causes the content group to drift when scaled.
+		   Anchor the group to the top (within padding) for stable positioning. */
+		justify-content: flex-start;
+	}
+	.hmpro-th-hero__content{
+		margin-top: var(--hmpro-hero-group-top-m, 0px);
+		transform: translate3d(0, 0, 0) scale(var(--hmpro-hero-group-scale, 1));
+	}
+}
+
+/* Mobile hero optimization (Customizer)
+   - Optional mobile height via --hmpro-hero-h-m
+   - Optional hide via .hmpro-th-hero--hide-mobile
+*/
+@media (max-width: 768px){
+	.hmpro-th-hero{ height: var(--hmpro-hero-h-m, var(--hmpro-hero-h, 520px)); }
+	.hmpro-th-hero--hide-mobile{ display: none; }
+	.hmpro-th-hero__inner{ padding: 88px 16px 28px; max-width: 100%; }
+	.hmpro-th-hero__content{
+		margin-top: var(--hmpro-hero-group-top-m, 0px);
+		transform: translate3d(0, 0, 0) scale(var(--hmpro-hero-group-scale-m, var(--hmpro-hero-group-scale, 1)));
+	}
+}
+
 /* Anchor mega dropdown to the full header width, not the nav component width */
 #site-header,
 .site-header {

@@ -17,6 +17,8 @@ function hmpro_render_transparent_header_hero() {
 	$video_url_raw   = ( ! $video_id && is_string( $hero_video_raw ) ) ? trim( $hero_video_raw ) : '';
 
 	$height  = absint( get_theme_mod( 'hmpro_th_hero_height', 520 ) );
+	$hide_mobile = (int) get_theme_mod( 'hmpro_th_hero_hide_mobile', 0 ) === 1;
+	$height_mobile = absint( get_theme_mod( 'hmpro_th_hero_height_mobile', 0 ) );
 	$overlay = absint( get_theme_mod( 'hmpro_th_hero_overlay', 30 ) );
 	$title   = trim( (string) get_theme_mod( 'hmpro_th_hero_title', '' ) );
 	$text    = trim( (string) get_theme_mod( 'hmpro_th_hero_text', '' ) );
@@ -46,6 +48,29 @@ function hmpro_render_transparent_header_hero() {
 	$offset_x = (int) get_theme_mod( 'hmpro_th_hero_group_x', 0 );
 	$offset_y = (int) get_theme_mod( 'hmpro_th_hero_group_y', 0 );
 
+	// Optional mobile-only scale (0 = inherit desktop).
+	$scale_mobile = (float) get_theme_mod( 'hmpro_th_hero_group_scale_mobile', 0 );
+	if ( $scale_mobile < 0 ) {
+		$scale_mobile = 0;
+	}
+	if ( $scale_mobile > 0 ) {
+		if ( $scale_mobile < 0.5 ) {
+			$scale_mobile = 0.5;
+		}
+		if ( $scale_mobile > 2.0 ) {
+			$scale_mobile = 2.0;
+		}
+	}
+
+	// Mobile/tablet top offset for the anchored hero content group.
+	$top_mobile = (int) get_theme_mod( 'hmpro_th_hero_group_top_mobile', 0 );
+	if ( $top_mobile < -200 ) {
+		$top_mobile = -200;
+	}
+	if ( $top_mobile > 200 ) {
+		$top_mobile = 200;
+	}
+
 	$img_url = $image_id ? wp_get_attachment_image_url( $image_id, 'full' ) : '';
 	if ( ! $img_url && $image_url_raw !== '' ) {
 		$img_url = esc_url_raw( $image_url_raw );
@@ -71,6 +96,9 @@ function hmpro_render_transparent_header_hero() {
 	}
 
 	$style  = '--hmpro-hero-h:' . $height . 'px;';
+	if ( $height_mobile > 0 ) {
+		$style .= ' --hmpro-hero-h-m:' . $height_mobile . 'px;';
+	}
 	$style .= ' --hmpro-hero-overlay:' . ( $overlay / 100 ) . ';';
 	$style .= ' --hmpro-hero-title-color:' . $title_color . ';';
 	$style .= ' --hmpro-hero-text-color:' . $text_color . ';';
@@ -81,13 +109,23 @@ function hmpro_render_transparent_header_hero() {
 	$style .= ' --hmpro-hero-title-size:' . $title_size . 'px;';
 	$style .= ' --hmpro-hero-text-size:' . $text_size . 'px;';
 	$style .= ' --hmpro-hero-group-scale:' . $scale . ';';
+	if ( $scale_mobile > 0 ) {
+		$style .= ' --hmpro-hero-group-scale-m:' . $scale_mobile . ';';
+	}
+	if ( $top_mobile !== 0 ) {
+		$style .= ' --hmpro-hero-group-top-m:' . $top_mobile . 'px;';
+	}
 	$style .= ' --hmpro-hero-group-x:' . $offset_x . 'px;';
 	$style .= ' --hmpro-hero-group-y:' . $offset_y . 'px;';
 	if ( ! $vid_url && $img_url ) {
 		$style .= ' background-image:url(' . esc_url( $img_url ) . ');';
 	}
 
-	echo '<section class="hmpro-th-hero" style="' . esc_attr( $style ) . '">';
+	$classes = 'hmpro-th-hero';
+	if ( $hide_mobile ) {
+		$classes .= ' hmpro-th-hero--hide-mobile';
+	}
+	echo '<section class="' . esc_attr( $classes ) . '" style="' . esc_attr( $style ) . '">';
 	if ( $vid_url ) {
 		echo '<video class="hmpro-th-hero__video" autoplay muted loop playsinline>';
 		echo '<source src="' . esc_url( $vid_url ) . '">';

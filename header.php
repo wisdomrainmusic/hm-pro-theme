@@ -67,12 +67,14 @@ function hmpro_icon_close() {
 		<?php hmpro_render_builder_region( 'header_main', 'header' ); ?>
 		<?php hmpro_render_builder_region( 'header_bottom', 'header' ); ?>
 
-		<!-- Desktop persistent account CTA (Woo /hesabim) -->
-		<div class="hmpro-header-account-cta">
-			<a class="hmpro-account-link" href="<?php echo esc_url( $hmpro_account_url ); ?>">
-				<?php echo esc_html__( 'Giriş Yap / Kayıt Ol', 'hm-pro-theme' ); ?>
-			</a>
-		</div>
+		<?php
+		/**
+		 * NOTE:
+		 * The account CTA is intentionally NOT injected as a fixed desktop element.
+		 * Use Header Builder components (HTML/Button) to place the CTA inside header_top/header_main.
+		 * Mobile CTA remains inside the drawer for a consistent UX.
+		 */
+		?>
 
 		<!-- Mobile hamburger toggle -->
 		<button
