@@ -1,0 +1,59 @@
+.hmpro-pg-editor__tiles {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.hmpro-pg-editor__tile {
+  padding: 10px;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.hmpro-pg-editor__tile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.hmpro-pg-editor__thumb {
+  width: 100%;
+  height: 120px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  margin: 10px 0;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.hmpro-pg-editor__limit {
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.hmpro-pg__tile--preview {
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  min-height: var(--hm-pg-tile-minh, 240px);
+}
+
+.hmpro-pg__media {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1);
+}
+
+.hmpro-pg__media--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.03);
+  color: rgba(0,0,0,0.65);
+}
