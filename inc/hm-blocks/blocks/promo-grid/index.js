@@ -30,6 +30,8 @@
 		{ label: '4 Mosaic Left', value: 'four_mosaic_left' },
 		{ label: '4 Mosaic Right', value: 'four_mosaic_right' },
 		{ label: 'Six Grid', value: 'six_grid' },
+		{ label: '6 Mosaic Left', value: 'six_mosaic_left' },
+		{ label: '6 Mosaic Right', value: 'six_mosaic_right' },
 	];
 
 	const TILE_LIMITS = {
@@ -43,6 +45,8 @@
 		four_mosaic_left: 4,
 		four_mosaic_right: 4,
 		six_grid: 6,
+		six_mosaic_left: 6,
+		six_mosaic_right: 6,
 	};
 
 	const POSITIONS = [
@@ -108,6 +112,19 @@
 				tiles,
 			} = attributes;
 
+			// Normalize numeric values that may arrive as localized strings (e.g. "0,5").
+			const toNumber = ( value, fallback ) => {
+				if ( value === null || value === undefined || value === '' ) {
+					return fallback;
+				}
+				if ( typeof value === 'number' && Number.isFinite( value ) ) {
+					return value;
+				}
+				const normalized = String( value ).replace( ',', '.' );
+				const parsed = parseFloat( normalized );
+				return Number.isFinite( parsed ) ? parsed : fallback;
+			};
+
 			const maxTiles = TILE_LIMITS[ preset ] || 6;
 			const safeTiles = normalizeTiles( tiles, maxTiles );
 
@@ -148,11 +165,11 @@
 			}
 
 			const previewStyle = {
-				'--hm-pg-gap': ( gridGap || 0 ) + 'px',
-				'--hm-pg-minh': ( containerMinHeight || 0 ) + 'px',
-				'--hm-pg-tile-minh': ( tileMinHeight || 0 ) + 'px',
-				'--hm-pg-media-scale': mediaScale || 1,
-				'--hm-pg-overlay-opacity': overlayOpacity,
+				'--hm-pg-gap': ( gridGap || 24 ) + 'px',
+				'--hm-pg-minh': ( containerMinHeight || 360 ) + 'px',
+				'--hm-pg-tile-minh': ( tileMinHeight || 340 ) + 'px',
+				'--hm-pg-media-scale': toNumber( mediaScale, 1.08 ),
+				'--hm-pg-overlay-opacity': toNumber( overlayOpacity, 0.35 ),
 				// IMPORTANT: editor preview needs explicit height when fixedHeight is on
 				...( fixedHeight ? { height: ( containerHeight || 520 ) + 'px' } : {} ),
 			};
@@ -249,7 +266,7 @@
 							step: 0.05,
 							value: mediaScale,
 							onChange: function ( v ) {
-								setAttributes( { mediaScale: v || 1 } );
+								setAttributes( { mediaScale: toNumber( v, 1.08 ) } );
 							},
 						} ),
 						wp.element.createElement( RangeControl, {
@@ -259,7 +276,7 @@
 							step: 0.05,
 							value: overlayOpacity,
 							onChange: function ( v ) {
-								setAttributes( { overlayOpacity: ( typeof v === 'number' ? v : 0.35 ) } );
+								setAttributes( { overlayOpacity: toNumber( v, 0.35 ) } );
 							},
 						} )
 					),

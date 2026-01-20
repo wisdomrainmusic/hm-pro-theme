@@ -165,6 +165,8 @@
 .hmpro-pg__grid--four_checker { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); grid-template-areas: 'a b' 'c d'; }
 .hmpro-pg__grid--four_mosaic_left { grid-template-columns: 1.4fr 1fr; grid-template-rows: repeat(3, minmax(0, 1fr)); grid-template-areas: 'a b' 'a c' 'a d'; }
 .hmpro-pg__grid--four_mosaic_right { grid-template-columns: 1fr 1.4fr; grid-template-rows: repeat(3, minmax(0, 1fr)); grid-template-areas: 'b a' 'c a' 'd a'; }
+.hmpro-pg__grid--six_mosaic_left { grid-template-columns: 2fr 2fr 1.35fr; grid-template-rows: repeat(4, minmax(0, 1fr)); grid-template-areas: 'a a b' 'a a c' 'd d e' 'd d f'; }
+.hmpro-pg__grid--six_mosaic_right { grid-template-columns: 1.35fr 2fr 2fr; grid-template-rows: repeat(4, minmax(0, 1fr)); grid-template-areas: 'b a a' 'c a a' 'e d d' 'f d d'; }
 .hmpro-pg__grid--six_grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); grid-template-areas: 'a b c' 'd e f'; }
 
 .hmpro-pg__tile--a { grid-area: a; }
