@@ -7,12 +7,58 @@
    ========================================================= */
 
 /* ---------------------------------------------------------
-   Hero Banner (Homepage)
+   Transparent Header (Homepage only)
+   - No builder schema changes
+   - Works via body classes + CSS vars
    --------------------------------------------------------- */
+body.hmpro-transparent-header-home{
+	--hmpro-transparent-text: #ffffff;
+}
+
+/* Text/icon color in transparent state */
+body.hmpro-transparent-header-home .hmpro-site-header,
+body.hmpro-transparent-header-home header.site-header,
+body.hmpro-transparent-header-home .site-header{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 999;
+	background: transparent;
+	color: var(--hmpro-transparent-text);
+}
+
+body.hmpro-transparent-header-home .hmpro-site-header a,
+body.hmpro-transparent-header-home header.site-header a,
+body.hmpro-transparent-header-home .site-header a{
+	color: inherit;
+}
+
+/* Offset so content doesn't hide under header (optional) */
+body.hmpro-transparent-header-home.hmpro-transparent-header-offset{
+	padding-top: 110px;
+}
+
+/* ---------------------------------------------------------
+   Overlay header on homepage hero (Astra-like)
+   --------------------------------------------------------- */
+body.hmpro-transparent-header-home .hmpro-header.hmpro-header--transparent{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 9999;
+	background: transparent !important;
+}
 
 .hmpro-th-hero{
 	position: relative;
-	min-height: var(--hmpro-hero-h, 520px);
+	/*
+	 * Fixed height provides predictable Customizer behavior.
+	 * When content is larger, it will be visually clipped (Astra-like hero).
+	 */
+	height: var(--hmpro-hero-h, 520px);
+	min-height: 0;
 	background-size: cover;
 	background-position: center center;
 	background-repeat: no-repeat;
@@ -37,7 +83,8 @@
 .hmpro-th-hero__inner{
 	position: relative;
 	z-index: 2;
-	min-height: var(--hmpro-hero-h, 520px);
+	height: 100%;
+	min-height: 0;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -45,39 +92,44 @@
 	padding: 120px 24px 40px;
 	max-width: 1200px;
 	margin: 0 auto;
-	font-family: var(--hmpro-hero-font, inherit);
 }
 .hmpro-th-hero__content{
-	transform: translate(var(--hmpro-hero-x, 0px), var(--hmpro-hero-y, 0px)) scale(var(--hmpro-hero-scale, 1));
-	transform-origin: left center;
+	font-family: var(--hmpro-hero-font, inherit);
+	transform: translate3d(var(--hmpro-hero-group-x, 0px), var(--hmpro-hero-group-y, 0px), 0) scale(var(--hmpro-hero-group-scale, 1));
+	transform-origin: left top;
+	will-change: transform;
+}
+.hmpro-th-hero__title,
+.hmpro-th-hero__text{
+	/* Override global heading/body typography rules (base.css) */
+	font-family: var(--hmpro-hero-font, inherit);
+	color: var(--hmpro-hero-text-color, #fff);
 }
 .hmpro-th-hero__title{
 	color: var(--hmpro-hero-title-color, #fff);
-	font-size: var(--hmpro-hero-title-size, 48px);
-	line-height: 1.08;
-	margin: 0 0 10px;
+	font-size: var(--hmpro-hero-title-size, 44px);
+	line-height: 1.1;
+	margin: 0 0 12px;
 }
 .hmpro-th-hero__text{
-	color: var(--hmpro-hero-text-color, #fff);
 	font-size: var(--hmpro-hero-text-size, 18px);
-	line-height: 1.5;
-	margin: 0 0 14px;
+	margin: 0 0 18px;
 	max-width: 720px;
 }
-.hmpro-th-hero__actions{
-	margin: 0;
-}
 .hmpro-th-hero__btn{
-	display: inline-block;
-	padding: 10px 16px;
-	border-radius: 999px;
-	background: var(--hmpro-hero-btn-bg, #fff);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	background: var(--hmpro-hero-btn-bg, #d4af37);
 	color: var(--hmpro-hero-btn-color, #111);
+	padding: 12px 18px;
+	border-radius: 999px;
 	text-decoration: none;
 	font-weight: 600;
 }
 .hmpro-th-hero__btn:hover{
-	opacity: .92;
+	filter: brightness(0.95);
 }
 
 /* Anchor mega dropdown to the full header width, not the nav component width */
