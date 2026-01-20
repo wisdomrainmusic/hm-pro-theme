@@ -1,91 +1,104 @@
 <?php
 
-function hmpro_render_transparent_header_hero() {
+function hmpro_th_render_homepage_hero() {
 	if ( ! is_front_page() ) {
 		return;
 	}
-	if ( ! (int) get_theme_mod( 'hmpro_transparent_header_home', 0 ) ) {
+
+	$enabled = get_theme_mod( 'hmpro_hero_enable', 0 );
+	if ( ! $enabled ) {
 		return;
 	}
 
-	$image_id  = absint( get_theme_mod( 'hmpro_th_hero_image', 0 ) );
-	$use_video = (int) get_theme_mod( 'hmpro_th_hero_use_video', 0 ) === 1;
-	$video_id  = absint( get_theme_mod( 'hmpro_th_hero_video', 0 ) );
+	$image_id = absint( get_theme_mod( 'hmpro_hero_image', 0 ) );
+	$video_on = absint( get_theme_mod( 'hmpro_hero_video_enable', 0 ) );
+	$video_id = absint( get_theme_mod( 'hmpro_hero_video', 0 ) );
 
-	$height  = absint( get_theme_mod( 'hmpro_th_hero_height', 520 ) );
-	$overlay = absint( get_theme_mod( 'hmpro_th_hero_overlay', 30 ) );
-	$title   = trim( (string) get_theme_mod( 'hmpro_th_hero_title', '' ) );
-	$text    = trim( (string) get_theme_mod( 'hmpro_th_hero_text', '' ) );
+	$height   = max( 120, absint( get_theme_mod( 'hmpro_hero_height', 520 ) ) );
+	$overlay  = min( 90, max( 0, absint( get_theme_mod( 'hmpro_hero_overlay', 30 ) ) ) );
+	$title    = trim( (string) get_theme_mod( 'hmpro_hero_title', '' ) );
+	$text     = (string) get_theme_mod( 'hmpro_hero_text', '' );
+	$btn_text = trim( (string) get_theme_mod( 'hmpro_hero_btn_text', '' ) );
+	$btn_url  = trim( (string) get_theme_mod( 'hmpro_hero_btn_url', '' ) );
 
-	$btn_text = trim( (string) get_theme_mod( 'hmpro_th_hero_btn_text', '' ) );
-	$btn_url  = trim( (string) get_theme_mod( 'hmpro_th_hero_btn_url', '' ) );
-	$btn_new  = (int) get_theme_mod( 'hmpro_th_hero_btn_newtab', 0 ) === 1;
+	$title_color = sanitize_hex_color( get_theme_mod( 'hmpro_hero_title_color', '#ffffff' ) ) ?: '#ffffff';
+	$text_color  = sanitize_hex_color( get_theme_mod( 'hmpro_hero_text_color', '#ffffff' ) ) ?: '#ffffff';
+	$btn_bg      = sanitize_hex_color( get_theme_mod( 'hmpro_hero_btn_bg', '#ffffff' ) ) ?: '#ffffff';
+	$btn_color   = sanitize_hex_color( get_theme_mod( 'hmpro_hero_btn_color', '#111111' ) ) ?: '#111111';
 
-	// Typography / style.
-	$title_color = trim( (string) get_theme_mod( 'hmpro_th_hero_title_color', '#ffffff' ) );
-	$text_color  = trim( (string) get_theme_mod( 'hmpro_th_hero_text_color', '#ffffff' ) );
-	$btn_bg      = trim( (string) get_theme_mod( 'hmpro_th_hero_btn_bg', '#d4af37' ) );
-	$btn_color   = trim( (string) get_theme_mod( 'hmpro_th_hero_btn_color', '#111111' ) );
-	$font_family = trim( (string) get_theme_mod( 'hmpro_th_hero_font_family', 'inherit' ) );
+	$title_size  = max( 12, absint( get_theme_mod( 'hmpro_hero_title_size', 48 ) ) );
+	$text_size   = max( 10, absint( get_theme_mod( 'hmpro_hero_text_size', 18 ) ) );
+	$font_family = sanitize_text_field( get_theme_mod( 'hmpro_hero_font_family', 'inherit' ) );
+	if ( $font_family === '' ) {
+		$font_family = 'inherit';
+	}
 
-	$title_size = absint( get_theme_mod( 'hmpro_th_hero_title_size', 44 ) );
-	$text_size  = absint( get_theme_mod( 'hmpro_th_hero_text_size', 18 ) );
-
-	// Group transform (scale + move).
-	$scale = (float) get_theme_mod( 'hmpro_th_hero_group_scale', 1 );
+	$scale = (float) get_theme_mod( 'hmpro_hero_scale', 1 );
 	if ( $scale < 0.5 ) {
 		$scale = 0.5;
 	}
 	if ( $scale > 2.0 ) {
 		$scale = 2.0;
 	}
-	$offset_x = (int) get_theme_mod( 'hmpro_th_hero_group_x', 0 );
-	$offset_y = (int) get_theme_mod( 'hmpro_th_hero_group_y', 0 );
 
-	$img_url = $image_id ? wp_get_attachment_image_url( $image_id, 'full' ) : '';
-	$vid_url = ( $use_video && $video_id ) ? wp_get_attachment_url( $video_id ) : '';
+	$x = intval( get_theme_mod( 'hmpro_hero_x', 0 ) );
+	$y = intval( get_theme_mod( 'hmpro_hero_y', 0 ) );
 
-	// Require at least one media source (video or image)
-	if ( ! $vid_url && ! $img_url ) {
+	if ( ! $image_id && ! $video_id ) {
 		return;
 	}
 
-	$style  = '--hmpro-hero-h:' . $height . 'px;';
-	$style .= ' --hmpro-hero-overlay:' . ( $overlay / 100 ) . ';';
-	$style .= ' --hmpro-hero-title-color:' . $title_color . ';';
-	$style .= ' --hmpro-hero-text-color:' . $text_color . ';';
-	$style .= ' --hmpro-hero-btn-bg:' . $btn_bg . ';';
-	$style .= ' --hmpro-hero-btn-color:' . $btn_color . ';';
-	$style .= ' --hmpro-hero-font:' . $font_family . ';';
-	$style .= ' --hmpro-hero-title-size:' . $title_size . 'px;';
-	$style .= ' --hmpro-hero-text-size:' . $text_size . 'px;';
-	$style .= ' --hmpro-hero-group-scale:' . $scale . ';';
-	$style .= ' --hmpro-hero-group-x:' . $offset_x . 'px;';
-	$style .= ' --hmpro-hero-group-y:' . $offset_y . 'px;';
-	if ( ! $vid_url && $img_url ) {
-		$style .= ' background-image:url(' . esc_url( $img_url ) . ');';
+	$style = implode( ';', [
+		'--hmpro-hero-h:' . $height . 'px',
+		'--hmpro-hero-overlay:' . ( $overlay / 100 ),
+		'--hmpro-hero-title-color:' . $title_color,
+		'--hmpro-hero-text-color:' . $text_color,
+		'--hmpro-hero-btn-bg:' . $btn_bg,
+		'--hmpro-hero-btn-color:' . $btn_color,
+		'--hmpro-hero-title-size:' . $title_size . 'px',
+		'--hmpro-hero-text-size:' . $text_size . 'px',
+		'--hmpro-hero-font:' . $font_family,
+		'--hmpro-hero-scale:' . $scale,
+		'--hmpro-hero-x:' . $x . 'px',
+		'--hmpro-hero-y:' . $y . 'px',
+	] ) . ';';
+
+	$bg = '';
+	if ( $image_id ) {
+		$url = wp_get_attachment_image_url( $image_id, 'full' );
+		if ( $url ) {
+			$bg = 'background-image:url(' . esc_url( $url ) . ');';
+		}
 	}
 
-	echo '<section class="hmpro-th-hero" style="' . esc_attr( $style ) . '">';
-	if ( $vid_url ) {
-		echo '<video class="hmpro-th-hero__video" autoplay muted loop playsinline>';
-		echo '<source src="' . esc_url( $vid_url ) . '">';
-		echo '</video>';
-	}
-	echo '<div class="hmpro-th-hero__overlay" aria-hidden="true"></div>';
-	echo '<div class="hmpro-th-hero__inner">';
-	echo '<div class="hmpro-th-hero__content">';
-	if ( $title !== '' ) {
-		echo '<h1 class="hmpro-th-hero__title">' . esc_html( $title ) . '</h1>';
-	}
-	if ( $text !== '' ) {
-		echo '<p class="hmpro-th-hero__text">' . esc_html( $text ) . '</p>';
-	}
-	if ( $btn_text !== '' && $btn_url !== '' ) {
-		$target = $btn_new ? ' target="_blank" rel="noopener noreferrer"' : '';
-		echo '<a class="hmpro-th-hero__btn" href="' . esc_url( $btn_url ) . '"' . $target . '>' . esc_html( $btn_text ) . '</a>';
-	}
-	echo '</div>';
-	echo '</div>';
-	echo '</section>';
+	?>
+	<section class="hmpro-th-hero" style="<?php echo esc_attr( $style . $bg ); ?>">
+		<?php if ( $video_on && $video_id ) :
+			$video_url = wp_get_attachment_url( $video_id );
+			if ( $video_url ) : ?>
+				<video class="hmpro-th-hero__video" autoplay muted loop playsinline>
+					<source src="<?php echo esc_url( $video_url ); ?>">
+				</video>
+			<?php endif;
+		endif; ?>
+		<div class="hmpro-th-hero__overlay"></div>
+		<div class="hmpro-th-hero__inner">
+			<div class="hmpro-th-hero__content">
+				<?php if ( $title ) : ?>
+					<h1 class="hmpro-th-hero__title"><?php echo esc_html( $title ); ?></h1>
+				<?php endif; ?>
+				<?php if ( $text ) : ?>
+					<div class="hmpro-th-hero__text"><?php echo wp_kses_post( wpautop( $text ) ); ?></div>
+				<?php endif; ?>
+				<?php if ( $btn_text && $btn_url ) : ?>
+					<p class="hmpro-th-hero__actions">
+						<a class="hmpro-th-hero__btn" href="<?php echo esc_url( $btn_url ); ?>">
+							<?php echo esc_html( $btn_text ); ?>
+						</a>
+					</p>
+				<?php endif; ?>
+			</div>
+		</div>
+	</section>
+	<?php
 }
