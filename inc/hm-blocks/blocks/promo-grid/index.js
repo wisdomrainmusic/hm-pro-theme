@@ -153,6 +153,8 @@
 				'--hm-pg-tile-minh': ( tileMinHeight || 0 ) + 'px',
 				'--hm-pg-media-scale': mediaScale || 1,
 				'--hm-pg-overlay-opacity': overlayOpacity,
+				// IMPORTANT: editor preview needs explicit height when fixedHeight is on
+				...( fixedHeight ? { height: ( containerHeight || 520 ) + 'px' } : {} ),
 			};
 
 			return wp.element.createElement(
@@ -424,18 +426,44 @@
 								? safeTiles.map( function ( tile, idx ) {
 										const t = Object.assign( createEmptyTile(), tile || {} );
 										if ( ! t.show ) return null;
+										const overlayClass = [ 'hmpro-pg__overlay', ( t.overlay ? '' : 'is-disabled' ) ]
+											.filter( Boolean ).join( ' ' );
+
+										const tileStyle = {
+											'--hm-pg-offset-x': ( t.offsetX || 0 ) + 'px',
+											'--hm-pg-offset-y': ( t.offsetY || 0 ) + 'px',
+											'--hm-pg-content-maxw': ( t.contentMaxWidth || 520 ) + 'px',
+											'--hm-pg-content-pad': ( t.contentPadding || 18 ) + 'px',
+										};
+
 										return wp.element.createElement(
 											'div',
-											{ key: idx, className: 'hmpro-pg__tile hmpro-pg__tile--preview' },
+											{
+												key: idx,
+												style: tileStyle,
+												className: [
+													'hmpro-pg__tile',
+													'hmpro-pg__tile--preview',
+													'hmpro-pg__tile-position-' + ( t.position || 'bottom-left' )
+												].join( ' ' )
+											},
 											t.imageUrl
-												? wp.element.createElement( 'div', { className: 'hmpro-pg__media', style: { backgroundImage: 'url(' + t.imageUrl + ')' } } )
+												? wp.element.createElement(
+														'div',
+														{ className: 'hmpro-pg__media' },
+														wp.element.createElement( 'img', {
+															src: t.imageUrl,
+															alt: t.title || '',
+															loading: 'lazy'
+														} )
+												  )
 												: wp.element.createElement( 'div', { className: 'hmpro-pg__media hmpro-pg__media--empty' }, __( 'Select image', 'hm-pro-theme' ) ),
 											wp.element.createElement(
 												'div',
-												{ className: 'hmpro-pg__overlay' },
+												{ className: overlayClass },
 												wp.element.createElement(
 													'div',
-													{ className: 'hmpro-pg__content' },
+													{ className: 'hmpro-pg__content hmpro-pg__content--' + ( t.position || 'bottom-left' ) },
 													t.title ? wp.element.createElement( 'div', { className: 'hmpro-pg__title' }, t.title ) : null,
 													t.subtitle ? wp.element.createElement( 'div', { className: 'hmpro-pg__subtitle' }, t.subtitle ) : null,
 													t.buttonText ? wp.element.createElement( 'span', { className: 'hmpro-pg__button' }, t.buttonText ) : null

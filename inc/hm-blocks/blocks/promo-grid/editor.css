@@ -45,9 +45,13 @@
 .hmpro-pg__media {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center;
-  filter: saturate(1);
+}
+
+.hmpro-pg__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .hmpro-pg__media--empty {
