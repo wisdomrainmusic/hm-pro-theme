@@ -20,6 +20,7 @@
   width: 100%;
   justify-content: flex-start;
   padding: 6px 0;
+  --hm-is-content-scale: var(--hm-is-content-scale-d, 1);
 }
 
 .hmpro-is-list {
@@ -194,13 +195,23 @@ body.hmpro-is-no-scroll {
   overflow: hidden;
 }
 
+.hmpro-is-modal-center {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+}
+
 .hmpro-is-modal-image {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
   max-width: 100%;
-  max-height: calc(100vh - 260px);
+  max-height: calc(100vh - 220px);
   width: auto;
   height: auto;
   object-fit: contain;
@@ -210,12 +221,14 @@ body.hmpro-is-no-scroll {
 
 .hmpro-is-modal-text {
   position: absolute;
-  bottom: 40px;
+  bottom: 44px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(var(--hm-is-content-scale, 1));
+  transform-origin: bottom center;
   width: 90%;
   text-align: center;
   z-index: 30;
+  pointer-events: none;
 }
 
 .hmpro-is-modal-title {
@@ -238,6 +251,7 @@ body.hmpro-is-no-scroll {
   font-weight: 500;
   text-decoration: none;
   min-width: 140px;
+  pointer-events: auto;
 }
 
 .hmpro-is-modal-link:hover {
@@ -265,6 +279,10 @@ body.hmpro-is-no-scroll {
     max-width: 100%;
     height: 100vh;
     border-radius: 0;
+  }
+
+  .hmpro-is-wrapper {
+    --hm-is-content-scale: var(--hm-is-content-scale-m, 1);
   }
 }
 

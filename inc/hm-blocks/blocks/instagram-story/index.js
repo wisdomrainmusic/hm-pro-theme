@@ -69,6 +69,8 @@
 				modalLinkColor,
 				modalLinkBg,
 				autoTime,
+				contentScaleDesktop,
+				contentScaleMobile,
 				stories,
 			} = attributes;
 
@@ -259,6 +261,31 @@
 							value: normalizeInt( autoTime, 4000 ),
 							onChange: function ( v ) {
 								setAttributes( { autoTime: normalizeInt( v, 4000 ) } );
+							},
+						} )
+					),
+
+					wp.element.createElement(
+						PanelBody,
+						{ title: __( 'Content Scale', 'hm-pro-theme' ), initialOpen: false },
+						wp.element.createElement( RangeControl, {
+							label: __( 'Content Scale (Desktop)', 'hm-pro-theme' ),
+							min: 0.6,
+							max: 1.4,
+							step: 0.01,
+							value: Number.isFinite( contentScaleDesktop ) ? contentScaleDesktop : 1,
+							onChange: function ( v ) {
+								setAttributes( { contentScaleDesktop: parseFloat( String( v ).replace( ',', '.' ) ) || 1 } );
+							},
+						} ),
+						wp.element.createElement( RangeControl, {
+							label: __( 'Content Scale (Mobile)', 'hm-pro-theme' ),
+							min: 0.6,
+							max: 1.4,
+							step: 0.01,
+							value: Number.isFinite( contentScaleMobile ) ? contentScaleMobile : 1,
+							onChange: function ( v ) {
+								setAttributes( { contentScaleMobile: parseFloat( String( v ).replace( ',', '.' ) ) || 1 } );
 							},
 						} )
 					),

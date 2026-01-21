@@ -37,6 +37,13 @@ $modal_link_col   = isset( $attrs['modalLinkColor'] ) ? sanitize_text_field( $at
 $modal_link_bg    = isset( $attrs['modalLinkBg'] ) ? sanitize_text_field( $attrs['modalLinkBg'] ) : 'rgba(0,0,0,0.55)';
 $auto_time        = isset( $attrs['autoTime'] ) ? max( 1200, absint( $attrs['autoTime'] ) ) : 4000;
 
+$content_scale_d  = isset( $attrs['contentScaleDesktop'] ) && is_numeric( $attrs['contentScaleDesktop'] ) ? (float) $attrs['contentScaleDesktop'] : 1;
+$content_scale_m  = isset( $attrs['contentScaleMobile'] ) && is_numeric( $attrs['contentScaleMobile'] ) ? (float) $attrs['contentScaleMobile'] : 1;
+
+// Clamp to a sensible range.
+$content_scale_d = max( 0.6, min( 1.4, $content_scale_d ) );
+$content_scale_m = max( 0.6, min( 1.4, $content_scale_m ) );
+
 $stories = isset( $attrs['stories'] ) && is_array( $attrs['stories'] ) ? $attrs['stories'] : array();
 if ( empty( $stories ) ) {
 	return '';
@@ -109,6 +116,8 @@ $style[] = '--hm-is-label-fs:' . $label_fs . 'px';
 $style[] = '--hm-is-modal-title:' . $modal_title_col;
 $style[] = '--hm-is-modal-link:' . $modal_link_col;
 $style[] = '--hm-is-modal-link-bg:' . $modal_link_bg;
+$style[] = '--hm-is-content-scale-d:' . $content_scale_d;
+$style[] = '--hm-is-content-scale-m:' . $content_scale_m;
 $style_attr = esc_attr( implode( ';', $style ) );
 
 $data_attr = esc_attr( wp_json_encode( $stories_data ) );
