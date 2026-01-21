@@ -7,6 +7,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+$block_url = trailingslashit( HMPRO_BLOCKS_URL ) . 'blocks/instagram-story/';
+
+// Ensure frontend JS is available even on WP installs that don't support block.json "viewScript".
+if ( ! is_admin() ) {
+	$handle = 'hmpro-instagram-story-view';
+	if ( ! wp_script_is( $handle, 'registered' ) ) {
+		wp_register_script(
+			$handle,
+			$block_url . 'view.js',
+			array(),
+			defined( 'HMPRO_VERSION' ) ? HMPRO_VERSION : null,
+			true
+		);
+	}
+	wp_enqueue_script( $handle );
+}
+
 $attrs = isset( $attributes ) && is_array( $attributes ) ? $attributes : array();
 
 $full_width = ! empty( $attrs['fullWidth'] );
