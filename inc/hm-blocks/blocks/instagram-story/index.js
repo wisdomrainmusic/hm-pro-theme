@@ -490,6 +490,9 @@
 							{ className: 'hmpro-is__list', role: 'list' },
 							previewStories.map( ( s, i ) => {
 								const thumb = s.thumbnailUrl || ( s.slides && s.slides[ 0 ] ? s.slides[ 0 ].imageUrl : '' );
+								const firstSlide = ( s.slides && s.slides[ 0 ] ) ? s.slides[ 0 ] : {};
+								const metaTitle = firstSlide.title || '';
+								const metaLink = firstSlide.linkText || '';
 								return wp.element.createElement(
 									'div',
 									{ key: 'hmpro-is-prev-' + i, className: 'hmpro-is__item', role: 'listitem' },
@@ -506,6 +509,19 @@
 								),
 									s.label
 										? wp.element.createElement( 'div', { className: 'hmpro-is__label' }, s.label )
+										: null
+									,
+									( metaTitle || metaLink )
+										? wp.element.createElement(
+											'div',
+											{ className: 'hmpro-is__meta' },
+											metaTitle
+												? wp.element.createElement( 'div', { className: 'hmpro-is__metaTitle' }, metaTitle )
+												: null,
+											metaLink
+												? wp.element.createElement( 'div', { className: 'hmpro-is__metaLink' }, metaLink )
+												: null
+										)
 										: null
 								);
 							} )

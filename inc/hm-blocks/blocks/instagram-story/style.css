@@ -153,6 +153,7 @@ body.hmpro-is-no-scroll {
 .hmpro-is-modal-header {
   padding: 12px 14px;
   position: relative;
+  z-index: 40;
 }
 
 .hmpro-is-modal-progress {
@@ -204,6 +205,7 @@ body.hmpro-is-no-scroll {
   height: auto;
   object-fit: contain;
   border-radius: 10px;
+  z-index: 5;
 }
 
 .hmpro-is-modal-text {
@@ -213,7 +215,7 @@ body.hmpro-is-no-scroll {
   transform: translateX(-50%);
   width: 90%;
   text-align: center;
-  z-index: 20;
+  z-index: 30;
 }
 
 .hmpro-is-modal-title {
@@ -253,6 +255,7 @@ body.hmpro-is-no-scroll {
   width: 50%;
   height: 100%;
   cursor: pointer;
+  z-index: 10;
 }
 .hmpro-is-modal-click-prev { left: 0; }
 .hmpro-is-modal-click-next { right: 0; }
