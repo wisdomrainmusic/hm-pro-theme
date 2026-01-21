@@ -27,34 +27,40 @@ if ( ! function_exists( 'hmpro_pft_sanitize_tabs' ) ) {
 }
 
 if ( ! function_exists( 'hmpro_pft_query_products' ) ) {
-  function hmpro_pft_query_products( $query_type, $term_id, $limit ) {
-    if ( ! class_exists( 'WooCommerce' ) ) return [];
-    if ( $term_id <= 0 ) return [];
+function hmpro_pft_query_products( $query_type, $term_id, $limit ) {
+	if ( ! class_exists( 'WooCommerce' ) ) return [];
+	if ( $term_id <= 0 ) return [];
 
-    $tax = ( $query_type === 'tag' ) ? 'product_tag' : 'product_cat';
+	$tax = ( $query_type === 'tag' ) ? 'product_tag' : 'product_cat';
 
-    $q = new WP_Query( [
-      'post_type'           => 'product',
-      'post_status'         => 'publish',
-      'posts_per_page'      => $limit,
-      'ignore_sticky_posts' => true,
-      'no_found_rows'       => true,
-      'tax_query'           => [
-        [
-          'taxonomy' => $tax,
-          'field'    => 'term_id',
-          'terms'    => [ $term_id ],
-        ]
-      ],
-      'meta_query' => WC()->query->get_meta_query(),
-      'tax_query'  => array_merge( WC()->query->get_tax_query(), [
-        [
-          'taxonomy' => $tax,
-          'field'    => 'term_id',
-          'terms'    => [ $term_id ],
-        ]
-      ] ),
-    ] );
+	// WooCommerce query object may not be available in some contexts (REST/editor).
+	$wc_query = null;
+	if ( function_exists( 'WC' ) ) {
+		$wc = WC();
+		if ( is_object( $wc ) && isset( $wc->query ) && is_object( $wc->query ) ) {
+			$wc_query = $wc->query;
+		}
+	}
+
+	$meta_query = $wc_query ? $wc_query->get_meta_query() : [];
+	$tax_query  = $wc_query ? $wc_query->get_tax_query() : [];
+
+	// Always include our term filter.
+	$tax_query[] = [
+		'taxonomy' => $tax,
+		'field'    => 'term_id',
+		'terms'    => [ $term_id ],
+	];
+
+	$q = new WP_Query( [
+		'post_type'           => 'product',
+		'post_status'         => 'publish',
+		'posts_per_page'      => $limit,
+		'ignore_sticky_posts' => true,
+		'no_found_rows'       => true,
+		'meta_query'          => $meta_query,
+		'tax_query'           => $tax_query,
+	] );
 
     return $q->have_posts() ? $q->posts : [];
   }
