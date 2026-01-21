@@ -11,17 +11,37 @@
     "html": false
   },
   "attributes": {
-    "fullWidth": { "type": "boolean", "default": false },
-    "columnsDesktop": { "type": "number", "default": 4 },
-    "gridGap": { "type": "number", "default": 20 },
-
-    "tabsAlign": { "type": "string", "default": "center" },
-
+    "fullWidth": {
+      "type": "boolean",
+      "default": false
+    },
+    "columnsDesktop": {
+      "type": "number",
+      "default": 4
+    },
+    "gridGap": {
+      "type": "number",
+      "default": 20
+    },
+    "tabsAlign": {
+      "type": "string",
+      "default": "center"
+    },
     "tabs": {
       "type": "array",
       "default": [
-        { "title": "Tab 1", "queryType": "category", "termId": 0, "perPage": 12 },
-        { "title": "Tab 2", "queryType": "category", "termId": 0, "perPage": 12 }
+        {
+          "title": "Tab 1",
+          "queryType": "category",
+          "termId": 0,
+          "perPage": 12
+        },
+        {
+          "title": "Tab 2",
+          "queryType": "category",
+          "termId": 0,
+          "perPage": 12
+        }
       ],
       "items": {
         "type": "object"
