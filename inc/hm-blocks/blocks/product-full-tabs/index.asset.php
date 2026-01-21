@@ -14,6 +14,7 @@ return array(
 		'wp-i18n',
 		'wp-components',
 		'wp-block-editor',
+		'wp-server-side-render',
 		'wp-editor',
 	),
 	'version' => '0.1.0',

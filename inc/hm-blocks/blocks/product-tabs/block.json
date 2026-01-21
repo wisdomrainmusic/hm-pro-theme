@@ -23,9 +23,45 @@
       "type": "number",
       "default": 20
     },
+    "gridMaxWidth": {
+      "type": "number",
+      "default": 1200
+    },
     "tabsAlign": {
       "type": "string",
       "default": "center"
+    },
+    "headerTitle": {
+      "type": "string",
+      "default": ""
+    },
+    "headerSubtitle": {
+      "type": "string",
+      "default": ""
+    },
+    "headerAlign": {
+      "type": "string",
+      "default": "center"
+    },
+    "panelBgColor": {
+      "type": "string",
+      "default": ""
+    },
+    "panelBgOpacity": {
+      "type": "number",
+      "default": 1
+    },
+    "panelBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "panelBorderWidth": {
+      "type": "number",
+      "default": 0
+    },
+    "panelRadius": {
+      "type": "number",
+      "default": 16
     },
     "tabs": {
       "type": "array",
@@ -34,18 +70,46 @@
           "title": "Tab 1",
           "queryType": "category",
           "termId": 0,
-          "perPage": 12
+          "perPage": 8
         },
         {
           "title": "Tab 2",
           "queryType": "category",
           "termId": 0,
-          "perPage": 12
+          "perPage": 8
         }
       ],
       "items": {
         "type": "object"
       }
+    },
+    "tabTextColor": {
+      "type": "string",
+      "default": ""
+    },
+    "tabBgColor": {
+      "type": "string",
+      "default": ""
+    },
+    "tabTextHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "tabBgHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "tabTextActiveColor": {
+      "type": "string",
+      "default": "#ffffff"
+    },
+    "tabBgActiveColor": {
+      "type": "string",
+      "default": "rgba(0,0,0,0.65)"
+    },
+    "tabsLayout": {
+      "type": "string",
+      "default": "horizontal"
     }
   },
   "editorScript": "file:./index.js",

@@ -89,6 +89,7 @@ $title_color = isset( $attrs['titleColor'] ) ? (string) $attrs['titleColor'] : '
 $price_color = isset( $attrs['priceColor'] ) ? (string) $attrs['priceColor'] : '';
 
 $tabs = hmpro_pft_sanitize_tabs( isset( $attrs['tabs'] ) ? $attrs['tabs'] : [] );
+$is_editor = is_admin();
 if ( empty( $tabs ) ) {
   $tabs[] = [
     'tabTitle' => 'New Arrivals',
@@ -111,6 +112,8 @@ if ( $tab_bg ) $vars[] = '--hm-pft-tab-bg:' . esc_attr( $tab_bg );
 if ( $tab_color ) $vars[] = '--hm-pft-tab-color:' . esc_attr( $tab_color );
 if ( $tab_bg_active ) $vars[] = '--hm-pft-tab-bg-active:' . esc_attr( $tab_bg_active );
 if ( $tab_c_active ) $vars[] = '--hm-pft-tab-color-active:' . esc_attr( $tab_c_active );
+if ( $tab_bg_hover ) $vars[] = '--hm-pft-tab-bg-hover:' . esc_attr( $tab_bg_hover );
+if ( $tab_c_hover ) $vars[] = '--hm-pft-tab-color-hover:' . esc_attr( $tab_c_hover );
 if ( $title_color ) $vars[] = '--hm-pft-title-color:' . esc_attr( $title_color );
 if ( $price_color ) $vars[] = '--hm-pft-price-color:' . esc_attr( $price_color );
 
@@ -171,15 +174,15 @@ $wrapper_classes = [
                 <article class="hm-pft__slide">
                   <div class="hm-pft__card">
                     <div class="hm-pft__img">
-                      <a href="<?php echo esc_url( $permalink ); ?>">
+                      <?php echo $link_open; ?>
                         <?php echo $img ? $img : ''; ?>
-                      </a>
+                      <?php echo $link_close; ?>
                     </div>
 
                     <h3 class="hm-pft__title">
-                      <a href="<?php echo esc_url( $permalink ); ?>">
+                      <?php echo $link_open; ?>
                         <?php echo esc_html( $title ); ?>
-                      </a>
+                      <?php echo $link_close; ?>
                     </h3>
 
                     <div class="hm-pft__price">

@@ -3,6 +3,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+
+
+
+/**
+ * REST JSON Output Guard
+ * Prevents stray PHP output (warnings/notices/whitespace/BOM) from corrupting REST JSON responses,
+ * which breaks Gutenberg with: "Response is not a valid JSON response."
+ */
+if (
+	( defined( 'REST_REQUEST' ) && REST_REQUEST ) ||
+	( isset( $_SERVER['REQUEST_URI'] ) && false !== strpos( (string) $_SERVER['REQUEST_URI'], '/wp-json/' ) )
+) {
+	if ( ! ob_get_level() ) {
+		ob_start();
+	}
+	add_filter( 'rest_pre_serve_request', function ( $served ) {
+		if ( ob_get_level() ) {
+			// Discard anything printed before REST served JSON.
+			ob_clean();
+		}
+		return $served;
+	}, 0 );
+}
+
 /**
  * REST JSON Guard (Dev/Local Safety Net)
  *

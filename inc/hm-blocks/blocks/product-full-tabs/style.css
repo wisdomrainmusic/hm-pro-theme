@@ -86,24 +86,10 @@
 .hm-pft__nav--next:before{ transform: rotate(-45deg); margin-right: 2px; }
 
 /* Track (scroll-snap slider, no Swiper dependency) */
-.hm-pft__track{
-  width:100%;
-  padding: 10px 12px 16px;
-  display:flex;
-  gap: 18px;
-  overflow-x:auto;
-  overflow-y:visible;
-  scroll-snap-type:x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
+.hm-pft__track{display:grid;grid-template-columns:repeat(var(--hm-pft-cols,4),minmax(0,1fr));gap:var(--hm-pft-gap,20px);}
 .hm-pft__track::-webkit-scrollbar{ display:none; }
 
-.hm-pft__slide{
-  scroll-snap-align:start;
-  flex: 0 0 calc((100% - (18px * (var(--hm-pft-cols, 4) - 1))) / var(--hm-pft-cols, 4));
-  display:flex;
-}
+.hm-pft__slide{min-width:0;}
 
 .hm-pft__card{
   height: 100%;
@@ -190,13 +176,21 @@
 @media (max-width: 1024px){
   .hm-pft__box{ padding: 26px; }
   .hm-pft__img{ min-height: 200px; }
-  .hm-pft__slide{ flex-basis: calc((100% - 16px) / 2); }
-  .hm-pft__track{ gap: 16px; }
+  .hm-pft__slide{min-width:0;}
+  .hm-pft__track{display:grid;grid-template-columns:repeat(var(--hm-pft-cols,4),minmax(0,1fr));gap:var(--hm-pft-gap,20px);}
 }
 @media (max-width: 767px){
   .hm-pft__box{ padding: 18px; }
   .hm-pft__img{ min-height: 180px; }
   .hm-pft__nav{ display:none; }
-  .hm-pft__slide{ flex-basis: 100%; }
-  .hm-pft__track{ gap: 14px; }
+  .hm-pft__slide{min-width:0;}
+  .hm-pft__track{display:grid;grid-template-columns:repeat(var(--hm-pft-cols,4),minmax(0,1fr));gap:var(--hm-pft-gap,20px);}
 }
+
+
+/* Hover/Active color fallbacks */
+.hm-pft{--hm-pft-tab-bg-hover: var(--hm-pft-tab-bg-active);--hm-pft-tab-color-hover: var(--hm-pft-tab-color-active, #fff);--hm-pft-tab-color-active: var(--hm-pft-tab-color-active, #fff);}
+.hm-pft__grid{display:grid;grid-template-columns:repeat(var(--hm-pft-cols,4),minmax(0,1fr));gap:var(--hm-pft-gap,20px);align-items:start;}
+
+@media (max-width: 1024px){.hm-pft__track{display:grid;grid-template-columns:repeat(var(--hm-pft-cols,4),minmax(0,1fr));gap:var(--hm-pft-gap,20px);}}
+@media (max-width: 600px){.hm-pft__track{display:grid;grid-template-columns:repeat(var(--hm-pft-cols,4),minmax(0,1fr));gap:var(--hm-pft-gap,20px);}}

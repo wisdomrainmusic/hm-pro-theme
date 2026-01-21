@@ -2,26 +2,36 @@
 	const { registerBlockType } = wp.blocks;
 	const { __ } = wp.i18n;
 
-	const { InspectorControls } = wp.blockEditor;
+	const { InspectorControls, useBlockProps } = wp.blockEditor;
 	const {
 		PanelBody,
 		ToggleControl,
 		RangeControl,
 		TextControl,
 		SelectControl,
+		ComboboxControl,
+		ColorPalette,
 		Button,
 		ButtonGroup,
 		Notice,
 	} = wp.components;
 
+	const { useSelect } = wp.data;
 	const ServerSideRender = wp.serverSideRender;
 	const el = wp.element.createElement;
+
+	// (Preview helper removed; we render SSR directly in the wrapper below.)
+
 	const Fragment = wp.element.Fragment;
 
 	function clampInt( value, min, max ) {
 		const n = parseInt( value, 10 );
 		if ( Number.isNaN( n ) ) return min;
 		return Math.max( min, Math.min( max, n ) );
+	}
+
+	function normalizeColor( v ) {
+		return v ? String( v ) : '';
 	}
 
 	registerBlockType( 'hmpro/product-tabs', {
@@ -37,9 +47,41 @@
 				fullWidth,
 				columnsDesktop,
 				gridGap,
+				gridMaxWidth,
+				headerTitle,
+				headerSubtitle,
+				headerAlign,
+				panelBgColor,
+				panelBgOpacity,
+				panelBorderColor,
+				panelBorderWidth,
+				panelRadius,
 				tabsAlign,
+				tabsLayout,
 				tabs = [],
+				tabTextColor,
+				tabBgColor,
+				tabTextHoverColor,
+				tabBgHoverColor,
+				tabTextActiveColor,
+				tabBgActiveColor,
 			} = attributes;
+
+			// Fetch terms (searchable dropdown)
+			const catTerms = useSelect( function ( select ) {
+				return select( 'core' ).getEntityRecords( 'taxonomy', 'product_cat', { per_page: 100, hide_empty: false } );
+			}, [] );
+			const tagTerms = useSelect( function ( select ) {
+				return select( 'core' ).getEntityRecords( 'taxonomy', 'product_tag', { per_page: 100, hide_empty: false } );
+			}, [] );
+
+			function getTermOptions( queryType ) {
+				const list = queryType === 'tag' ? tagTerms : catTerms;
+				if ( ! Array.isArray( list ) ) return [];
+				return list.map( function ( t ) {
+					return { label: t.name, value: String( t.id ) };
+				} );
+			}
 
 			function updateTab( index, patch ) {
 				const next = [ ...tabs ];
@@ -78,6 +120,14 @@
 					checked: !! fullWidth,
 					onChange: function ( v ) { setAttributes( { fullWidth: !! v } ); },
 				} ),
+				! fullWidth && el( RangeControl, {
+					label: __( 'Grid Max Width (px)', 'hm-pro-theme' ),
+					value: gridMaxWidth || 1200,
+					onChange: function ( v ) { setAttributes( { gridMaxWidth: clampInt( v, 600, 2200 ) } ); },
+					min: 600,
+					max: 2200,
+					step: 10,
+				} ),
 				el( RangeControl, {
 					label: __( 'Cards Per View (Desktop)', 'hm-pro-theme' ),
 					value: columnsDesktop,
@@ -92,7 +142,16 @@
 					min: 0,
 					max: 80,
 				} ),
-				el( SelectControl, {
+								el( SelectControl, {
+					label: __( 'Tabs Layout', 'hm-pro-theme' ),
+					value: tabsLayout || 'horizontal',
+					options: [
+						{ label: __( 'Horizontal', 'hm-pro-theme' ), value: 'horizontal' },
+						{ label: __( 'Vertical (Left)', 'hm-pro-theme' ), value: 'vertical' },
+					],
+					onChange: function ( v ) { setAttributes( { tabsLayout: v } ); },
+				} ),
+el( SelectControl, {
 					label: __( 'Tabs Alignment', 'hm-pro-theme' ),
 					value: tabsAlign,
 					options: [
@@ -104,7 +163,100 @@
 				} )
 			);
 
-			const tabsControls = tabs.map( function ( tab, index ) {
+			const colorsPanel = el(
+				PanelBody,
+				{ title: __( 'Tab Colors', 'hm-pro-theme' ), initialOpen: false },
+				el( 'p', { style: { marginTop: 0 } }, __( 'Tip: set Active background dark + Active text light for readability.', 'hm-pro-theme' ) ),
+				el( 'div', { style: { marginBottom: 12 } },
+					el( 'strong', null, __( 'Normal Text', 'hm-pro-theme' ) ),
+					el( ColorPalette, { value: tabTextColor, onChange: function ( v ) { setAttributes( { tabTextColor: normalizeColor( v ) } ); } } )
+				),
+				el( 'div', { style: { marginBottom: 12 } },
+					el( 'strong', null, __( 'Normal Background', 'hm-pro-theme' ) ),
+					el( ColorPalette, { value: tabBgColor, onChange: function ( v ) { setAttributes( { tabBgColor: normalizeColor( v ) } ); } } )
+				),
+				el( 'div', { style: { marginBottom: 12 } },
+					el( 'strong', null, __( 'Hover Text', 'hm-pro-theme' ) ),
+					el( ColorPalette, { value: tabTextHoverColor, onChange: function ( v ) { setAttributes( { tabTextHoverColor: normalizeColor( v ) } ); } } )
+				),
+				el( 'div', { style: { marginBottom: 12 } },
+					el( 'strong', null, __( 'Hover Background', 'hm-pro-theme' ) ),
+					el( ColorPalette, { value: tabBgHoverColor, onChange: function ( v ) { setAttributes( { tabBgHoverColor: normalizeColor( v ) } ); } } )
+				),
+				el( 'div', { style: { marginBottom: 12 } },
+					el( 'strong', null, __( 'Active Text', 'hm-pro-theme' ) ),
+					el( ColorPalette, { value: tabTextActiveColor, onChange: function ( v ) { setAttributes( { tabTextActiveColor: normalizeColor( v ) } ); } } )
+				),
+				el( 'div', { style: { marginBottom: 0 } },
+					el( 'strong', null, __( 'Active Background', 'hm-pro-theme' ) ),
+					el( ColorPalette, { value: tabBgActiveColor, onChange: function ( v ) { setAttributes( { tabBgActiveColor: normalizeColor( v ) } ); } } )
+				)
+			);
+
+			
+			const headerPanel = el(
+				PanelBody,
+				{ title: __( 'Header', 'hm-pro-theme' ), initialOpen: false },
+				el( TextControl, {
+					label: __( 'Title', 'hm-pro-theme' ),
+					value: headerTitle || '',
+					onChange: function ( v ) { setAttributes( { headerTitle: v } ); },
+				} ),
+				el( TextControl, {
+					label: __( 'Subtitle', 'hm-pro-theme' ),
+					value: headerSubtitle || '',
+					onChange: function ( v ) { setAttributes( { headerSubtitle: v } ); },
+				} ),
+				el( SelectControl, {
+					label: __( 'Alignment', 'hm-pro-theme' ),
+					value: headerAlign || 'center',
+					options: [
+						{ label: __( 'Left', 'hm-pro-theme' ), value: 'left' },
+						{ label: __( 'Center', 'hm-pro-theme' ), value: 'center' },
+						{ label: __( 'Right', 'hm-pro-theme' ), value: 'right' },
+					],
+					onChange: function ( v ) { setAttributes( { headerAlign: v } ); },
+				} )
+			);
+
+			const containerPanel = el(
+				PanelBody,
+				{ title: __( 'Container', 'hm-pro-theme' ), initialOpen: false },
+				el( 'p', { style: { marginTop: 0, opacity: 0.8 } }, __( 'Optional panel styling around tabs + grid.', 'hm-pro-theme' ) ),
+				el( 'div', { style: { marginBottom: 12 } },
+					el( 'strong', null, __( 'Background', 'hm-pro-theme' ) ),
+					el( ColorPalette, { value: panelBgColor, onChange: function ( v ) { setAttributes( { panelBgColor: normalizeColor( v ) } ); } } )
+				),
+				el( RangeControl, {
+					label: __( 'Background Opacity', 'hm-pro-theme' ),
+					value: typeof panelBgOpacity === 'number' ? panelBgOpacity : 1,
+					onChange: function ( v ) { setAttributes( { panelBgOpacity: Math.max( 0, Math.min( 1, parseFloat( v ) ) ) } ); },
+					min: 0,
+					max: 1,
+					step: 0.05,
+				} ),
+				el( 'div', { style: { marginBottom: 12 } },
+					el( 'strong', null, __( 'Border Color', 'hm-pro-theme' ) ),
+					el( ColorPalette, { value: panelBorderColor, onChange: function ( v ) { setAttributes( { panelBorderColor: normalizeColor( v ) } ); } } )
+				),
+				el( RangeControl, {
+					label: __( 'Border Width (px)', 'hm-pro-theme' ),
+					value: panelBorderWidth || 0,
+					onChange: function ( v ) { setAttributes( { panelBorderWidth: clampInt( v, 0, 12 ) } ); },
+					min: 0,
+					max: 12,
+				} ),
+				el( RangeControl, {
+					label: __( 'Border Radius (px)', 'hm-pro-theme' ),
+					value: panelRadius || 16,
+					onChange: function ( v ) { setAttributes( { panelRadius: clampInt( v, 0, 48 ) } ); },
+					min: 0,
+					max: 48,
+				} )
+			);
+
+const tabsControls = tabs.map( function ( tab, index ) {
+				const queryType = tab.queryType || 'category';
 				return el(
 					'div',
 					{ key: index, style: { padding: '12px 0', borderTop: '1px solid rgba(0,0,0,0.08)' } },
@@ -115,17 +267,19 @@
 					} ),
 					el( SelectControl, {
 						label: __( 'Query Type', 'hm-pro-theme' ),
-						value: tab.queryType || 'category',
+						value: queryType,
 						options: [
 							{ label: __( 'By Category', 'hm-pro-theme' ), value: 'category' },
 							{ label: __( 'By Tag', 'hm-pro-theme' ), value: 'tag' },
 						],
-						onChange: function ( v ) { updateTab( index, { queryType: v } ); },
+						onChange: function ( v ) { updateTab( index, { queryType: v, termId: 0 } ); },
 					} ),
-					el( TextControl, {
-						label: __( 'Term ID (category/tag)', 'hm-pro-theme' ),
+					el( ComboboxControl, {
+						label: __( 'Select Term', 'hm-pro-theme' ),
 						value: String( tab.termId ?? 0 ),
+						options: getTermOptions( queryType ),
 						onChange: function ( v ) { updateTab( index, { termId: clampInt( v, 0, 999999 ) } ); },
+						help: __( 'Search and pick a product category or tag.', 'hm-pro-theme' ),
 					} ),
 					el( RangeControl, {
 						label: __( 'Products Per Tab (Max 24)', 'hm-pro-theme' ),
@@ -160,7 +314,7 @@
 				PanelBody,
 				{ title: __( 'Tabs', 'hm-pro-theme' ), initialOpen: true },
 				el( Notice, { status: 'info', isDismissible: false },
-					__( 'Commit 1: Term selection uses Term ID. Commit 2 will replace this with searchable selectors.', 'hm-pro-theme' )
+					__( 'Term selection is searchable. If your taxonomy list is huge, we can add pagination in a later commit.', 'hm-pro-theme' )
 				),
 				...tabsControls,
 				el(
@@ -170,18 +324,23 @@
 				)
 			);
 
+			const blockProps = useBlockProps( { className: 'hmpro-pft__editor' } );
+
 			return el(
 				Fragment,
 				null,
 				el(
 					InspectorControls,
 					null,
+					headerPanel,
+					containerPanel,
 					layoutPanel,
+					colorsPanel,
 					tabsPanel
 				),
 				el(
 					'div',
-					{ className: 'hmpro-pft__editor' },
+					blockProps,
 					el( ServerSideRender, { block: 'hmpro/product-tabs', attributes: attributes } )
 				)
 			);

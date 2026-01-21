@@ -1,6 +1,8 @@
 <?php
 /**
- * Asset file for HM Product Tabs block editor script.
+ * Asset file for HM Hero Slider block editor script.
+ *
+ * WordPress uses this to load correct script dependencies when block.json uses "file:./index.js".
  */
 return array(
 	'dependencies' => array(
@@ -10,9 +12,6 @@ return array(
 		'wp-components',
 		'wp-block-editor',
 		'wp-editor',
-		'wp-server-side-render',
-		'wp-data',
-		'wp-core-data',
 	),
 	'version' => '0.1.0',
 );

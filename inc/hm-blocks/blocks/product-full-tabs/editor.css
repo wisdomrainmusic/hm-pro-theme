@@ -25,3 +25,32 @@
   background: rgba(15,23,42,.92);
   color: #fff;
 }
+
+
+.hm-pft-editor{position:relative;}
+.hm-pft-editor__preview{pointer-events:none;}
+.hm-pft-editor__overlay{pointer-events:none;}
+
+.wp-block-hm-pm-product-full-tabs{position:relative;}
+.wp-block-hm-pm-product-full-tabs:hover{outline:2px dashed rgba(0,0,0,.15);outline-offset:4px;}
+
+/* Make preview selectable: disable pointer events on cards in editor */
+.editor-styles-wrapper .hmpro-product-full-tabs .hm-pft__track,
+.editor-styles-wrapper .hmpro-product-full-tabs .hm-pft__slide,
+.editor-styles-wrapper .hmpro-product-full-tabs .hm-pft__card,
+.editor-styles-wrapper .hmpro-product-full-tabs .hm-pft__img,
+.editor-styles-wrapper .hmpro-product-full-tabs .hm-pft__img img,
+.editor-styles-wrapper .hmpro-product-full-tabs .hm-pft__title,
+.editor-styles-wrapper .hmpro-product-full-tabs .hm-pft__price{pointer-events:none;}
+.editor-styles-wrapper .hmpro-product-full-tabs .hm-pft__tabs{pointer-events:auto;}
+
+.wp-block-hm-pm-product-full-tabs{position:relative;}
+.hm-pft-editor-root{position:relative;}
+.hm-pft-editor__select{
+  position:absolute; top:8px; left:8px; z-index:20;
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 10px; border-radius:10px;
+  background:#111; color:#fff; font-size:12px; line-height:1;
+  cursor:pointer; user-select:none;
+}
+.hm-pft-editor__preview{pointer-events:none;}
