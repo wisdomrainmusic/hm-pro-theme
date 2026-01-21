@@ -1,0 +1,27 @@
+.wp-block-hmpro-product-full-tabs .hm-pft__note{
+  padding: 14px 16px;
+  border: 1px dashed rgba(0,0,0,.25);
+  border-radius: 12px;
+  background: rgba(255,255,255,.6);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.wp-block-hmpro-product-full-tabs .hm-pft__note strong{
+  display:block;
+  margin-bottom: 6px;
+}
+.wp-block-hmpro-product-full-tabs .hm-pft__mini{
+  margin-top: 12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap: 8px;
+}
+.wp-block-hmpro-product-full-tabs .hm-pft__chip{
+  font-size: 12px;
+  line-height: 1;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(15,23,42,.92);
+  color: #fff;
+}
