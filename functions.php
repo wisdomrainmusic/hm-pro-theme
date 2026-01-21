@@ -3,6 +3,50 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * REST JSON Guard (Dev/Local Safety Net)
+ *
+ * On some local stacks (XAMPP, display_errors=On), ANY PHP warning/notice/output
+ * printed before REST responses will break the JSON payload and Gutenberg shows:
+ * "Yayınlanamadı. Yanıt geçerli bir JSON yanıtı değil."
+ *
+ * This guard buffers output for REST requests and discards any accidental output
+ * right before WP serves the REST response.
+ *
+ * NOTE: This does NOT hide real fatal errors; it only prevents notices/warnings
+ * or stray echoes/whitespace from corrupting JSON responses.
+ */
+add_action( 'init', function () {
+	$is_rest = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
+	if ( ! $is_rest && isset( $_SERVER['REQUEST_URI'] ) ) {
+		// Fallback for edge cases where REST_REQUEST isn't defined early enough.
+		$is_rest = ( false !== strpos( (string) $_SERVER['REQUEST_URI'], '/wp-json/' ) );
+	}
+	if ( ! $is_rest ) {
+		return;
+	}
+
+	// Start a buffer as early as possible for this request.
+	if ( ! ob_get_level() ) {
+		ob_start();
+	}
+}, 0 );
+
+add_filter( 'rest_pre_serve_request', function ( $served, $result, $request, $server ) {
+	// If anything was echoed/printed (warnings, notices, BOM, whitespace), clean it.
+	if ( ob_get_level() ) {
+		$garbage = ob_get_contents();
+		if ( is_string( $garbage ) && $garbage !== '' ) {
+			// Optional: keep a trace in debug.log when WP_DEBUG_LOG is enabled.
+			if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+				error_log( '[HMPRO REST GUARD] Stray output discarded (len=' . strlen( $garbage ) . ')' );
+			}
+			ob_clean();
+		}
+	}
+	return $served;
+}, 0, 4 );
+
 define( 'HMPRO_VERSION', '0.1.0' );
 define( 'HMPRO_PATH', get_template_directory() );
 define( 'HMPRO_URL', get_template_directory_uri() );
