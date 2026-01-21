@@ -20,6 +20,8 @@
     "modalLinkColor": { "type": "string", "default": "#ffffff" },
     "modalLinkBg": { "type": "string", "default": "rgba(0,0,0,0.55)" },
     "autoTime": { "type": "number", "default": 4000 },
+    "contentScaleDesktop": { "type": "number", "default": 1 },
+    "contentScaleMobile": { "type": "number", "default": 1 },
     "stories": {
       "type": "array",
       "default": [],
