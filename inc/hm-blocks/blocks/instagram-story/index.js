@@ -6,7 +6,7 @@
 		MediaUpload,
 		MediaUploadCheck,
 		useBlockProps,
-	} = wp.blockEditor;
+	} = wp.blockEditor || wp.editor;
 	const {
 		PanelBody,
 		ToggleControl,
