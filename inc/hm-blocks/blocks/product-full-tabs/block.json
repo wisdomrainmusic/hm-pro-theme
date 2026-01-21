@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "hmpro/product-full-tabs",
+  "title": "HM Product Full Tabs",
+  "category": "hmpro",
+  "icon": "products",
+  "description": "WooCommerce products in tabbed categories/tags with a full-width hero option and snap slider.",
+  "supports": {
+    "align": ["wide", "full"],
+    "anchor": true
+  },
+  "attributes": {
+    "columnsPerView": { "type": "number", "default": 4 },
+    "fullBleed": { "type": "boolean", "default": false },
+    "tabs": {
+      "type": "array",
+      "default": [],
+      "items": { "type": "object" }
+    },
+    "tabsAlignment": { "type": "string", "default": "center" },
+    "boxBg": { "type": "string", "default": "" },
+    "boxRadius": { "type": "number", "default": 22 },
+    "boxPadding": { "type": "number", "default": 34 },
+    "tabBg": { "type": "string", "default": "" },
+    "tabColor": { "type": "string", "default": "" },
+    "tabBgActive": { "type": "string", "default": "" },
+    "tabColorActive": { "type": "string", "default": "" },
+    "titleColor": { "type": "string", "default": "" },
+    "priceColor": { "type": "string", "default": "" }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php"
+}
