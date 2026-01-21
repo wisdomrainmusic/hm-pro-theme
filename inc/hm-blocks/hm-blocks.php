@@ -33,27 +33,22 @@ require_once HMPRO_BLOCKS_PATH . '/render/shared/templates.php';
 /**
  * Register "HM Pro" block category in the inserter.
  */
-add_filter( 'block_categories_all', function ( $categories, $post ) {
-
+add_filter( 'block_categories_all', function ( $categories ) {
 	$slug = 'hmpro';
+	foreach ( $categories as $cat ) {
+		if ( isset( $cat['slug'] ) && $cat['slug'] === $slug ) {
+			return $categories;
+		}
+	}
 
-	$hm = [
+	$categories[] = [
 		'slug'  => $slug,
 		'title' => __( 'HM Pro Blocks', 'hm-pro-theme' ),
 		'icon'  => null,
 	];
 
-	// Remove if already present (avoid duplicates).
-	$categories = array_values( array_filter( $categories, function( $cat ) use ( $slug ) {
-		return ! ( isset( $cat['slug'] ) && $cat['slug'] === $slug );
-	} ) );
-
-	// Add to top.
-	array_unshift( $categories, $hm );
-
 	return $categories;
-
-}, 1, 2 );
+}, 20 );
 
 /**
  * Register shared assets for HM Pro blocks.
