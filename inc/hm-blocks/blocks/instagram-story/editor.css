@@ -68,6 +68,29 @@
   text-overflow: ellipsis;
 }
 
+.hmpro-instagram-story .hmpro-is__meta {
+  margin-top: 4px;
+  max-width: calc(var(--hm-is-bubble, 68px) + 40px);
+}
+
+.hmpro-instagram-story .hmpro-is__metaTitle,
+.hmpro-instagram-story .hmpro-is__metaLink {
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hmpro-instagram-story .hmpro-is__metaTitle {
+  color: #111111;
+  font-weight: 600;
+}
+
+.hmpro-instagram-story .hmpro-is__metaLink {
+  color: rgba(17,17,17,0.75);
+}
+
 /* Inspector helpers */
 .hmpro-is-media-row {
   display: flex;
