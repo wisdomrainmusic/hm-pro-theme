@@ -502,9 +502,8 @@
 											thumb
 												? wp.element.createElement( 'img', { src: thumb, alt: s.label || '' } )
 												: wp.element.createElement( 'div', { className: 'hmpro-is__thumbPh' } )
-										)
 									)
-									),
+								),
 									s.label
 										? wp.element.createElement( 'div', { className: 'hmpro-is__label' }, s.label )
 										: null
