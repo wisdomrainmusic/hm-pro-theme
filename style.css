@@ -19,6 +19,16 @@ Tags: e-commerce, woocommerce, elementor, custom-colors, custom-logo, theme-opti
 	--hmpro-accent-contrast: #fff;
 	--hmpro-icon-bg: rgba(0, 0, 0, 0.04);
 	--hmpro-icon-border: rgba(0, 0, 0, 0.08);
+	--hmpro-social-icon-color: var(--hmpro-accent);
+	--hmpro-social-icon-bg: var(--hmpro-icon-bg);
+	--hmpro-social-icon-border: var(--hmpro-icon-border);
+	--hmpro-social-icon-hover-color: var(--hmpro-accent);
+	--hmpro-social-icon-hover-bg: rgba(0, 0, 0, 0.07);
+	--hmpro-social-icon-hover-border: rgba(0, 0, 0, 0.14);
+	--hmpro-social-icon-contrast: var(--hmpro-accent-contrast);
+	--hmpro-social-icon-size: 34px;
+	--hmpro-social-icon-radius: 999px;
+	--hmpro-social-icon-svg-size: 18px;
 }
 
 .hmpro-socialicon {
@@ -26,13 +36,13 @@ Tags: e-commerce, woocommerce, elementor, custom-colors, custom-logo, theme-opti
 	align-items: center;
 	justify-content: center;
 	line-height: 1;
-	width: 34px;
-	height: 34px;
-	border-radius: 999px;
-	color: var(--hmpro-accent);
+	width: var(--hmpro-social-icon-size);
+	height: var(--hmpro-social-icon-size);
+	border-radius: var(--hmpro-social-icon-radius);
+	color: var(--hmpro-social-icon-color);
 	text-decoration: none;
-	background: var(--hmpro-icon-bg);
-	border: 1px solid var(--hmpro-icon-border);
+	background: var(--hmpro-social-icon-bg);
+	border: 1px solid var(--hmpro-social-icon-border);
 	transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
@@ -41,6 +51,9 @@ Tags: e-commerce, woocommerce, elementor, custom-colors, custom-logo, theme-opti
 	transform: translateY(-1px);
 	opacity: 0.95;
 	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+	color: var(--hmpro-social-icon-hover-color);
+	background: var(--hmpro-social-icon-hover-bg);
+	border-color: var(--hmpro-social-icon-hover-border);
 }
 
 .hmpro-socialicon:focus {
@@ -68,8 +81,8 @@ Tags: e-commerce, woocommerce, elementor, custom-colors, custom-logo, theme-opti
 }
 
 .hmpro-socialicon__svg svg {
-	width: 18px;
-	height: 18px;
+	width: var(--hmpro-social-icon-svg-size);
+	height: var(--hmpro-social-icon-svg-size);
 	display: block;
 }
 
