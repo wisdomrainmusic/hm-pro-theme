@@ -178,40 +178,62 @@
 	max-height: 100% !important;
 }
 
-/* Main image: standard visual height, crop gently, keep aspect tidy. */
-.single-product.woocommerce div.product div.images .woocommerce-product-gallery__wrapper img {
-	width: 100%;
-	max-height: 560px;
-	object-fit: cover;
-	display: block;
-}
-
 /* =========================================================
    Product media standard (2:3 canvas like 1200x1800)
    - Shop/category cards + single gallery
    - White canvas + center contain (no crop)
    ========================================================= */
 
-/* Shop / Category / Archive product cards */
-.woocommerce ul.products li.product a img,
-.woocommerce-page ul.products li.product a img {
-	width: 100%;
-	height: auto;
-	aspect-ratio: 2 / 3;
-	object-fit: contain;
-	background: #fff;
+/* -----------------------------------------
+   Shop / Category / Archive product cards
+   True 2:3 canvas must be on the container,
+   NOT on the <img> (intrinsic ratio overrides it).
+   ----------------------------------------- */
+.woocommerce ul.products li.product a.woocommerce-LoopProduct-link,
+.woocommerce ul.products li.product a.woocommerce-loop-product__link,
+.woocommerce-page ul.products li.product a.woocommerce-LoopProduct-link,
+.woocommerce-page ul.products li.product a.woocommerce-loop-product__link {
 	display: block;
+	position: relative;
+	aspect-ratio: 2 / 3;
+	background: #fff;
+	overflow: hidden;
+}
+
+.woocommerce ul.products li.product a.woocommerce-LoopProduct-link img,
+.woocommerce ul.products li.product a.woocommerce-loop-product__link img,
+.woocommerce-page ul.products li.product a.woocommerce-LoopProduct-link img,
+.woocommerce-page ul.products li.product a.woocommerce-loop-product__link img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	object-position: center;
+	display: block;
+	background: #fff;
 }
 
 /* Single product: enforce stable gallery ratio and prevent CLS */
 .single-product.woocommerce div.product div.images .woocommerce-product-gallery {
 	background: #fff;
+	aspect-ratio: 2 / 3;
+	overflow: hidden;
 }
 
 .single-product.woocommerce div.product div.images .woocommerce-product-gallery__wrapper {
-	aspect-ratio: 2 / 3;
-	overflow: hidden;
 	background: #fff;
+	height: 100%;
+}
+
+.single-product.woocommerce div.product div.images .flex-viewport {
+	height: 100% !important;
+}
+
+.single-product.woocommerce div.product div.images .woocommerce-product-gallery__wrapper,
+.single-product.woocommerce div.product div.images .woocommerce-product-gallery__image,
+.single-product.woocommerce div.product div.images .woocommerce-product-gallery__image a {
+	height: 100%;
 }
 
 .single-product.woocommerce div.product div.images .woocommerce-product-gallery__image,
@@ -220,7 +242,6 @@
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	height: 100%;
 }
 
 /* Override previous crop rule: use contain + full height within ratio box */
@@ -229,6 +250,7 @@
 	height: 100%;
 	max-height: none;
 	object-fit: contain;
+	object-position: center;
 	display: block;
 	background: #fff;
 }
