@@ -6,6 +6,11 @@
 		var h = $gallery.outerHeight();
 		if (!h || h < 50) return;
 
+		// Hard cap to prevent "giant" galleries on wide layouts
+		// Adjust if needed, but keep it under ~900px for a premium, stable look.
+		var cap = 900;
+		if (h > cap) h = cap;
+
 		// FlexSlider viewport + wrapper must follow the canvas height
 		var $vp = $gallery.find('.flex-viewport');
 		if ($vp.length) {
