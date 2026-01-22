@@ -1,8 +1,8 @@
-✅ Session Check: Header, Presets \& Hero Mobile Optimization (Fixed17)
+✅ Session Check: Header, Presets \& Header Banner Mobile Optimization (Fixed17)
 
 
 
-This update finalizes a major stability and UX improvement pass across header styling, preset behavior, and hero banner responsiveness.
+This update finalizes a major stability and UX improvement pass across header styling, preset behavior, and header banner responsiveness.
 
 
 
@@ -34,11 +34,11 @@ Mobile hamburger menu CTA remains intact.
 
 
 
-Hero Banner (Desktop, Tablet, Mobile)
+Header Background Banner (Desktop, Tablet, Mobile)
 
 
 
-Desktop Hero content supports extended X/Y positioning up to ±1200px.
+Desktop banner content supports extended X/Y positioning up to ±1200px.
 
 
 
@@ -46,7 +46,7 @@ Mobile and Tablet:
 
 
 
-Hero content X/Y positioning is disabled to prevent layout breakage.
+Banner content X/Y positioning is disabled to prevent layout breakage.
 
 
 
@@ -54,19 +54,19 @@ Content is anchored to the top (no vertical centering shift).
 
 
 
-Separate Mobile Hero Content Scale setting added.
+Separate Mobile banner content scale setting added.
 
 
 
-Mobile/Tablet Hero Content Top Offset added for fine alignment control.
+Mobile/Tablet banner content top offset added for fine alignment control.
 
 
 
-Optional Mobile Hero hide toggle available.
+Optional mobile banner hide toggle available.
 
 
 
-Mobile Hero height is configurable independently from desktop.
+Mobile banner height is configurable independently from desktop.
 
 
 
@@ -74,7 +74,7 @@ Result
 
 
 
-Hero content no longer shifts unpredictably on mobile/tablet when scaling.
+Banner content no longer shifts unpredictably on mobile/tablet when scaling.
 
 
 
@@ -106,15 +106,15 @@ Ready for demo packaging and further feature development.
 
 
 
-✅ CHECKPOINT – Header \& Hero Banner Refactor (Jan 2026)
+✅ CHECKPOINT – Header \& Banner Refactor (Jan 2026)
 Summary
 
-This checkpoint finalizes a major refactor around the header, transparent header logic, and hero banner behavior.
-The previous scroll-based transparent header approach was intentionally removed in favor of a clean, Customizer-driven Hero Banner system that works independently of Elementor.
+This checkpoint finalizes a major refactor around the header, transparent header logic, and header banner behavior.
+The previous scroll-based transparent header approach was intentionally removed in favor of a clean, Customizer-driven Header Background Banner system that works independently of Elementor.
 
 What Was Tried
 
-Astra-like transparent header with menu overlay on hero
+Astra-like transparent header with menu overlay on the banner
 
 Scroll-based state switching (transparent → opaque)
 
@@ -130,7 +130,7 @@ The transparent header scroll logic was fully removed.
 
 Instead, the theme now uses:
 
-A Customizer-controlled Hero Banner (image or video)
+A Customizer-controlled Header Background Banner (image or video)
 
 Fixed, predictable header layout
 
@@ -140,7 +140,7 @@ This results in a simpler, more stable, and more maintainable architecture.
 
 Current System (Active)
 
-Hero Banner is rendered above page content
+Header Background Banner is rendered within the header layout
 
 Configurable from Customizer
 
@@ -150,11 +150,11 @@ Header remains consistent across scroll states
 
 Customizer Features
 
-Hero background image
+Header background image
 
 Optional background video (mp4 / webm)
 
-Adjustable hero height (px)
+Adjustable banner height (px)
 
 Overlay darkness control
 
@@ -184,17 +184,17 @@ Makes demos more predictable
 
 Keeps the theme flexible for Elementor and non-Elementor users
 
-Establishes a solid base for future hero + CTA enhancements
+Establishes a solid base for future banner + CTA enhancements
 
 Next Possible Enhancements
 
-Hero content alignment (center / left)
+Banner content alignment (center / left)
 
-CTA button support in Hero
+CTA button support in the header banner
 
-Per-page hero override (optional)
+Per-page banner override (optional)
 
-Preset hero styles for demos
+Preset banner styles for demos
 HM Pro Theme — Surgical Checkpoint (Developer)
 Repository snapshot
 Theme root: hm-pro-theme-main/
