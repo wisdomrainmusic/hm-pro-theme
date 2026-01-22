@@ -221,4 +221,11 @@ add_action( 'wp_enqueue_scripts', function() {
 		hmpro_asset_ver( 'assets/js/woo-variation-gallery.js' ),
 		true
 	);
+
+	wp_enqueue_style(
+		'hmpro-woo-variation-gallery',
+		HMPRO_URL . '/assets/css/woo-variation-gallery.css',
+		[],
+		hmpro_asset_ver( 'assets/css/woo-variation-gallery.css' )
+	);
 }, 40 );
