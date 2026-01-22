@@ -28,10 +28,17 @@ html, body {
 	height: 100%;
 }
 
+/* Prevent accidental horizontal overflow caused by 100vw panels/blocks (mega menu, full-width blocks)
+   This removes the bottom horizontal scrollbar on desktop without changing layouts. */
+html {
+	overflow-x: clip;
+}
+
 body {
 	background-color: var(--hm-bg);
 	color: var(--hm-dark);
 	font-family: var(--hm-body-font);
+	overflow-x: hidden; /* fallback for browsers without overflow-x: clip */
 
 	/* Sticky footer:
 	   Keep footer at the bottom when page content is short.
