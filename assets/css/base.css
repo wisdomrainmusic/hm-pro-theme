@@ -24,10 +24,34 @@
 }
 
 /* Base colors */
+html, body {
+	height: 100%;
+}
+
 body {
 	background-color: var(--hm-bg);
 	color: var(--hm-dark);
 	font-family: var(--hm-body-font);
+
+	/* Sticky footer:
+	   Keep footer at the bottom when page content is short.
+	   Safe for long pages (footer flows normally). */
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+/* Main content grows to push footer down */
+main.site-main,
+main#primary,
+#primary.site-main {
+	flex: 1 0 auto;
+}
+
+/* Footer must not shrink */
+footer,
+#site-footer {
+	flex-shrink: 0;
 }
 
 h1,
