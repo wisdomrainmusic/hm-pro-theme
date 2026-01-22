@@ -1,6 +1,22 @@
 (function($){
 	'use strict';
 
+	function lockHeight($gallery){
+		var h = $gallery.outerHeight();
+		if (h && h > 0) {
+			$gallery.css('min-height', h + 'px').addClass('hmpro-vg-lock');
+		}
+	}
+	function unlockHeight($gallery){
+		$gallery.css('min-height', '').removeClass('hmpro-vg-lock');
+	}
+	function waitImages($gallery, cb){
+		var $imgs = $gallery.find('.woocommerce-product-gallery__wrapper img');
+		if (!$imgs.length) { cb(); return; }
+		var total = $imgs.length, done = 0, tick = function(){ done++; if (done >= total) cb(); };
+		$imgs.each(function(){ if (this.complete) { tick(); } else { $(this).one('load error', tick); } });
+	}
+
 	function hasGallery(variation){
 		return variation && variation.hmpro_gallery && Array.isArray(variation.hmpro_gallery) && variation.hmpro_gallery.length > 0;
 	}
@@ -75,11 +91,14 @@
 		})();
 
 		function swapToVariation(variation){
+			lockHeight($gallery);
+
 			// If this variation has no custom gallery -> keep DEFAULT product gallery.
 			// Do NOT allow Woo to leave the gallery in a half-state (single image / zoomed crop).
 			if (!variation || !hasGallery(variation)) {
 				$wrapper.html(originalSlidesHtml);
 				hardResetGallery($gallery);
+				waitImages($gallery, function(){ unlockHeight($gallery); });
 				return;
 			}
 
@@ -93,11 +112,13 @@
 			if (!html) {
 				$wrapper.html(originalSlidesHtml);
 				hardResetGallery($gallery);
+				waitImages($gallery, function(){ unlockHeight($gallery); });
 				return;
 			}
 
 			$wrapper.html(html);
 			hardResetGallery($gallery);
+			waitImages($gallery, function(){ unlockHeight($gallery); });
 		}
 
 		/**
