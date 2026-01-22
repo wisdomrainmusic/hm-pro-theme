@@ -67,17 +67,6 @@ do_action( 'hmpro/header/before' );
 <?php $hmpro_account_url = home_url( '/hesabim/' ); ?>
 
 <?php
-/**
- * Hero Banner (Transparent Header Hero)
- * - Function exists in inc/core/template-tags.php
- * - Was never called in header.php, so it never rendered on frontend.
- */
-if ( function_exists( 'hmpro_render_transparent_header_hero' ) ) {
-	hmpro_render_transparent_header_hero();
-}
-?>
-
-<?php
 // Inline SVG icons (consistent across fonts/browsers)
 function hmpro_icon_hamburger() {
 	return '<svg class="hmpro-icon hmpro-icon-burger" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">

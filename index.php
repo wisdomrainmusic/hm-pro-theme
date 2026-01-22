@@ -12,12 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 get_header();
 ?>
 
-<?php
-if ( function_exists( 'hmpro_render_transparent_header_hero' ) ) {
-	hmpro_render_transparent_header_hero();
-}
-?>
-
 <main id="primary" class="site-main">
 	<div class="hmpro-container">
 		<?php
