@@ -5,8 +5,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! function_exists( 'hmpro_render_legacy_header' ) ) {
 	function hmpro_render_legacy_header() {
+		$hmpro_hb_enabled = function_exists( 'hmpro_header_bg_banner_is_enabled' ) && hmpro_header_bg_banner_is_enabled();
+		$hmpro_hb_hide_m  = $hmpro_hb_enabled && (int) get_theme_mod( 'hmpro_hb_hide_mobile', 0 ) === 1;
+
+		$hmpro_header_classes = 'site-header';
+		if ( $hmpro_hb_enabled ) {
+			$hmpro_header_classes .= ' hmpro-hb-enabled';
+		}
+		if ( $hmpro_hb_hide_m ) {
+			$hmpro_header_classes .= ' hmpro-hb-hide-mobile';
+		}
+
+		$hmpro_hb_header_style = '';
+		if ( $hmpro_hb_enabled ) {
+			$gap = absint( get_theme_mod( 'hmpro_hb_after_gap', 0 ) );
+			if ( $gap > 200 ) {
+				$gap = 200;
+			}
+			$hmpro_hb_header_style = ' style="--hmpro-hb-after-gap:' . esc_attr( (string) $gap ) . 'px;"';
+		}
 		?>
-		<header class="site-header">
+		<header class="<?php echo esc_attr( $hmpro_header_classes ); ?>"<?php echo $hmpro_hb_header_style; ?>>
+			<?php
+			// Header Background Banner must also work in legacy header mode.
+			if ( $hmpro_hb_enabled && function_exists( 'hmpro_render_header_bg_banner' ) ) {
+				hmpro_render_header_bg_banner();
+			}
+			?>
 			<div class="hmpro-container">
 				<a class="site-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>">
 					<?php bloginfo( 'name' ); ?>
@@ -40,6 +65,17 @@ do_action( 'hmpro/header/before' );
 <?php wp_body_open(); ?>
 
 <?php $hmpro_account_url = home_url( '/hesabim/' ); ?>
+
+<?php
+/**
+ * Hero Banner (Transparent Header Hero)
+ * - Function exists in inc/core/template-tags.php
+ * - Was never called in header.php, so it never rendered on frontend.
+ */
+if ( function_exists( 'hmpro_render_transparent_header_hero' ) ) {
+	hmpro_render_transparent_header_hero();
+}
+?>
 
 <?php
 // Inline SVG icons (consistent across fonts/browsers)
