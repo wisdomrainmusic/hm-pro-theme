@@ -104,6 +104,7 @@ require_once HMPRO_PATH . '/inc/woocommerce/checkout-tweaks.php';
 // WooCommerce extensions.
 require_once HMPRO_PATH . '/inc/woo/variation-long-desc.php';
 require_once HMPRO_PATH . '/inc/woo/variation-multi-gallery.php';
+require_once HMPRO_PATH . '/inc/woo/product-media-standard.php';
 
 require_once HMPRO_PATH . '/inc/engine/presets.php';
 require_once HMPRO_PATH . '/inc/engine/css-engine.php';
