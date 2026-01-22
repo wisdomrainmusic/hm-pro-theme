@@ -1,0 +1,53 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "hmpro/text-panel",
+  "title": "HM Text Panel",
+  "category": "hmpro",
+  "icon": "columns",
+  "description": "Premium text layout with resizable columns, typography, and optional backdrop panel.",
+  "supports": {
+    "align": ["wide", "full"],
+    "anchor": true
+  },
+  "attributes": {
+    "columnsCount": { "type": "number", "default": 2 },
+    "layoutPreset": { "type": "string", "default": "equal" },
+    "columnWidths": { "type": "array", "default": [50, 50] },
+    "columnGap": { "type": "number", "default": 24 },
+    "stackOnMobile": { "type": "boolean", "default": true },
+
+    "textAlign": { "type": "string", "default": "left" },
+
+    "titleSize": { "type": "number", "default": 22 },
+    "titleWeight": { "type": "number", "default": 700 },
+    "bodySize": { "type": "number", "default": 16 },
+    "lineHeight": { "type": "number", "default": 1.6 },
+
+    "textColor": { "type": "string", "default": "" },
+    "linkColor": { "type": "string", "default": "" },
+    "linkHoverColor": { "type": "string", "default": "" },
+
+    "panelEnabled": { "type": "boolean", "default": false },
+    "panelColor": { "type": "string", "default": "" },
+    "panelOpacity": { "type": "number", "default": 85 },
+    "panelBlur": { "type": "number", "default": 0 },
+    "panelRadius": { "type": "number", "default": 16 },
+    "panelPadding": { "type": "number", "default": 22 },
+    "panelBorder": { "type": "boolean", "default": false },
+    "panelBorderColor": { "type": "string", "default": "rgba(0,0,0,0.10)" },
+
+    "columns": {
+      "type": "array",
+      "default": [
+        { "heading": "Column Title", "body": "<p>Write your text here…</p>" },
+        { "heading": "Column Title", "body": "<p>Write your text here…</p>" }
+      ],
+      "items": { "type": "object" }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}
