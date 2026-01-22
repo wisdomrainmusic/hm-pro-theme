@@ -2,6 +2,7 @@
 	const { registerBlockType } = wp.blocks;
 	const { __ } = wp.i18n;
 	const { InspectorControls, RichText, useBlockProps } = wp.blockEditor;
+	const { useEffect } = wp.element;
 	const {
 		PanelBody,
 		SelectControl,
@@ -92,6 +93,19 @@
 		return normalizeWidths( w, count );
 	}
 
+	function colsEqual( a, b, count ) {
+		if ( ! Array.isArray( a ) || ! Array.isArray( b ) ) return false;
+		if ( a.length !== count || b.length !== count ) return false;
+		for ( let i = 0; i < count; i++ ) {
+			const ah = (a[i] && a[i].heading) ? String(a[i].heading) : '';
+			const ab = (a[i] && a[i].body) ? String(a[i].body) : '';
+			const bh = (b[i] && b[i].heading) ? String(b[i].heading) : '';
+			const bb = (b[i] && b[i].body) ? String(b[i].body) : '';
+			if ( ah !== bh || ab !== bb ) return false;
+		}
+		return true;
+	}
+
 	registerBlockType( 'hmpro/text-panel', {
 		edit: function ( props ) {
 			const { attributes, setAttributes } = props;
@@ -124,13 +138,27 @@
 			const safeCols = ensureColumnsArray( columns, count );
 			const safeWidths = normalizeWidths( columnWidths, count );
 
-			if ( safeCols !== columns ) {
-				setAttributes( { columns: safeCols } );
-			}
-			if ( safeWidths.join(',') !== normalizeWidths( columnWidths, count ).join(',') ) {
-				// keep attribute normalized
-				setAttributes( { columnWidths: safeWidths } );
-			}
+			/**
+			 * IMPORTANT:
+			 * Do NOT call setAttributes during render.
+			 * That causes an infinite render loop and freezes the editor on block insert.
+			 * Instead normalize attributes in an effect.
+			 */
+			useEffect( () => {
+				const nextCols = ensureColumnsArray( attributes.columns, count );
+				if ( ! colsEqual( nextCols, attributes.columns, count ) ) {
+					setAttributes( { columns: nextCols } );
+				}
+
+				const nextWidths = normalizeWidths( attributes.columnWidths, count );
+				const curWidths = Array.isArray( attributes.columnWidths )
+					? attributes.columnWidths.slice( 0, count )
+					: [];
+				if ( nextWidths.join(',') !== normalizeWidths( curWidths, count ).join(',') ) {
+					setAttributes( { columnWidths: nextWidths } );
+				}
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+			}, [ count ] );
 
 			const styleVars = {
 				'--hm-tp-gap': clamp( columnGap, 0, 80 ) + 'px',
