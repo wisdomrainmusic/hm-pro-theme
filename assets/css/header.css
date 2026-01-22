@@ -336,7 +336,8 @@
 	font-weight:600;
 	text-decoration:none;
 }
-.hmpro-nav .hmpro-menu{
+.hmpro-nav .hmpro-menu,
+.hmpro-primary-nav .hmpro-menu{
 	list-style:none;
 	margin:0;
 	padding:0;
@@ -344,23 +345,31 @@
 	gap:22px;
 	align-items:center;
 }
-.hmpro-nav .hmpro-menu li{
+.hmpro-nav .hmpro-menu li,
+.hmpro-primary-nav .hmpro-menu li{
 	margin:0;
 	padding:0;
 }
-.hmpro-nav .hmpro-menu a{
+.hmpro-nav .hmpro-menu a,
+.hmpro-primary-nav .hmpro-menu a{
 	text-decoration:none;
 	color: var(--hmpro-menu-text-color);
 	transition: color 0.15s ease;
 }
 .hmpro-nav .hmpro-menu a:hover,
-.hmpro-nav .hmpro-menu a:focus{
+.hmpro-nav .hmpro-menu a:focus,
+.hmpro-primary-nav .hmpro-menu a:hover,
+.hmpro-primary-nav .hmpro-menu a:focus{
 	color: var(--hmpro-menu-hover-color);
 }
 .hmpro-nav .hmpro-menu .current-menu-item > a,
 .hmpro-nav .hmpro-menu .current-menu-ancestor > a,
 .hmpro-nav .hmpro-menu .current_page_item > a,
-.hmpro-nav .hmpro-menu .current_page_ancestor > a{
+.hmpro-nav .hmpro-menu .current_page_ancestor > a,
+.hmpro-primary-nav .hmpro-menu .current-menu-item > a,
+.hmpro-primary-nav .hmpro-menu .current-menu-ancestor > a,
+.hmpro-primary-nav .hmpro-menu .current_page_item > a,
+.hmpro-primary-nav .hmpro-menu .current_page_ancestor > a{
 	color: var(--hmpro-menu-active-color);
 }
 .hmpro-search{
