@@ -142,6 +142,47 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'type'        => 'checkbox',
 	] );
 
+	// --------------------------------------------------
+	// Header Backdrop Panel (Top + Main)
+	// --------------------------------------------------
+	$wp_customize->add_setting( 'hmpro_header_backdrop_enable', [
+		'default'           => 0,
+		'sanitize_callback' => function ( $v ) {
+			return (int) ( $v ? 1 : 0 );
+		},
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_header_backdrop_enable', [
+		'label'       => __( 'Enable Header Backdrop Panel', 'hm-pro-theme' ),
+		'description' => __( 'Adds a customizable opaque background behind Top + Main header regions (useful with Header Background / Hero overlays).', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+		'type'        => 'checkbox',
+	] );
+
+	$wp_customize->add_setting( 'hmpro_header_backdrop_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_header_backdrop_color', [
+		'label'       => __( 'Header Backdrop Color', 'hm-pro-theme' ),
+		'description' => __( 'Backdrop color behind header. Leave empty to use the preset/topbar color as base.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_header_backdrop_opacity', [
+		'default'           => 85,
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_header_backdrop_opacity', [
+		'label'       => __( 'Header Backdrop Opacity (%)', 'hm-pro-theme' ),
+		'description' => __( 'Controls how opaque the header background panel is.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+		'type'        => 'range',
+		'input_attrs' => [ 'min' => 0, 'max' => 100, 'step' => 1 ],
+	] );
+
 	$wp_customize->add_setting( 'hmpro_footer_bg_color', [
 		'default'           => '',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -972,6 +1013,9 @@ add_action( 'wp_ajax_hmpro_reset_header_footer_colors', function () {
 	remove_theme_mod( 'hmpro_menu_hover_color' );
 	remove_theme_mod( 'hmpro_menu_active_color' );
 	remove_theme_mod( 'hmpro_show_header_logo' );
+	remove_theme_mod( 'hmpro_header_backdrop_enable' );
+	remove_theme_mod( 'hmpro_header_backdrop_color' );
+	remove_theme_mod( 'hmpro_header_backdrop_opacity' );
 	remove_theme_mod( 'hmpro_social_icon_color' );
 	remove_theme_mod( 'hmpro_social_icon_bg' );
 	remove_theme_mod( 'hmpro_social_icon_border' );
