@@ -19,6 +19,10 @@ Tags: e-commerce, woocommerce, elementor, custom-colors, custom-logo, theme-opti
 	--hmpro-accent-contrast: #fff;
 	--hmpro-icon-bg: rgba(0, 0, 0, 0.04);
 	--hmpro-icon-border: rgba(0, 0, 0, 0.08);
+	/* Primary Menu (Header Builder: Main nav) */
+	--hmpro-menu-text-color: inherit;
+	--hmpro-menu-hover-color: var(--hmpro-accent);
+	--hmpro-menu-active-color: var(--hmpro-accent);
 	--hmpro-social-icon-color: var(--hmpro-accent);
 	--hmpro-social-icon-bg: var(--hmpro-icon-bg);
 	--hmpro-social-icon-border: var(--hmpro-icon-border);

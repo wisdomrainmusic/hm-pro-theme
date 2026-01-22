@@ -91,6 +91,42 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'section'     => $hmpro_header_section,
 	] ) );
 
+	// --------------------------------------------------
+	// Primary Menu color controls (Header Builder: Main region)
+	// --------------------------------------------------
+	$wp_customize->add_setting( 'hmpro_menu_text_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_menu_text_color', [
+		'label'       => __( 'Primary Menu Text/Link Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies to the main header menu links. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_menu_hover_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_menu_hover_color', [
+		'label'       => __( 'Primary Menu Hover Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies on hover/focus for main header menu links. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_menu_active_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_menu_active_color', [
+		'label'       => __( 'Primary Menu Active Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies to current/active menu items in the main header menu. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
 	$wp_customize->add_setting( 'hmpro_footer_bg_color', [
 		'default'           => '',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -240,7 +276,7 @@ add_action( 'customize_register', function ( $wp_customize ) {
 				$nonce = wp_create_nonce( 'hmpro_reset_header_footer_colors' );
 				?>
 				<span class="customize-control-title"><?php esc_html_e( 'Reset Header UI Colors', 'hm-pro-theme' ); ?></span>
-				<p class="description"><?php esc_html_e( 'Clears the Top Bar, Social Icons, and Footer color overrides and returns to theme preset defaults.', 'hm-pro-theme' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Clears the Top Bar, Primary Menu, and Footer color overrides and returns to theme preset defaults.', 'hm-pro-theme' ); ?></p>
 				<button type="button" class="button" id="hmpro-reset-hf-colors" data-nonce="<?php echo esc_attr( $nonce ); ?>">
 					<?php esc_html_e( 'Reset to Defaults', 'hm-pro-theme' ); ?>
 				</button>
@@ -917,6 +953,9 @@ add_action( 'wp_ajax_hmpro_reset_header_footer_colors', function () {
 	remove_theme_mod( 'hmpro_topbar_text_color' );
 	remove_theme_mod( 'hmpro_topbar_search_text_color' );
 	remove_theme_mod( 'hmpro_topbar_search_placeholder_color' );
+	remove_theme_mod( 'hmpro_menu_text_color' );
+	remove_theme_mod( 'hmpro_menu_hover_color' );
+	remove_theme_mod( 'hmpro_menu_active_color' );
 	remove_theme_mod( 'hmpro_social_icon_color' );
 	remove_theme_mod( 'hmpro_social_icon_bg' );
 	remove_theme_mod( 'hmpro_social_icon_border' );

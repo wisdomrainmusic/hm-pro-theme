@@ -38,6 +38,9 @@ add_action( 'wp_head', function () {
 	$top_search_ph   = sanitize_hex_color( get_theme_mod( 'hmpro_topbar_search_placeholder_color', '' ) );
 	$foot_bg  = sanitize_hex_color( get_theme_mod( 'hmpro_footer_bg_color', '' ) );
 	$foot_txt = sanitize_hex_color( get_theme_mod( 'hmpro_footer_text_color', '' ) );
+	$menu_text   = sanitize_hex_color( get_theme_mod( 'hmpro_menu_text_color', '' ) );
+	$menu_hover  = sanitize_hex_color( get_theme_mod( 'hmpro_menu_hover_color', '' ) );
+	$menu_active = sanitize_hex_color( get_theme_mod( 'hmpro_menu_active_color', '' ) );
 
 	// Social icon style overrides (Social Icon Button).
 	$soc_color    = sanitize_hex_color( get_theme_mod( 'hmpro_social_icon_color', '' ) );
@@ -104,6 +107,17 @@ add_action( 'wp_head', function () {
 		$css .= '.hmpro-region-header_top .hmpro-search-field::-moz-placeholder{color:' . $top_search_ph . ';opacity:1;}';
 		$css .= '.hmpro-region-header_top .hmpro-search-field:-ms-input-placeholder{color:' . $top_search_ph . ';}';
 		$css .= '.hmpro-region-header_top .hmpro-search-field::-ms-input-placeholder{color:' . $top_search_ph . ';}';
+	}
+
+	// Primary Menu (Header Builder: main nav) via CSS variables.
+	if ( $menu_text ) {
+		$css .= ':root{--hmpro-menu-text-color:' . $menu_text . ';}';
+	}
+	if ( $menu_hover ) {
+		$css .= ':root{--hmpro-menu-hover-color:' . $menu_hover . ';}';
+	}
+	if ( $menu_active ) {
+		$css .= ':root{--hmpro-menu-active-color:' . $menu_active . ';}';
 	}
 
 	// Footer Builder wrapper + regions

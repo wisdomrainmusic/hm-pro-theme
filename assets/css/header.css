@@ -350,6 +350,18 @@
 }
 .hmpro-nav .hmpro-menu a{
 	text-decoration:none;
+	color: var(--hmpro-menu-text-color);
+	transition: color 0.15s ease;
+}
+.hmpro-nav .hmpro-menu a:hover,
+.hmpro-nav .hmpro-menu a:focus{
+	color: var(--hmpro-menu-hover-color);
+}
+.hmpro-nav .hmpro-menu .current-menu-item > a,
+.hmpro-nav .hmpro-menu .current-menu-ancestor > a,
+.hmpro-nav .hmpro-menu .current_page_item > a,
+.hmpro-nav .hmpro-menu .current_page_ancestor > a{
+	color: var(--hmpro-menu-active-color);
 }
 .hmpro-search{
 	display:flex;
