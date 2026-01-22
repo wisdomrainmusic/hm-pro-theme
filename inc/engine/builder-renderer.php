@@ -8,6 +8,26 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Renders the stored layout safely on frontend.
  */
 
+/**
+ * Convert hex color (#rrggbb or #rgb) to [r,g,b] array.
+ *
+ * @param string $hex Hex color string.
+ * @return array<int,int>|null
+ */
+function hmpro_hex_to_rgb( $hex ) {
+	$hex = ltrim( (string) $hex, '#' );
+	if ( 3 === strlen( $hex ) ) {
+		$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+	}
+	if ( 6 !== strlen( $hex ) ) {
+		return null;
+	}
+	$r = hexdec( substr( $hex, 0, 2 ) );
+	$g = hexdec( substr( $hex, 2, 2 ) );
+	$b = hexdec( substr( $hex, 4, 2 ) );
+	return [ $r, $g, $b ];
+}
+
 add_action(
 	'hmpro/header/render_region',
 	function ( $region_key ) {
@@ -42,6 +62,9 @@ add_action( 'wp_head', function () {
 	$menu_hover  = sanitize_hex_color( get_theme_mod( 'hmpro_menu_hover_color', '' ) );
 	$menu_active = sanitize_hex_color( get_theme_mod( 'hmpro_menu_active_color', '' ) );
 	$show_logo   = (int) get_theme_mod( 'hmpro_show_header_logo', 1 );
+	$hdr_backdrop_enable  = (int) get_theme_mod( 'hmpro_header_backdrop_enable', 0 );
+	$hdr_backdrop_color   = sanitize_hex_color( get_theme_mod( 'hmpro_header_backdrop_color', '' ) );
+	$hdr_backdrop_opacity = absint( get_theme_mod( 'hmpro_header_backdrop_opacity', 85 ) );
 
 	// Social icon style overrides (Social Icon Button).
 	$soc_color    = sanitize_hex_color( get_theme_mod( 'hmpro_social_icon_color', '' ) );
@@ -60,6 +83,22 @@ add_action( 'wp_head', function () {
 	// Header logo visibility (Header Builder: main region logo component).
 	if ( 0 === $show_logo ) {
 		$css .= '.hmpro-header-builder .hmpro-region-header_main .hmpro-logo-wrap{display:none!important;}';
+	}
+
+	// Header Backdrop Panel behind Top + Main regions.
+	if ( $hdr_backdrop_enable ) {
+		$base = $hdr_backdrop_color ? $hdr_backdrop_color : ( $top_bg ? $top_bg : '' );
+		$rgb  = $base ? hmpro_hex_to_rgb( $base ) : null;
+		$op   = max( 0, min( 100, (int) $hdr_backdrop_opacity ) ) / 100;
+		if ( $rgb ) {
+			$rgba = 'rgba(' . (int) $rgb[0] . ',' . (int) $rgb[1] . ',' . (int) $rgb[2] . ',' . $op . ')';
+			// Apply to both header regions so the whole header reads as one panel.
+			$css .= '.hmpro-header-builder .hmpro-region-header_top{background:' . $rgba . ';}';
+			$css .= '.hmpro-header-builder .hmpro-region-header_main{background:' . $rgba . ';}';
+			// Make sure inner rows stay transparent so panel is consistent.
+			$css .= '.hmpro-header-builder .hmpro-region-header_top .hmpro-builder-row{background:transparent;}';
+			$css .= '.hmpro-header-builder .hmpro-region-header_main .hmpro-builder-row{background:transparent;}';
+		}
 	}
 
 	// Social icon CSS variables.
