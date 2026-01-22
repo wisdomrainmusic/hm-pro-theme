@@ -127,6 +127,21 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'section'     => $hmpro_header_section,
 	] ) );
 
+	// Header Logo visibility (Header Builder: Logo component)
+	$wp_customize->add_setting( 'hmpro_show_header_logo', [
+		'default'           => 1,
+		'sanitize_callback' => function ( $v ) {
+			return (int) ( $v ? 1 : 0 );
+		},
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_show_header_logo', [
+		'label'       => __( 'Show Header Logo', 'hm-pro-theme' ),
+		'description' => __( 'Toggles the Logo component in the Header Builder (main region).', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+		'type'        => 'checkbox',
+	] );
+
 	$wp_customize->add_setting( 'hmpro_footer_bg_color', [
 		'default'           => '',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -956,6 +971,7 @@ add_action( 'wp_ajax_hmpro_reset_header_footer_colors', function () {
 	remove_theme_mod( 'hmpro_menu_text_color' );
 	remove_theme_mod( 'hmpro_menu_hover_color' );
 	remove_theme_mod( 'hmpro_menu_active_color' );
+	remove_theme_mod( 'hmpro_show_header_logo' );
 	remove_theme_mod( 'hmpro_social_icon_color' );
 	remove_theme_mod( 'hmpro_social_icon_bg' );
 	remove_theme_mod( 'hmpro_social_icon_border' );

@@ -41,6 +41,7 @@ add_action( 'wp_head', function () {
 	$menu_text   = sanitize_hex_color( get_theme_mod( 'hmpro_menu_text_color', '' ) );
 	$menu_hover  = sanitize_hex_color( get_theme_mod( 'hmpro_menu_hover_color', '' ) );
 	$menu_active = sanitize_hex_color( get_theme_mod( 'hmpro_menu_active_color', '' ) );
+	$show_logo   = (int) get_theme_mod( 'hmpro_show_header_logo', 1 );
 
 	// Social icon style overrides (Social Icon Button).
 	$soc_color    = sanitize_hex_color( get_theme_mod( 'hmpro_social_icon_color', '' ) );
@@ -55,6 +56,11 @@ add_action( 'wp_head', function () {
 	$soc_svg      = absint( get_theme_mod( 'hmpro_social_icon_svg_size', 18 ) );
 
 	$css = ':root{--hmpro-logo-max-height:' . $height . 'px;--hmpro-logo-max-height-mobile:' . $mobile_height . 'px;--hmpro-footer-logo-max-height:' . $footer_height . 'px;}';
+
+	// Header logo visibility (Header Builder: main region logo component).
+	if ( 0 === $show_logo ) {
+		$css .= '.hmpro-header-builder .hmpro-region-header_main .hmpro-logo-wrap{display:none!important;}';
+	}
 
 	// Social icon CSS variables.
 	if ( $soc_color ) {
@@ -671,6 +677,8 @@ function hmpro_builder_comp_menu( array $set, $context = 'header' ) {
 	wp_nav_menu(
 		array(
 			'theme_location' => $location,
+			// Ensure a stable class so our header CSS + Customizer color variables apply reliably.
+			'menu_class'     => 'hmpro-menu',
 			'container'      => false,
 			'fallback_cb'    => '__return_empty_string',
 			'depth'          => $depth,
