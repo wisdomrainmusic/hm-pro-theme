@@ -2,6 +2,7 @@
 	const el = wp.element.createElement;
 	const registerBlockType = wp.blocks.registerBlockType;
 	const InspectorControls = wp.blockEditor.InspectorControls;
+	const useBlockProps = wp.blockEditor.useBlockProps;
 
 	const PanelBody = wp.components.PanelBody;
 	const TextareaControl = wp.components.TextareaControl;
@@ -21,6 +22,13 @@
 		edit: function ( props ) {
 			const attrs = props.attributes;
 			const setAttributes = props.setAttributes;
+
+			function ensureSelected() {
+				// Some themes/components can swallow editor clicks; force select on interaction.
+				try {
+					wp.data.dispatch( 'core/block-editor' ).selectBlock( props.clientId );
+				} catch ( e ) {}
+			}
 
 			const textMode = attrs.textMode || 'static';
 			const isMarquee = textMode === 'marquee';
@@ -58,9 +66,16 @@
 				  )
 				: el( 'span', { className: 'hmpro-cb__text' }, attrs.text || '' );
 
-			const previewInner = el(
+			const blockProps = useBlockProps( {
+				className: [ 'hmpro-cb-editorWrap' ].concat( classes ).join( ' ' ),
+				style: styleVars,
+				onMouseDown: ensureSelected,
+				onClick: ensureSelected
+			} );
+
+			const preview = el(
 				'div',
-				{ className: classes.join( ' ' ), style: styleVars },
+				Object.assign( { key: 'preview' }, blockProps ),
 				el(
 					'div',
 					{ className: 'hmpro-cb__link', role: 'button', tabIndex: 0 },
@@ -197,7 +212,7 @@
 						} )
 					)
 				),
-				el( 'div', { key: 'preview', className: 'hmpro-cb-editorWrap' }, previewInner )
+				preview
 			];
 		},
 
