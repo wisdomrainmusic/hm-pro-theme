@@ -92,6 +92,30 @@ add_action( 'customize_register', function ( $wp_customize ) {
 	] ) );
 
 	// --------------------------------------------------
+	// Top Bar height (Header Builder: Top region).
+	$wp_customize->add_setting( 'hmpro_topbar_height', [
+		'default'           => 0,
+		'sanitize_callback' => function ( $v ) {
+			$v = absint( $v );
+			if ( $v && $v < 28 ) {
+				$v = 28;
+			}
+			if ( $v > 240 ) {
+				$v = 240;
+			}
+			return $v;
+		},
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_topbar_height', [
+		'label'       => __( 'Top Bar Height (px)', 'hm-pro-theme' ),
+		'description' => __( 'Sets a fixed minimum height for Header Builder: Top region (header_top). Use 0 for auto height.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+		'type'        => 'number',
+		'input_attrs' => [ 'min' => 0, 'max' => 240, 'step' => 1 ],
+	] );
+
+	// --------------------------------------------------
 	// Primary Menu color controls (Header Builder: Main region)
 	// --------------------------------------------------
 	$wp_customize->add_setting( 'hmpro_menu_text_color', [

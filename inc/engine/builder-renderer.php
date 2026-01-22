@@ -56,6 +56,13 @@ add_action( 'wp_head', function () {
 	$top_text = sanitize_hex_color( get_theme_mod( 'hmpro_topbar_text_color', '' ) );
 	$top_search_text = sanitize_hex_color( get_theme_mod( 'hmpro_topbar_search_text_color', '' ) );
 	$top_search_ph   = sanitize_hex_color( get_theme_mod( 'hmpro_topbar_search_placeholder_color', '' ) );
+	$top_h    = absint( get_theme_mod( 'hmpro_topbar_height', 0 ) );
+	if ( $top_h && $top_h < 28 ) {
+		$top_h = 28;
+	}
+	if ( $top_h > 240 ) {
+		$top_h = 240;
+	}
 	$foot_bg  = sanitize_hex_color( get_theme_mod( 'hmpro_footer_bg_color', '' ) );
 	$foot_txt = sanitize_hex_color( get_theme_mod( 'hmpro_footer_text_color', '' ) );
 	$menu_text   = sanitize_hex_color( get_theme_mod( 'hmpro_menu_text_color', '' ) );
@@ -79,6 +86,12 @@ add_action( 'wp_head', function () {
 	$soc_svg      = absint( get_theme_mod( 'hmpro_social_icon_svg_size', 18 ) );
 
 	$css = ':root{--hmpro-logo-max-height:' . $height . 'px;--hmpro-logo-max-height-mobile:' . $mobile_height . 'px;--hmpro-footer-logo-max-height:' . $footer_height . 'px;}';
+
+	// Top Bar height override (header_top region).
+	if ( $top_h ) {
+		$css .= ':root{--hmpro-topbar-height:' . $top_h . 'px;}';
+		$css .= '.hmpro-header-builder .hmpro-builder-region.hmpro-region-header_top .hmpro-builder-row{min-height:' . $top_h . 'px;padding-top:0;padding-bottom:0;}';
+	}
 
 	// Header logo visibility (Header Builder: main region logo component).
 	if ( 0 === $show_logo ) {
