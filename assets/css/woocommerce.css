@@ -210,12 +210,17 @@
 	background: #fff;
 	aspect-ratio: 2 / 3;
 	overflow: hidden;
+	/* Prevent excessive height on wide layouts */
+	max-height: 900px;
+	width: 100%;
+	margin: 0 auto;
 }
 
 .single-product.woocommerce div.product div.images .woocommerce-product-gallery__wrapper {
 	background: #fff;
 	height: 100%;
 	overflow: hidden;
+	max-height: 900px;
 }
 
 /* FlexSlider wraps the wrapper; put the ratio stability on the viewport too */
@@ -223,6 +228,7 @@
 	height: 100% !important;
 	background: #fff;
 	overflow: hidden;
+	max-height: 900px;
 }
 
 .single-product.woocommerce div.product div.images .woocommerce-product-gallery__image,
