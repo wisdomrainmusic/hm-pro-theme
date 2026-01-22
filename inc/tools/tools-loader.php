@@ -13,27 +13,6 @@ require_once HMPRO_PATH . '/inc/tools/product-importer/product-importer.php';
 require_once HMPRO_PATH . '/inc/tools/hm-menu-controller/hm-menu-controller.php';
 require_once HMPRO_PATH . '/inc/tools/hm-basic-ceviri-inline/hm-basic-ceviri-inline.php';
 
-// Move HM Basic Çeviri (Inline) from Settings -> HM Pro Theme submenu.
-// We keep the original module intact and only relocate its admin page.
-add_action( 'admin_menu', function () {
-    if ( ! class_exists( 'HM_Basic_Ceviri_Inline' ) ) {
-        return;
-    }
-
-    // Remove Settings submenu.
-    remove_submenu_page( 'options-general.php', 'hm-basic-ceviri-inline' );
-
-    // Re-add under HM Pro Theme.
-    add_submenu_page(
-        'hmpro-theme',
-        'HM Basic Translate',
-        'HM Basic Translate',
-        'manage_options',
-        'hm-basic-ceviri-inline',
-        [ 'HM_Basic_Ceviri_Inline', 'settings_page' ]
-    );
-}, 999 );
-
 add_action( 'admin_init', function () {
 
     // Category Importer boot
