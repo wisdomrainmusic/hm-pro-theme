@@ -4,11 +4,26 @@
 	function lockHeight($gallery){
 		var h = $gallery.outerHeight();
 		if (h && h > 0) {
-			$gallery.css('min-height', h + 'px').addClass('hmpro-vg-lock');
+			$gallery
+				.css({ 'height': h + 'px', 'min-height': h + 'px' })
+				.addClass('hmpro-vg-lock');
+		}
+
+		// ALSO lock wrapper height (Woo/Flex may mutate wrapper during init)
+		var $wrap = $gallery.find('.woocommerce-product-gallery__wrapper');
+		if ($wrap.length) {
+			var wh = $wrap.outerHeight();
+			if (wh && wh > 0) {
+				$wrap.css({ 'height': wh + 'px', 'min-height': wh + 'px' });
+			}
 		}
 	}
 	function unlockHeight($gallery){
-		$gallery.css('min-height', '').removeClass('hmpro-vg-lock');
+		$gallery.css({ 'height': '', 'min-height': '' }).removeClass('hmpro-vg-lock');
+		var $wrap = $gallery.find('.woocommerce-product-gallery__wrapper');
+		if ($wrap.length) {
+			$wrap.css({ 'height': '', 'min-height': '' });
+		}
 	}
 	function waitImages($gallery, cb){
 		var $imgs = $gallery.find('.woocommerce-product-gallery__wrapper img');
