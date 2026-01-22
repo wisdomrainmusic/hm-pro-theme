@@ -153,7 +153,14 @@ add_filter( 'woocommerce_available_variation', function( $data, $product, $varia
 		return $data;
 	}
 
-	$variation_id = isset( $variation->get_id ) ? (int) $variation->get_id() : 0;
+	// IMPORTANT: get_id is a method (not a property). If we fail to read it,
+	// hmpro_gallery never reaches the frontend JSON.
+	$variation_id = 0;
+	if ( is_callable( [ $variation, 'get_id' ] ) ) {
+		$variation_id = (int) $variation->get_id();
+	} elseif ( isset( $variation->ID ) ) {
+		$variation_id = (int) $variation->ID;
+	}
 	if ( ! $variation_id ) {
 		return $data;
 	}
@@ -205,9 +212,6 @@ add_filter( 'woocommerce_available_variation', function( $data, $product, $varia
  */
 add_action( 'wp_enqueue_scripts', function() {
 	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
-		return;
-	}
-	if ( ! wp_script_is( 'wc-single-product', 'registered' ) ) {
 		return;
 	}
 	wp_enqueue_script(
