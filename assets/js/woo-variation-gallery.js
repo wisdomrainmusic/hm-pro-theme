@@ -56,7 +56,7 @@
 		var originalHtml = $wrapper.html();
 
 		function swapToVariation(variation){
-			if (!hasGallery(variation)) {
+			if (!variation || !hasGallery(variation)) {
 				$wrapper.html(originalHtml);
 				reinitGallery($gallery);
 				return;
@@ -79,13 +79,26 @@
 			reinitGallery($gallery);
 		}
 
-		$form.on('found_variation', function(e, variation){
-			swapToVariation(variation);
+		/**
+		 * IMPORTANT:
+		 * Use show_variation and defer execution
+		 * so Woo does NOT override our gallery after swap.
+		 */
+		$form.on('show_variation', function(e, variation){
+			window.requestAnimationFrame(function(){
+				setTimeout(function(){
+					swapToVariation(variation);
+				}, 0);
+			});
 		});
 
 		$form.on('reset_data', function(){
-			$wrapper.html(originalHtml);
-			reinitGallery($gallery);
+			window.requestAnimationFrame(function(){
+				setTimeout(function(){
+					$wrapper.html(originalHtml);
+					reinitGallery($gallery);
+				}, 0);
+			});
 		});
 
 	});
