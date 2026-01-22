@@ -92,12 +92,17 @@ add_action( 'wp_head', function () {
 		$op   = max( 0, min( 100, (int) $hdr_backdrop_opacity ) ) / 100;
 		if ( $rgb ) {
 			$rgba = 'rgba(' . (int) $rgb[0] . ',' . (int) $rgb[1] . ',' . (int) $rgb[2] . ',' . $op . ')';
-			// Apply to both header regions so the whole header reads as one panel.
-			$css .= '.hmpro-header-builder .hmpro-region-header_top{background:' . $rgba . ';}';
-			$css .= '.hmpro-header-builder .hmpro-region-header_main{background:' . $rgba . ';}';
-			// Make sure inner rows stay transparent so panel is consistent.
-			$css .= '.hmpro-header-builder .hmpro-region-header_top .hmpro-builder-row{background:transparent;}';
-			$css .= '.hmpro-header-builder .hmpro-region-header_main .hmpro-builder-row{background:transparent;}';
+			/**
+			 * NOTE:
+			 * header.css currently forces `.hmpro-builder-region { background: transparent !important; }`
+			 * so we must override with equal/greater strength.
+			 */
+			$css .= '#site-header.hmpro-hb-enabled .hmpro-builder-region.hmpro-region-header_top{background:' . $rgba . ' !important;}';
+			$css .= '#site-header.hmpro-hb-enabled .hmpro-builder-region.hmpro-region-header_main{background:' . $rgba . ' !important;}';
+
+			// Keep inner layers transparent so the panel reads as one unified surface.
+			$css .= '#site-header.hmpro-hb-enabled .hmpro-builder-region.hmpro-region-header_top .hmpro-builder-row{background:transparent !important;}';
+			$css .= '#site-header.hmpro-hb-enabled .hmpro-builder-region.hmpro-region-header_main .hmpro-builder-row{background:transparent !important;}';
 		}
 	}
 
