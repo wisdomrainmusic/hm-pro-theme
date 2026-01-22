@@ -215,6 +215,7 @@
 .single-product.woocommerce div.product div.images .woocommerce-product-gallery__wrapper {
 	background: #fff;
 	height: 100%;
+	overflow: hidden;
 }
 
 /* FlexSlider wraps the wrapper; put the ratio stability on the viewport too */
