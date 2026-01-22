@@ -9,6 +9,8 @@ add_action( 'wp_enqueue_scripts', function () {
 		'hmpro-style',
 		get_stylesheet_uri(),
 		[],
-		HMPRO_VERSION
+		file_exists( get_stylesheet_directory() . '/style.css' )
+			? (string) filemtime( get_stylesheet_directory() . '/style.css' )
+			: (string) HMPRO_VERSION
 	);
 } );

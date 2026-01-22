@@ -75,6 +75,22 @@ define( 'HMPRO_VERSION', '0.1.0' );
 define( 'HMPRO_PATH', get_template_directory() );
 define( 'HMPRO_URL', get_template_directory_uri() );
 
+/**
+ * Asset version helper (cache-bust)
+ * Uses filemtime() so updated themes always bypass stale CSS/JS cache on legacy sites.
+ */
+function hmpro_asset_ver( $relative_path ) {
+	$relative_path = ltrim( (string) $relative_path, '/' );
+	$path          = trailingslashit( HMPRO_PATH ) . $relative_path;
+	if ( file_exists( $path ) ) {
+		return (string) filemtime( $path );
+	}
+	return (string) HMPRO_VERSION;
+}
+
+// Theme upgrade/migration routine (one-time when version increases)
+require_once HMPRO_PATH . '/inc/core/upgrade.php';
+
 require_once HMPRO_PATH . '/inc/core/setup.php';
 require_once HMPRO_PATH . '/inc/core/widgets.php';
 require_once HMPRO_PATH . '/inc/core/enqueue.php';
@@ -119,14 +135,14 @@ add_action( 'admin_enqueue_scripts', function () {
 		'hmpro-admin',
 		HMPRO_URL . '/assets/admin.css',
 		[],
-		HMPRO_VERSION
+		hmpro_asset_ver( 'assets/admin.css' )
 	);
 
 	wp_enqueue_script(
 		'hmpro-admin',
 		HMPRO_URL . '/assets/admin.js',
 		[],
-		HMPRO_VERSION,
+		hmpro_asset_ver( 'assets/admin.js' ),
 		true
 	);
 
@@ -160,35 +176,35 @@ add_action( 'wp_enqueue_scripts', function () {
 		'hmpro-base',
 		HMPRO_URL . '/assets/css/base.css',
 		[],
-		HMPRO_VERSION
+		hmpro_asset_ver( 'assets/css/base.css' )
 	);
 
 	wp_enqueue_style(
 		'hmpro-header',
 		HMPRO_URL . '/assets/css/header.css',
 		[ 'hmpro-base' ],
-		HMPRO_VERSION
+		hmpro_asset_ver( 'assets/css/header.css' )
 	);
 
 	wp_enqueue_style(
 		'hmpro-footer',
 		HMPRO_URL . '/assets/css/footer.css',
 		[ 'hmpro-base' ],
-		HMPRO_VERSION
+		hmpro_asset_ver( 'assets/css/footer.css' )
 	);
 
 	wp_enqueue_style(
 		'hmpro-mega-menu',
 		HMPRO_URL . '/assets/css/mega-menu.css',
 		[ 'hmpro-base' ],
-		HMPRO_VERSION
+		hmpro_asset_ver( 'assets/css/mega-menu.css' )
 	);
 
 	wp_enqueue_script(
 		'hmpro-mega-menu',
 		get_template_directory_uri() . '/assets/js/mega-menu.js',
 		array(),
-		HMPRO_VERSION,
+		hmpro_asset_ver( 'assets/js/mega-menu.js' ),
 		true
 	);
 
@@ -197,7 +213,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		'hmpro-mobile-header',
 		get_template_directory_uri() . '/assets/js/mobile-header.js',
 		array(),
-		HMPRO_VERSION,
+		hmpro_asset_ver( 'assets/js/mobile-header.js' ),
 		true
 	);
 
@@ -206,7 +222,7 @@ add_action( 'wp_enqueue_scripts', function () {
 			'hmpro-woo',
 			HMPRO_URL . '/assets/css/woocommerce.css',
 			[ 'hmpro-base' ],
-			HMPRO_VERSION
+			hmpro_asset_ver( 'assets/css/woocommerce.css' )
 		);
 	}
 } );
@@ -268,7 +284,7 @@ add_action( 'wp_enqueue_scripts', function () {
 				'hmpro-hb-slider',
 				get_template_directory_uri() . '/assets/js/hb-slider.js',
 				[],
-				HMPRO_VERSION,
+				hmpro_asset_ver( 'assets/js/hb-slider.js' ),
 				true
 			);
 		}
