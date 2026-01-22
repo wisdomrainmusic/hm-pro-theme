@@ -1,6 +1,22 @@
 (function($){
 	'use strict';
 
+	function syncSingleGalleryHeights($gallery){
+		if (!$gallery || !$gallery.length) return;
+		var h = $gallery.outerHeight();
+		if (!h || h < 50) return;
+
+		// FlexSlider viewport + wrapper must follow the canvas height
+		var $vp = $gallery.find('.flex-viewport');
+		if ($vp.length) {
+			$vp.css('height', h + 'px');
+		}
+		var $wrap = $gallery.find('.woocommerce-product-gallery__wrapper');
+		if ($wrap.length) {
+			$wrap.css('height', h + 'px');
+		}
+	}
+
 	function lockHeight($gallery){
 		var h = $gallery.outerHeight();
 		if (h && h > 0) {
@@ -24,6 +40,7 @@
 		if ($wrap.length) {
 			$wrap.css({ 'height': '', 'min-height': '' });
 		}
+		syncSingleGalleryHeights($gallery);
 	}
 	function waitImages($gallery, cb){
 		var $imgs = $gallery.find('.woocommerce-product-gallery__wrapper img');
@@ -88,6 +105,12 @@
 
 		var $wrapper = $gallery.find('.woocommerce-product-gallery__wrapper');
 		if (!$wrapper.length) return;
+
+		syncSingleGalleryHeights($gallery);
+		$(window).on('resize', function(){ syncSingleGalleryHeights($gallery); });
+
+		// After Woo/Flex initializes, heights may change again
+		setTimeout(function(){ syncSingleGalleryHeights($gallery); }, 250);
 
 		/**
 		 * Cache a PRISTINE default gallery:
