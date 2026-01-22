@@ -1,8 +1,9 @@
 .hmpro-cb-editorWrap {
   width: 100%;
+  margin: 0;
 }
 
-.hmpro-cb-editorWrap .hmpro-cb {
+.hmpro-cb-editorWrap.hmpro-cb {
   margin: 0;
 }
 
