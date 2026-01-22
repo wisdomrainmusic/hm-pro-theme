@@ -42,18 +42,21 @@ add_filter( 'woocommerce_available_variation', function ( $data, $product, $vari
 	return $data;
 }, 10, 3 );
 
-// 4) Frontend script (enqueue instead of wp_footer echo)
+// 4) Frontend script (enqueue reliably + after wc-add-to-cart-variation)
 add_action( 'wp_enqueue_scripts', function () {
 	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
 		return;
 	}
 
-	// Only load on variable products.
-	global $product;
-	if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
+	// NOTE:
+	// On wp_enqueue_scripts, the global $product is often NOT set yet.
+	// So we must resolve the product from the queried object ID.
+	if ( ! function_exists( 'wc_get_product' ) ) {
 		return;
 	}
-	if ( ! $product->is_type( 'variable' ) ) {
+	$product_id = get_queried_object_id();
+	$product    = $product_id ? wc_get_product( $product_id ) : null;
+	if ( ! $product || ! $product->is_type( 'variable' ) ) {
 		return;
 	}
 
@@ -61,8 +64,9 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_register_script(
 		$handle,
 		get_template_directory_uri() . '/assets/js/variation-long-desc.js',
-		[ 'jquery' ],
-		'1.0.0',
+		// Ensure the variation events exist before our listener runs.
+		[ 'jquery', 'wc-add-to-cart-variation' ],
+		'1.0.1',
 		true
 	);
 	wp_enqueue_script( $handle );
