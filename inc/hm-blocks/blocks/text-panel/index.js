@@ -15,6 +15,30 @@
 		ButtonGroup,
 	} = wp.components;
 
+	function hexToRgb( hex ) {
+		if ( ! hex || typeof hex !== 'string' ) return null;
+		let h = hex.trim();
+		if ( h[0] !== '#' ) return null;
+		h = h.slice(1);
+		if ( h.length === 3 ) {
+			h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+		}
+		if ( h.length !== 6 ) return null;
+		const r = parseInt( h.slice(0, 2), 16 );
+		const g = parseInt( h.slice(2, 4), 16 );
+		const b = parseInt( h.slice(4, 6), 16 );
+		if ( [ r, g, b ].some( ( v ) => Number.isNaN( v ) ) ) return null;
+		return { r, g, b };
+	}
+
+	function buildRgba( color, opacity01 ) {
+		if ( ! color ) return '';
+		if ( typeof color === 'string' && color.trim().startsWith( 'rgba' ) ) return color.trim();
+		const rgb = hexToRgb( color );
+		if ( ! rgb ) return '';
+		return `rgba(${rgb.r},${rgb.g},${rgb.b},${opacity01})`;
+	}
+
 	function clamp( n, min, max ) {
 		n = parseFloat( n );
 		if ( ! Number.isFinite( n ) ) return min;
@@ -160,6 +184,12 @@
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 			}, [ count ] );
 
+			// Build panel background color for editor preview (style.css expects --hm-tp-panel-bg).
+			const op01 = clamp( panelOpacity, 0, 100 ) / 100;
+			const panelBg = panelEnabled
+				? ( buildRgba( panelColor, op01 ) || `rgba(255,255,255,${op01})` )
+				: '';
+
 			const styleVars = {
 				'--hm-tp-gap': clamp( columnGap, 0, 80 ) + 'px',
 				'--hm-tp-title-size': clamp( titleSize, 12, 64 ) + 'px',
@@ -169,11 +199,12 @@
 				'--hm-tp-text': textColor || '',
 				'--hm-tp-link': linkColor || '',
 				'--hm-tp-link-hover': linkHoverColor || '',
-				'--hm-tp-panel-opacity': clamp( panelOpacity, 0, 100 ) / 100,
+				'--hm-tp-panel-opacity': op01,
 				'--hm-tp-panel-blur': clamp( panelBlur, 0, 20 ) + 'px',
 				'--hm-tp-panel-radius': clamp( panelRadius, 0, 40 ) + 'px',
 				'--hm-tp-panel-pad': clamp( panelPadding, 0, 60 ) + 'px',
 				'--hm-tp-panel-color': panelColor || '',
+				'--hm-tp-panel-bg': panelBg,
 				'--hm-tp-panel-border': panelBorder ? '1px solid ' + ( panelBorderColor || 'rgba(0,0,0,0.10)' ) : '0',
 			};
 
