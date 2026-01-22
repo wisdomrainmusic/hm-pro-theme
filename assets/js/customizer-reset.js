@@ -12,7 +12,7 @@
 	$(document).on('click', '#hmpro-reset-hf-colors', function (e) {
 		e.preventDefault();
 
-		if (!window.confirm('Reset Top Bar + Footer colors to defaults?')) {
+		if (!window.confirm('Reset Header UI colors (Top Bar, Social Icons, Footer) to defaults?')) {
 			return;
 		}
 
@@ -24,7 +24,7 @@
 			.done(function () {
 				// Clear Customizer settings in UI.
 				if (wp && wp.customize) {
-					['hmpro_topbar_bg_color', 'hmpro_topbar_text_color', 'hmpro_footer_bg_color', 'hmpro_footer_text_color'].forEach(function (key) {
+					['hmpro_topbar_bg_color', 'hmpro_topbar_text_color', 'hmpro_topbar_search_text_color', 'hmpro_topbar_search_placeholder_color', 'hmpro_social_icon_color', 'hmpro_social_icon_bg', 'hmpro_social_icon_border', 'hmpro_social_icon_hover_color', 'hmpro_social_icon_hover_bg', 'hmpro_social_icon_hover_border', 'hmpro_social_icon_contrast', 'hmpro_social_icon_size', 'hmpro_social_icon_radius', 'hmpro_social_icon_svg_size', 'hmpro_footer_bg_color', 'hmpro_footer_text_color'].forEach(function (key) {
 						if (wp.customize.has(key)) {
 							wp.customize(key).set('');
 						}

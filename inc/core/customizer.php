@@ -113,6 +113,125 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'section'     => $hmpro_header_section,
 	] ) );
 
+	// --------------------------------------------------
+	// Social Icon Styles (Header Builder)
+	// --------------------------------------------------
+	$wp_customize->add_setting( 'hmpro_social_icon_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_social_icon_color', [
+		'label'       => __( 'Social Icon Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies to Social Icon Button icons (header/footer). Leave empty to inherit preset defaults.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_social_icon_bg', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_social_icon_bg', [
+		'label'       => __( 'Social Icon Background', 'hm-pro-theme' ),
+		'description' => __( 'Background color for the social icon circle. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_social_icon_border', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_social_icon_border', [
+		'label'       => __( 'Social Icon Border', 'hm-pro-theme' ),
+		'description' => __( 'Border color for the social icon circle. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_social_icon_hover_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_social_icon_hover_color', [
+		'label'       => __( 'Social Icon Hover Color', 'hm-pro-theme' ),
+		'description' => __( 'Icon color on hover/focus. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_social_icon_hover_bg', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_social_icon_hover_bg', [
+		'label'       => __( 'Social Icon Hover Background', 'hm-pro-theme' ),
+		'description' => __( 'Background color on hover/focus. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_social_icon_hover_border', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_social_icon_hover_border', [
+		'label'       => __( 'Social Icon Hover Border', 'hm-pro-theme' ),
+		'description' => __( 'Border color on hover/focus. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_social_icon_contrast', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_social_icon_contrast', [
+		'label'       => __( 'Social Icon Contrast Fill', 'hm-pro-theme' ),
+		'description' => __( 'Used for inner cut-outs (e.g., YouTube play triangle). Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_social_icon_size', [
+		'default'           => 34,
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_social_icon_size', [
+		'label'       => __( 'Social Icon Size (px)', 'hm-pro-theme' ),
+		'description' => __( 'Controls the circle size for Social Icon Button.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+		'type'        => 'range',
+		'input_attrs' => [ 'min' => 20, 'max' => 64, 'step' => 1 ],
+	] );
+
+	$wp_customize->add_setting( 'hmpro_social_icon_radius', [
+		'default'           => 999,
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_social_icon_radius', [
+		'label'       => __( 'Social Icon Radius (px)', 'hm-pro-theme' ),
+		'description' => __( '999 = full circle, smaller values = rounded square.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+		'type'        => 'range',
+		'input_attrs' => [ 'min' => 0, 'max' => 999, 'step' => 1 ],
+	] );
+
+	$wp_customize->add_setting( 'hmpro_social_icon_svg_size', [
+		'default'           => 18,
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'hmpro_social_icon_svg_size', [
+		'label'       => __( 'Social Icon SVG Size (px)', 'hm-pro-theme' ),
+		'description' => __( 'Controls the inner SVG size.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+		'type'        => 'range',
+		'input_attrs' => [ 'min' => 12, 'max' => 40, 'step' => 1 ],
+	] );
+
 	// Reset button (Header Top + Footer colors)
 	if ( class_exists( 'WP_Customize_Control' ) && ! class_exists( 'HMPRO_Reset_Colors_Control' ) ) {
 		class HMPRO_Reset_Colors_Control extends WP_Customize_Control {
@@ -120,8 +239,8 @@ add_action( 'customize_register', function ( $wp_customize ) {
 			public function render_content() {
 				$nonce = wp_create_nonce( 'hmpro_reset_header_footer_colors' );
 				?>
-				<span class="customize-control-title"><?php esc_html_e( 'Reset Header/Footer Colors', 'hm-pro-theme' ); ?></span>
-				<p class="description"><?php esc_html_e( 'Clears the Top Bar + Footer color overrides and returns to theme preset defaults.', 'hm-pro-theme' ); ?></p>
+				<span class="customize-control-title"><?php esc_html_e( 'Reset Header UI Colors', 'hm-pro-theme' ); ?></span>
+				<p class="description"><?php esc_html_e( 'Clears the Top Bar, Social Icons, and Footer color overrides and returns to theme preset defaults.', 'hm-pro-theme' ); ?></p>
 				<button type="button" class="button" id="hmpro-reset-hf-colors" data-nonce="<?php echo esc_attr( $nonce ); ?>">
 					<?php esc_html_e( 'Reset to Defaults', 'hm-pro-theme' ); ?>
 				</button>
@@ -798,6 +917,16 @@ add_action( 'wp_ajax_hmpro_reset_header_footer_colors', function () {
 	remove_theme_mod( 'hmpro_topbar_text_color' );
 	remove_theme_mod( 'hmpro_topbar_search_text_color' );
 	remove_theme_mod( 'hmpro_topbar_search_placeholder_color' );
+	remove_theme_mod( 'hmpro_social_icon_color' );
+	remove_theme_mod( 'hmpro_social_icon_bg' );
+	remove_theme_mod( 'hmpro_social_icon_border' );
+	remove_theme_mod( 'hmpro_social_icon_hover_color' );
+	remove_theme_mod( 'hmpro_social_icon_hover_bg' );
+	remove_theme_mod( 'hmpro_social_icon_hover_border' );
+	remove_theme_mod( 'hmpro_social_icon_contrast' );
+	remove_theme_mod( 'hmpro_social_icon_size' );
+	remove_theme_mod( 'hmpro_social_icon_radius' );
+	remove_theme_mod( 'hmpro_social_icon_svg_size' );
 	remove_theme_mod( 'hmpro_footer_bg_color' );
 	remove_theme_mod( 'hmpro_footer_text_color' );
 

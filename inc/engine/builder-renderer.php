@@ -39,7 +39,51 @@ add_action( 'wp_head', function () {
 	$foot_bg  = sanitize_hex_color( get_theme_mod( 'hmpro_footer_bg_color', '' ) );
 	$foot_txt = sanitize_hex_color( get_theme_mod( 'hmpro_footer_text_color', '' ) );
 
+	// Social icon style overrides (Social Icon Button).
+	$soc_color    = sanitize_hex_color( get_theme_mod( 'hmpro_social_icon_color', '' ) );
+	$soc_bg       = sanitize_hex_color( get_theme_mod( 'hmpro_social_icon_bg', '' ) );
+	$soc_border   = sanitize_hex_color( get_theme_mod( 'hmpro_social_icon_border', '' ) );
+	$soc_h_color  = sanitize_hex_color( get_theme_mod( 'hmpro_social_icon_hover_color', '' ) );
+	$soc_h_bg     = sanitize_hex_color( get_theme_mod( 'hmpro_social_icon_hover_bg', '' ) );
+	$soc_h_border = sanitize_hex_color( get_theme_mod( 'hmpro_social_icon_hover_border', '' ) );
+	$soc_contrast = sanitize_hex_color( get_theme_mod( 'hmpro_social_icon_contrast', '' ) );
+	$soc_size     = absint( get_theme_mod( 'hmpro_social_icon_size', 34 ) );
+	$soc_radius   = absint( get_theme_mod( 'hmpro_social_icon_radius', 999 ) );
+	$soc_svg      = absint( get_theme_mod( 'hmpro_social_icon_svg_size', 18 ) );
+
 	$css = ':root{--hmpro-logo-max-height:' . $height . 'px;--hmpro-logo-max-height-mobile:' . $mobile_height . 'px;--hmpro-footer-logo-max-height:' . $footer_height . 'px;}';
+
+	// Social icon CSS variables.
+	if ( $soc_color ) {
+		$css .= ':root{--hmpro-social-icon-color:' . $soc_color . ';}';
+	}
+	if ( $soc_bg ) {
+		$css .= ':root{--hmpro-social-icon-bg:' . $soc_bg . ';}';
+	}
+	if ( $soc_border ) {
+		$css .= ':root{--hmpro-social-icon-border:' . $soc_border . ';}';
+	}
+	if ( $soc_h_color ) {
+		$css .= ':root{--hmpro-social-icon-hover-color:' . $soc_h_color . ';}';
+	}
+	if ( $soc_h_bg ) {
+		$css .= ':root{--hmpro-social-icon-hover-bg:' . $soc_h_bg . ';}';
+	}
+	if ( $soc_h_border ) {
+		$css .= ':root{--hmpro-social-icon-hover-border:' . $soc_h_border . ';}';
+	}
+	if ( $soc_contrast ) {
+		$css .= ':root{--hmpro-social-icon-contrast:' . $soc_contrast . ';}';
+	}
+	if ( $soc_size ) {
+		$css .= ':root{--hmpro-social-icon-size:' . $soc_size . 'px;}';
+	}
+	if ( $soc_radius ) {
+		$css .= ':root{--hmpro-social-icon-radius:' . $soc_radius . 'px;}';
+	}
+	if ( $soc_svg ) {
+		$css .= ':root{--hmpro-social-icon-svg-size:' . $soc_svg . 'px;}';
+	}
 
 	// Header Builder: Top region (Top Bar)
 	if ( $top_bg ) {
