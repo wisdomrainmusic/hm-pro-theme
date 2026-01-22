@@ -22,13 +22,21 @@
 		'</div>';
 	}
 
-	function reinitGallery($gallery){
-		// Destroy flexslider if present (Woo uses it under the hood).
-		try {
-			if ($gallery.data('flexslider')) {
-				$gallery.flexslider('destroy');
-			}
-		} catch(e){}
+	function hardResetGallery($gallery){
+		// 1) Attempt to destroy flexslider wherever it might be attached.
+		try { if ($gallery.data('flexslider')) { $gallery.flexslider('destroy'); } } catch(e){}
+		try { if ($gallery.find('.woocommerce-product-gallery__wrapper').data('flexslider')) { $gallery.find('.woocommerce-product-gallery__wrapper').flexslider('destroy'); } } catch(e){}
+		try { $gallery.find('.flexslider').each(function(){ try { $(this).flexslider('destroy'); } catch(e){} }); } catch(e){}
+
+		// 2) Remove leftover wrappers/nav created by flexslider (prevents duplicate slides & weird crop states).
+		$gallery.find('.flex-control-nav, .flex-direction-nav').remove();
+		$gallery.find('.flex-viewport').each(function(){
+			var $vp = $(this);
+			var $children = $vp.children().detach();
+			$vp.replaceWith($children);
+		});
+		$gallery.removeData('flexslider');
+		$gallery.find('.woocommerce-product-gallery__wrapper').removeData('flexslider');
 
 		// Woo exposes jQuery plugin wc_product_gallery() on .woocommerce-product-gallery.
 		try {
@@ -38,8 +46,6 @@
 				$gallery.wc_product_gallery();
 			}
 		} catch(e){}
-
-		// Ensure arrows still show (theme already forces via PHP + inline JS).
 	}
 
 	$(function(){
@@ -52,13 +58,28 @@
 		var $wrapper = $gallery.find('.woocommerce-product-gallery__wrapper');
 		if (!$wrapper.length) return;
 
-		// Cache original gallery to restore on reset / when no variation gallery exists.
-		var originalHtml = $wrapper.html();
+		/**
+		 * Cache a PRISTINE default gallery:
+		 * Only real slides (no flex clones/wrappers). This prevents zoom/crop weirdness on restore.
+		 */
+		var originalSlidesHtml = (function(){
+			var html = '';
+			$wrapper.children('.woocommerce-product-gallery__image').each(function(){
+				html += $(this).prop('outerHTML');
+			});
+			// Fallback if theme structure differs.
+			if (!html) {
+				html = $wrapper.html();
+			}
+			return html;
+		})();
 
 		function swapToVariation(variation){
+			// If this variation has no custom gallery -> keep DEFAULT product gallery.
+			// Do NOT allow Woo to leave the gallery in a half-state (single image / zoomed crop).
 			if (!variation || !hasGallery(variation)) {
-				$wrapper.html(originalHtml);
-				reinitGallery($gallery);
+				$wrapper.html(originalSlidesHtml);
+				hardResetGallery($gallery);
 				return;
 			}
 
@@ -70,13 +91,13 @@
 			});
 
 			if (!html) {
-				$wrapper.html(originalHtml);
-				reinitGallery($gallery);
+				$wrapper.html(originalSlidesHtml);
+				hardResetGallery($gallery);
 				return;
 			}
 
 			$wrapper.html(html);
-			reinitGallery($gallery);
+			hardResetGallery($gallery);
 		}
 
 		/**
@@ -95,8 +116,8 @@
 		$form.on('reset_data', function(){
 			window.requestAnimationFrame(function(){
 				setTimeout(function(){
-					$wrapper.html(originalHtml);
-					reinitGallery($gallery);
+					$wrapper.html(originalSlidesHtml);
+					hardResetGallery($gallery);
 				}, 0);
 			});
 		});
