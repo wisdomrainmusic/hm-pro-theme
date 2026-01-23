@@ -7,6 +7,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+if ( ! function_exists( 'hmpro_hero_sanitize_color' ) ) {
+	function hmpro_hero_sanitize_color( $c ) {
+		$c = is_string( $c ) ? trim( $c ) : '';
+		if ( $c === '' ) {
+			return '';
+		}
+		// #RGB, #RRGGBB, #RRGGBBAA
+		if ( preg_match( '/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i', $c ) ) {
+			return $c;
+		}
+		// rgb()/rgba()
+		if ( preg_match( '/^rgba?\(([^)]+)\)$/i', $c ) ) {
+			return $c;
+		}
+		return '';
+	}
+}
+
 $attrs = isset( $attributes ) && is_array( $attributes ) ? $attributes : [];
 
 $only_homepage = ! empty( $attrs['onlyHomepage'] );
@@ -148,6 +166,11 @@ foreach ( $slides as $i => $s ) {
 	$btn_text   = isset( $s['buttonText'] ) ? sanitize_text_field( (string) $s['buttonText'] ) : '';
 	$btn_url    = isset( $s['buttonUrl'] ) ? esc_url_raw( (string) $s['buttonUrl'] ) : '';
 
+	$t_col = hmpro_hero_sanitize_color( $s['titleColor'] ?? '' );
+	$st_col = hmpro_hero_sanitize_color( $s['subtitleColor'] ?? '' );
+	$b_col = hmpro_hero_sanitize_color( $s['buttonTextColor'] ?? '' );
+	$bbg_col = hmpro_hero_sanitize_color( $s['buttonBgColor'] ?? '' );
+
 	$resolved_url = '';
 	if ( $media_id ) {
 		$resolved_url = wp_get_attachment_image_url( $media_id, 'full' );
@@ -163,7 +186,22 @@ foreach ( $slides as $i => $s ) {
 	$is_active = ( $i === 0 );
 	$slide_classes = 'hmpro-hero-slide' . ( $is_active ? ' is-active' : '' );
 
-	echo '<div class="' . esc_attr( $slide_classes ) . '" data-index="' . esc_attr( (string) $i ) . '" aria-hidden="' . esc_attr( $is_active ? 'false' : 'true' ) . '">';
+	$style_bits = [];
+	if ( $t_col ) {
+		$style_bits[] = '--hmpro-hero-title-color:' . $t_col;
+	}
+	if ( $st_col ) {
+		$style_bits[] = '--hmpro-hero-subtitle-color:' . $st_col;
+	}
+	if ( $b_col ) {
+		$style_bits[] = '--hmpro-hero-btn-color:' . $b_col;
+	}
+	if ( $bbg_col ) {
+		$style_bits[] = '--hmpro-hero-btn-bg:' . $bbg_col;
+	}
+	$slide_style = $style_bits ? ' style="' . esc_attr( implode( ';', $style_bits ) ) . ';"' : '';
+
+	echo '<div class="' . esc_attr( $slide_classes ) . '" data-index="' . esc_attr( (string) $i ) . '" aria-hidden="' . esc_attr( $is_active ? 'false' : 'true' ) . '"' . $slide_style . '>';
 	echo '<div class="hmpro-hero-slide__media">';
 
 	$bg = $resolved_url ? ' style="background-image:url(' . esc_url( $resolved_url ) . ')"' : '';

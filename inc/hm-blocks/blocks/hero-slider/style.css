@@ -99,14 +99,14 @@
 	line-height: 1.08;
 	font-weight: 700;
 	margin: 0 0 10px 0;
-	color: #fff;
+	color: var(--hmpro-hero-title-color, #fff);
 }
 
 .hmpro-hero__subtitle{
 	font-size: 18px;
 	line-height: 1.45;
 	margin: 0 0 18px 0;
-	color: rgba(255,255,255,0.9);
+	color: var(--hmpro-hero-subtitle-color, rgba(255,255,255,0.9));
 }
 
 .hmpro-hero__btn{
@@ -114,8 +114,8 @@
 	align-items:center;
 	justify-content:center;
 	gap: 10px;
-	background: #d4af37;
-	color: #111;
+	background: var(--hmpro-hero-btn-bg, #d4af37);
+	color: var(--hmpro-hero-btn-color, #111);
 	padding: 12px 18px;
 	border-radius: 999px;
 	font-weight: 700;
