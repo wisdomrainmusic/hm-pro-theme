@@ -3,7 +3,7 @@
 
 	const { registerBlockType } = wp.blocks;
 	const { InspectorControls, useBlockProps, MediaUpload, MediaUploadCheck, BlockControls } = wp.blockEditor || wp.editor;
-	const { PanelBody, ToggleControl, RangeControl, Button, TextControl, ToolbarGroup, ToolbarButton } = wp.components;
+	const { PanelBody, ToggleControl, RangeControl, Button, TextControl, ToolbarGroup, ToolbarButton, BaseControl, ColorPalette } = wp.components;
 	const { Fragment, useEffect, useMemo, useRef, useState } = wp.element;
 
 	function clamp( n, min, max ) {
@@ -24,7 +24,11 @@
 				title: "",
 				subtitle: "",
 				buttonText: "",
-				buttonUrl: ""
+				buttonUrl: "",
+				titleColor: "",
+				subtitleColor: "",
+				buttonTextColor: "",
+				buttonBgColor: ""
 			} );
 		}
 		// Hard normalize to IMAGE-only (legacy content may still have mediaType=video)
@@ -76,6 +80,8 @@
 				return ensureMinSlides( slides );
 			}, [ slides ] );
 
+			const current = normalizedSlides[ active ] || {};
+
 			function updateSlide( idx, patch ) {
 				const next = normalizedSlides.slice();
 				next[ idx ] = Object.assign( {}, next[ idx ] || {}, patch || {}, { mediaType: "image" } );
@@ -91,7 +97,11 @@
 					title: "",
 					subtitle: "",
 					buttonText: "",
-					buttonUrl: ""
+					buttonUrl: "",
+					titleColor: "",
+					subtitleColor: "",
+					buttonTextColor: "",
+					buttonBgColor: ""
 				} ] );
 				setAttributes( { slides: next } );
 				setActive( next.length - 1 );
@@ -166,11 +176,13 @@
 					"--hmpro-hero-group-y-m": clamp( mobileGroupY, -300, 300 ) + "px",
 					"--hmpro-hero-scale": clamp( contentScale, 0.7, 1.3 ),
 					"--hmpro-hero-scale-m": clamp( mobileContentScale, 0.6, 1.3 ),
-					"--hmpro-hero-title-scale-m": clamp( mobileTitleScale, 0.6, 1.2 )
+					"--hmpro-hero-title-scale-m": clamp( mobileTitleScale, 0.6, 1.2 ),
+					"--hmpro-hero-title-color": current.titleColor || "",
+					"--hmpro-hero-subtitle-color": current.subtitleColor || "",
+					"--hmpro-hero-btn-color": current.buttonTextColor || "",
+					"--hmpro-hero-btn-bg": current.buttonBgColor || ""
 				}
 			} );
-
-			const current = normalizedSlides[ active ] || {};
 
 			function onSelectMedia( idx, media ) {
 				if ( !media ) return;
@@ -263,15 +275,15 @@
 							step: 10,
 							onChange: function ( v ) { setAttributes( { maxWidth: clamp( v, 720, 1800 ) } ); }
 						} ),
-						wp.element.createElement( TextControl, {
+						wp.element.createElement( RangeControl, {
 							label: "Hero height (px)",
 							help: "Tip: 520–760 is a good range. Increase if you use a larger title.",
-							type: "number",
 							value: clamp( height, 200, 1200 ),
-							onChange: function ( v ) {
-								const n = parseInt( v, 10 );
-								setAttributes( { height: clamp( isNaN( n ) ? 520 : n, 200, 1200 ) } );
-							}
+							min: 200,
+							max: 1200,
+							step: 10,
+							withInputField: true,
+							onChange: function ( v ) { setAttributes( { height: clamp( v, 200, 1200 ) } ); }
 						} ),
 						wp.element.createElement( ToggleControl, {
 							label: "Hide on mobile",
@@ -315,6 +327,42 @@
 							checked: !!showDots,
 							onChange: function ( v ) { setAttributes( { showDots: !!v } ); }
 						} )
+					),
+					wp.element.createElement(
+						PanelBody,
+						{ title: "Active Slide Styles", initialOpen: false },
+						wp.element.createElement(
+							BaseControl,
+							{ label: "Title color" },
+							wp.element.createElement( ColorPalette, {
+								value: current.titleColor || "",
+								onChange: function ( v ) { updateSlide( active, { titleColor: v || "" } ); }
+							} )
+						),
+						wp.element.createElement(
+							BaseControl,
+							{ label: "Subtitle color" },
+							wp.element.createElement( ColorPalette, {
+								value: current.subtitleColor || "",
+								onChange: function ( v ) { updateSlide( active, { subtitleColor: v || "" } ); }
+							} )
+						),
+						wp.element.createElement(
+							BaseControl,
+							{ label: "Button text color" },
+							wp.element.createElement( ColorPalette, {
+								value: current.buttonTextColor || "",
+								onChange: function ( v ) { updateSlide( active, { buttonTextColor: v || "" } ); }
+							} )
+						),
+						wp.element.createElement(
+							BaseControl,
+							{ label: "Button background" },
+							wp.element.createElement( ColorPalette, {
+								value: current.buttonBgColor || "",
+								onChange: function ( v ) { updateSlide( active, { buttonBgColor: v || "" } ); }
+							} )
+						)
 					),
 					wp.element.createElement(
 						PanelBody,
