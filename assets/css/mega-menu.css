@@ -810,3 +810,71 @@ body.hmpro-mega-click #site-header .hmpro-primary-nav li.hmpro-li-has-mega.hmpro
 body.hmpro-mega-click #site-header .hmpro-primary-nav li.hmpro-li-has-mega.hmpro-mega-open > a .hmpro-mega-toggle:before{
 	content: "▴";
 }
+/* =========================================================
+   Mega Menu v2 Canvas – Image containment + consistent column spacing
+   Fix: When adding image components (especially in column 4), some themes
+   can apply global img/link styles that make the image overflow the mega panel.
+   We hard-scope defensive rules to the v2 canvas only.
+   ========================================================= */
+
+/* Keep v2 canvas deterministic and allow children to shrink inside grid */
+#site-header .hmpro-mega-panel .hmpro-mega-canvas{
+  /* image sizing presets */
+  --hmpro-mega-image-h: 240px;       /* default desktop image height */
+  --hmpro-mega-image-radius: 14px;   /* match theme card radius */
+
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: start;
+}
+
+@media (max-width: 1024px){
+  #site-header .hmpro-mega-panel .hmpro-mega-canvas{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    --hmpro-mega-image-h: 200px;
+  }
+}
+
+@media (max-width: 640px){
+  #site-header .hmpro-mega-panel .hmpro-mega-canvas{
+    grid-template-columns: 1fr;
+    --hmpro-mega-image-h: 180px;
+  }
+}
+
+/* Column + widget containment (prevents right-edge spill) */
+#site-header .hmpro-mega-panel .hmpro-mega-canvas .hmpro-mega-col{
+  min-width: 0;
+}
+
+#site-header .hmpro-mega-panel .hmpro-mega-canvas .hmpro-mega-widget{
+  max-width: 100%;
+  min-width: 0;
+  margin: 0 0 14px 0;
+}
+
+/* Image widget: force responsive sizing inside its column */
+#site-header .hmpro-mega-panel .hmpro-mega-canvas .hmpro-mega-image,
+#site-header .hmpro-mega-panel .hmpro-mega-canvas .hmpro-mega-image a{
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+#site-header .hmpro-mega-panel .hmpro-mega-canvas .hmpro-mega-image img{
+  display: block;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: var(--hmpro-mega-image-h) !important;
+  object-fit: cover;
+  border-radius: var(--hmpro-mega-image-radius);
+}
+
+/* If the image is wrapped in a link, keep the same radius clipping */
+#site-header .hmpro-mega-panel .hmpro-mega-canvas .hmpro-mega-image a{
+  border-radius: var(--hmpro-mega-image-radius);
+  overflow: hidden;
+}
