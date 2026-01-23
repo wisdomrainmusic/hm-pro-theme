@@ -810,3 +810,40 @@ body.hmpro-mega-click #site-header .hmpro-primary-nav li.hmpro-li-has-mega.hmpro
 body.hmpro-mega-click #site-header .hmpro-primary-nav li.hmpro-li-has-mega.hmpro-mega-open > a .hmpro-mega-toggle:before{
 	content: "▴";
 }
+
+/* =========================================================
+   Mega Menu (legacy builder render) – column stacking fix
+   The mega region was still using base.css flex-row columns:
+   menu + image could sit side-by-side and overflow (often in col 4).
+   Scope strictly to mega panel + mega context.
+   ========================================================= */
+
+.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel
+  .hmpro-builder-region.hmpro-context-mega .hmpro-builder-row{
+  align-items: flex-start;
+}
+
+.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel
+  .hmpro-builder-region.hmpro-context-mega .hmpro-builder-col{
+  flex-direction: column;     /* IMPORTANT: stack widgets vertically */
+  align-items: stretch;       /* let widgets fill column width */
+  justify-content: flex-start;
+  min-width: 0;               /* allow shrink inside flex */
+  gap: 14px;                  /* consistent spacing like canvas */
+}
+
+/* Defensive: never allow components to exceed their column */
+.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel
+  .hmpro-builder-region.hmpro-context-mega .hmpro-builder-col > *{
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Ensure image component fills column width (prevents right spill) */
+.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel
+  .hmpro-builder-region.hmpro-context-mega .hmpro-comp-image,
+.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel
+  .hmpro-builder-region.hmpro-context-mega .hmpro-mega-image{
+  width: 100%;
+  max-width: 100%;
+}
