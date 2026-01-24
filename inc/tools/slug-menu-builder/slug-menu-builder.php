@@ -8,12 +8,9 @@
 
 if (!defined('ABSPATH')) exit;
 
-// Safety guard: this tool file may be loaded more than once depending on bootstrap order.
-// Avoid fatal "Cannot declare class ... already in use".
-if ( class_exists( 'HM_Product_Cat_Menu_Builder', false ) ) {
-    return;
-}
-
+// Safety: avoid re-declaring the class, BUT do not return from file
+// because helper functions / callbacks below must remain available.
+if ( ! class_exists( 'HM_Product_Cat_Menu_Builder', false ) ) :
 final class HM_Product_Cat_Menu_Builder {
     const NONCE_ACTION = 'hm_pcm_build_menu';
     const OPTION_LAST_LOG = 'hm_pcm_last_log';
@@ -485,6 +482,7 @@ final class HM_Product_Cat_Menu_Builder {
         return $base;
     }
 }
+endif;
 
 
 if ( ! function_exists( 'hmpro_get_slug_menu_builder' ) ) {
