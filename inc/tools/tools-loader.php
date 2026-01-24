@@ -1,11 +1,30 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'HMPRO_CATEGORY_IMPORTER_EMBEDDED', true );
-define( 'HMPRO_SLUG_MENU_BUILDER_EMBEDDED', true );
-define( 'HMPRO_PRODUCT_IMPORTER_EMBEDDED', true );
-define( 'HMPRO_MENU_CONTROLLER_EMBEDDED', true );
-define( 'HMPRO_BASIC_CEVIRI_INLINE_EMBEDDED', true );
+/**
+ * Tools loader can be evaluated more than once on some installs (bootstrap order / child theme /
+ * host-specific file resolution). Make it idempotent to prevent redeclare/define warnings.
+ */
+if ( defined( 'HMPRO_TOOLS_LOADER_LOADED' ) ) {
+	return;
+}
+define( 'HMPRO_TOOLS_LOADER_LOADED', true );
+
+if ( ! defined( 'HMPRO_CATEGORY_IMPORTER_EMBEDDED' ) ) {
+	define( 'HMPRO_CATEGORY_IMPORTER_EMBEDDED', true );
+}
+if ( ! defined( 'HMPRO_SLUG_MENU_BUILDER_EMBEDDED' ) ) {
+	define( 'HMPRO_SLUG_MENU_BUILDER_EMBEDDED', true );
+}
+if ( ! defined( 'HMPRO_PRODUCT_IMPORTER_EMBEDDED' ) ) {
+	define( 'HMPRO_PRODUCT_IMPORTER_EMBEDDED', true );
+}
+if ( ! defined( 'HMPRO_MENU_CONTROLLER_EMBEDDED' ) ) {
+	define( 'HMPRO_MENU_CONTROLLER_EMBEDDED', true );
+}
+if ( ! defined( 'HMPRO_BASIC_CEVIRI_INLINE_EMBEDDED' ) ) {
+	define( 'HMPRO_BASIC_CEVIRI_INLINE_EMBEDDED', true );
+}
 
 require_once HMPRO_PATH . '/inc/tools/category-importer/category-importer.php';
 require_once HMPRO_PATH . '/inc/tools/slug-menu-builder/slug-menu-builder.php';
