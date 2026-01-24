@@ -7,6 +7,12 @@
 
 if (!defined('ABSPATH')) exit;
 
+// Safety guard: this tool file may be loaded more than once depending on bootstrap order.
+// Avoid fatal "Cannot declare class ... already in use".
+if ( class_exists( 'HM_Master_Importer', false ) ) {
+  return;
+}
+
 /**
  * Emergency-safe importer logger (works even when WP debug logs are disabled).
  * Writes to: /wp-content/hm-importer.log
