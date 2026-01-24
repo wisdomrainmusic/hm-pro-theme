@@ -1352,6 +1352,46 @@ class HM_Master_Importer {
     return $url;
   }
 
+  private static function get_base_category_parent_id(): int {
+    $magaza = get_terms([
+      'taxonomy'   => 'product_cat',
+      'slug'       => 'magaza',
+      'parent'     => 0,
+      'hide_empty' => false,
+      'number'     => 1,
+    ]);
+    if (is_wp_error($magaza) || !$magaza) {
+      $magaza = get_term_by('slug', 'magaza', 'product_cat');
+      $magaza = ($magaza && !is_wp_error($magaza)) ? [$magaza] : [];
+    }
+
+    if (!$magaza) return 0;
+
+    $magaza_id = (int) $magaza[0]->term_id;
+    if (!$magaza_id) return 0;
+
+    $kategoriler = get_terms([
+      'taxonomy'   => 'product_cat',
+      'slug'       => 'kategoriler',
+      'parent'     => $magaza_id,
+      'hide_empty' => false,
+      'number'     => 1,
+    ]);
+    if (is_wp_error($kategoriler) || !$kategoriler) return 0;
+
+    return (int) $kategoriler[0]->term_id;
+  }
+
+  private static function strip_leading_base_categories(array $path): array {
+    $base_slugs = ['magaza', 'kategoriler'];
+    while ($path) {
+      $first = sanitize_title((string) $path[0]);
+      if (!in_array($first, $base_slugs, true)) break;
+      array_shift($path);
+    }
+    return $path;
+  }
+
   private static function apply_categories(int $productId, array $d) {
     $levels = ['ana_kategori','alt_kategori','alt_kategori_2','alt_kategori_3','alt_kategori_4'];
     $path = [];
@@ -1361,8 +1401,13 @@ class HM_Master_Importer {
     }
     if (!$path) return;
 
-    $parent = 0;
-    $lastTermId = 0;
+    $base_parent = self::get_base_category_parent_id();
+    $path = self::strip_leading_base_categories($path);
+
+    $parent = $base_parent ?: 0;
+    $lastTermId = $parent;
+
+    if (!$path && !$lastTermId) return;
 
     foreach ($path as $name) {
       $term = term_exists($name, 'product_cat', $parent);
