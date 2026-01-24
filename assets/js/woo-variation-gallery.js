@@ -131,7 +131,26 @@
 			return html;
 		})();
 
+		/**
+		 * Cache the featured image slide as a reliable fallback.
+		 * Some Woo/Flex flows can mutate the wrapper markup, making originalSlidesHtml empty/unusable.
+		 */
+		var originalFeaturedSlideHtml = (function(){
+			var $img = $gallery.find('img.wp-post-image').first();
+			if (!$img.length) return '';
+			var $slide = $img.closest('.woocommerce-product-gallery__image');
+			return $slide.length ? $slide.prop('outerHTML') : '';
+		})();
+
 		var customGalleryActive = false;
+
+		function getRestoreHtml(){
+			var html = originalSlidesHtml;
+			if (!html || !String(html).trim()) {
+				html = originalFeaturedSlideHtml;
+			}
+			return html;
+		}
 
 		function swapToVariation(variation){
 			var hasCustomGallery = hasGallery(variation);
@@ -140,8 +159,13 @@
 			// Only restore the parent gallery if we previously applied a custom gallery.
 			if (!variation || !hasCustomGallery) {
 				if (customGalleryActive) {
+					var restoreHtml = getRestoreHtml();
+					if (!restoreHtml || !String(restoreHtml).trim()) {
+						customGalleryActive = false;
+						return;
+					}
 					lockHeight($gallery);
-					$wrapper.html(originalSlidesHtml);
+					$wrapper.html(restoreHtml);
 					hardResetGallery($gallery);
 					waitImages($gallery, function(){ unlockHeight($gallery); });
 					customGalleryActive = false;
@@ -160,9 +184,12 @@
 
 			if (!html) {
 				if (customGalleryActive) {
-					$wrapper.html(originalSlidesHtml);
-					hardResetGallery($gallery);
-					waitImages($gallery, function(){ unlockHeight($gallery); });
+					var restoreHtml = getRestoreHtml();
+					if (restoreHtml && String(restoreHtml).trim()) {
+						$wrapper.html(restoreHtml);
+						hardResetGallery($gallery);
+						waitImages($gallery, function(){ unlockHeight($gallery); });
+					}
 					customGalleryActive = false;
 				}
 				return;
@@ -190,8 +217,13 @@
 		$form.on('reset_data', function(){
 			window.requestAnimationFrame(function(){
 				setTimeout(function(){
-					$wrapper.html(originalSlidesHtml);
-					hardResetGallery($gallery);
+					var restoreHtml = getRestoreHtml();
+					if (restoreHtml && String(restoreHtml).trim()) {
+						lockHeight($gallery);
+						$wrapper.html(restoreHtml);
+						hardResetGallery($gallery);
+						waitImages($gallery, function(){ unlockHeight($gallery); });
+					}
 					customGalleryActive = false;
 				}, 0);
 			});
