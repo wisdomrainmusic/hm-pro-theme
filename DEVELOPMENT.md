@@ -1,4 +1,80 @@
 # HM Pro Theme — Development Rules (Stability Guide)
+📅 2026-01-24 — HM Hero Slider Major Update (Gutenberg)
+Summary
+
+HM Hero Slider block was significantly improved for Gutenberg to match and exceed previous Elementor capabilities, with a strong focus on responsive behavior, performance, and editor UX. Desktop behavior is now stable and finalized; mobile behavior follows a clear and simplified rule set.
+
+Key Changes
+1. Slide Count Extension
+
+Slide limit increased from 1–6 to 1–12.
+
+Editor UI and logic updated accordingly.
+
+Asset version bumped to prevent stale editor cache issues.
+
+2. Image Fit Control
+
+Added Image Fit option:
+
+Cover (fill) – default, fills frame (may crop)
+
+Contain (show full image) – optional, may letterbox
+
+Default behavior remains unchanged for backward compatibility.
+
+3. Per-Device Images (Elementor-like)
+
+Each slide now supports separate images per device:
+
+Desktop image (required)
+
+Tablet image (optional, falls back to desktop)
+
+Mobile image (optional, falls back to tablet → desktop)
+
+Editor preview switches images automatically when toggling Desktop / Tablet / Mobile view.
+
+Front-end renders correct image per breakpoint without breaking existing slides.
+
+4. Mobile & Tablet Layout Optimization
+
+Mobile and tablet layouts were refined via CSS only (no JS/PHP logic changes):
+
+Hero height capped using viewport units on smaller screens.
+
+Improved padding, typography scaling, and control sizing.
+
+Prevents “overly tall” hero sections on phones.
+
+5. Final Responsive Strategy (Locked Decision)
+
+To avoid over-complexity and maintain long-term stability:
+
+Desktop + Tablet
+
+Use the same 16:9 image (e.g. 1920×1080, 1600×900).
+
+Mobile
+
+Use 9:16 (portrait / reels-style) images (e.g. 1080×1920).
+
+Image fit should remain Cover.
+
+Mobile height should be kept compact (≈56–60vh) to avoid excessive vertical space.
+
+Square (1:1) images were tested but rejected due to poor visual balance.
+9:16 provides the most natural and modern mobile experience.
+
+Notes
+
+All changes were implemented without breaking existing content.
+
+Desktop behavior is considered final and stable.
+
+Mobile behavior is intentionally simplified to reduce maintenance and avoid over-engineering.
+
+This block now fully replaces the previous Elementor-based hero workflow.
 ## 2026-01-24 – Woo Variation Gallery Operational Rule (Variation Image Required)
 
 Decision:
