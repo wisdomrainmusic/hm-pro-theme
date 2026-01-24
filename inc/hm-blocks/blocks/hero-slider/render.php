@@ -37,6 +37,10 @@ $max_width  = isset( $attrs['maxWidth'] ) ? absint( $attrs['maxWidth'] ) : 1200;
 $height     = isset( $attrs['height'] ) ? absint( $attrs['height'] ) : 520;
 $hide_mobile = ! empty( $attrs['hideOnMobile'] );
 
+// Background fit: "cover" (default) or "contain" (show full image).
+$image_fit = isset( $attrs['imageFit'] ) ? (string) $attrs['imageFit'] : 'cover';
+$image_fit = ( $image_fit === 'contain' ) ? 'contain' : 'cover';
+
 if ( $max_width < 720 ) {
 	$max_width = 720;
 }
@@ -134,8 +138,9 @@ $classes = [
 $wrapper_attrs = get_block_wrapper_attributes( [
 	'class' => implode( ' ', array_filter( $classes ) ),
 	'style' => sprintf(
-		'--hmpro-hero-h:%dpx;--hmpro-hero-overlay:%s;--hmpro-hero-maxw:%dpx;--hmpro-hero-group-x:%dpx;--hmpro-hero-group-y:%dpx;--hmpro-hero-group-x-m:%dpx;--hmpro-hero-group-y-m:%dpx;--hmpro-hero-scale:%s;--hmpro-hero-scale-m:%s;--hmpro-hero-title-scale-m:%s;',
+		'--hmpro-hero-h:%dpx;--hmpro-hero-bg-fit:%s;--hmpro-hero-overlay:%s;--hmpro-hero-maxw:%dpx;--hmpro-hero-group-x:%dpx;--hmpro-hero-group-y:%dpx;--hmpro-hero-group-x-m:%dpx;--hmpro-hero-group-y-m:%dpx;--hmpro-hero-scale:%s;--hmpro-hero-scale-m:%s;--hmpro-hero-title-scale-m:%s;',
 		$height,
+		esc_attr( $image_fit ),
 		rtrim( rtrim( (string) $overlay, '0' ), '.' ),
 		$max_width,
 		$group_x,

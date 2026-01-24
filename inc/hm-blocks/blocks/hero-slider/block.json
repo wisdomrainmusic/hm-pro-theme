@@ -16,6 +16,10 @@
     "html": false
   },
   "attributes": {
+    "imageFit": {
+      "type": "string",
+      "default": "cover"
+    },
     "onlyHomepage": {
       "type": "boolean",
       "default": false
