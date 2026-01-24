@@ -3,6 +3,20 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/**
+ * i18n
+ *
+ * WP 6.7+ can emit "_load_textdomain_just_in_time" notices if translations are triggered
+ * before the theme textdomain is loaded.
+ *
+ * This theme historically used both 'hmpro' and 'hm-pro-theme' domains in strings,
+ * so we load both to avoid just-in-time loading warnings.
+ */
+add_action( 'after_setup_theme', function () {
+	load_theme_textdomain( 'hmpro', HMPRO_PATH . '/languages' );
+	load_theme_textdomain( 'hm-pro-theme', HMPRO_PATH . '/languages' );
+}, 0 );
+
 add_action( 'after_setup_theme', function () {
 	add_theme_support(
 		'custom-logo',
@@ -84,9 +98,6 @@ function hmpro_render_builder_region( $region_key, $area ) {
 }
 
 add_action( 'after_setup_theme', function () {
-
-	load_theme_textdomain( 'hmpro', HMPRO_PATH . '/languages' );
-
 	add_theme_support( 'title-tag' );
 	add_theme_support( 'post-thumbnails' );
 	add_theme_support( 'responsive-embeds' );
