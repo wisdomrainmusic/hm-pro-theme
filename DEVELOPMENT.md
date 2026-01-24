@@ -1,5 +1,30 @@
 # HM Pro Theme — Development Rules (Stability Guide)
+## 2026-01-24 – Woo Variation Gallery Race Condition Fix
 
+Issue:
+Variation change caused a brief correct image display followed by
+an immediate revert to the parent product image.
+
+Root Cause:
+Custom frontend script (woo-variation-gallery.js) was restoring the
+parent gallery whenever a variation had no custom hmpro_gallery,
+overriding WooCommerce’s native variation image handling and causing
+a race condition.
+
+Resolution:
+Introduced state-based logic in the frontend:
+- Parent gallery is restored only if a custom variation gallery
+  was previously applied.
+- Variations without a custom gallery now rely entirely on
+  WooCommerce default behavior.
+
+Architectural Decision:
+- Variation images must be set at import time (_thumbnail_id).
+- Frontend must not compensate for missing variation images.
+- WooCommerce default fallback is trusted.
+
+Result:
+Stable variation image switching without visual glitches.
 This theme is designed to be updated frequently. To prevent regressions during updates, follow the rules below.
 These rules are based on real production incidents (double-load, PHP 8.1+ deprecations, admin callback fatals).
 
