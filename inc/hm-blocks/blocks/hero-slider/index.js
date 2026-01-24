@@ -3,7 +3,7 @@
 
 	const { registerBlockType } = wp.blocks;
 	const { InspectorControls, useBlockProps, MediaUpload, MediaUploadCheck, BlockControls } = wp.blockEditor || wp.editor;
-	const { PanelBody, ToggleControl, RangeControl, Button, TextControl, ToolbarGroup, ToolbarButton, BaseControl, ColorPalette } = wp.components;
+	const { PanelBody, ToggleControl, RangeControl, SelectControl, Button, TextControl, ToolbarGroup, ToolbarButton, BaseControl, ColorPalette } = wp.components;
 	const { Fragment, useEffect, useMemo, useRef, useState } = wp.element;
 
 	function clamp( n, min, max ) {
@@ -46,6 +46,7 @@
 			const { attributes, setAttributes, isSelected } = props;
 			const {
 				slides,
+				imageFit,
 				onlyHomepage,
 				fullWidth,
 				maxWidth,
@@ -168,6 +169,7 @@
 				].filter( Boolean ).join( " " ),
 				style: {
 					"--hmpro-hero-h": clamp( height, 200, 1200 ) + "px",
+					"--hmpro-hero-bg-fit": ( imageFit === "contain" ? "contain" : "cover" ),
 					"--hmpro-hero-overlay": clamp( overlayOpacity, 0, 0.8 ),
 					"--hmpro-hero-maxw": clamp( maxWidth, 720, 1800 ) + "px",
 					"--hmpro-hero-group-x": clamp( groupX, -300, 300 ) + "px",
@@ -266,6 +268,16 @@
 							label: "Full width (hero)",
 							checked: !!fullWidth,
 							onChange: function ( v ) { setAttributes( { fullWidth: !!v } ); }
+						} ),
+						wp.element.createElement( SelectControl, {
+							label: "Image fit",
+							help: "Cover fills the frame (may crop). Contain shows the full image (may letterbox).",
+							value: ( imageFit === "contain" ? "contain" : "cover" ),
+							options: [
+								{ label: "Cover (fill)", value: "cover" },
+								{ label: "Contain (show full image)", value: "contain" }
+							],
+							onChange: function ( v ) { setAttributes( { imageFit: ( v === "contain" ? "contain" : "cover" ) } ); }
 						} ),
 						wp.element.createElement( RangeControl, {
 							label: "Max width (boxed mode)",

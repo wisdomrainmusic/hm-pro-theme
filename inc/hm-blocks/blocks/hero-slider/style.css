@@ -45,7 +45,7 @@
 .hmpro-hero__bgImage{
 	position:absolute;
 	inset:0;
-	background-size: cover;
+	background-size: var(--hmpro-hero-bg-fit, cover);
 	background-position: center center;
 	background-repeat: no-repeat;
 	transform: scale(1.02);
@@ -151,7 +151,7 @@
 .hmpro-hero-slide__bg{
 	position:absolute;
 	inset:0;
-	background-size: cover;
+	background-size: var(--hmpro-hero-bg-fit, cover);
 	background-position: center center;
 	background-repeat: no-repeat;
 	transform: scale(1.02);
