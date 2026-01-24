@@ -8,6 +8,31 @@
 
 	const MAX_SLIDES = 12;
 
+	function getPreviewDeviceType() {
+		try {
+			if ( wp.data && wp.data.select ) {
+				const sel = wp.data.select( "core/edit-post" ) || wp.data.select( "core/editor" );
+				if ( sel && typeof sel.__experimentalGetPreviewDeviceType === "function" ) {
+					return sel.__experimentalGetPreviewDeviceType();
+				}
+				if ( sel && typeof sel.getPreviewDeviceType === "function" ) {
+					return sel.getPreviewDeviceType();
+				}
+			}
+		} catch ( e ) {}
+		return "Desktop";
+	}
+
+	function pickMediaUrlForDevice( slide, deviceType ) {
+		const d = ( deviceType || "Desktop" ).toLowerCase();
+		const desktop = slide.mediaUrl || "";
+		const tablet = slide.mediaUrlTablet || "";
+		const mobile = slide.mediaUrlMobile || "";
+		if ( d.indexOf( "mobile" ) !== -1 ) return mobile || tablet || desktop;
+		if ( d.indexOf( "tablet" ) !== -1 ) return tablet || desktop;
+		return desktop;
+	}
+
 	function clamp( n, min, max ) {
 		n = parseFloat( n );
 		if ( isNaN( n ) ) n = min;
@@ -22,6 +47,10 @@
 			arr.push( {
 				mediaId: 0,
 				mediaUrl: "",
+				mediaIdTablet: 0,
+				mediaUrlTablet: "",
+				mediaIdMobile: 0,
+				mediaUrlMobile: "",
 				mediaType: "image",
 				title: "",
 				subtitle: "",
@@ -35,7 +64,19 @@
 		}
 		// Hard normalize to IMAGE-only (legacy content may still have mediaType=video)
 		for ( let i = 0; i < arr.length; i++ ) {
-			arr[ i ] = Object.assign( {}, arr[ i ] || {}, { mediaType: "image" } );
+			arr[ i ] = Object.assign(
+				{
+					mediaId: 0,
+					mediaUrl: "",
+					mediaIdTablet: 0,
+					mediaUrlTablet: "",
+					mediaIdMobile: 0,
+					mediaUrlMobile: "",
+					mediaType: "image"
+				},
+				arr[ i ] || {},
+				{ mediaType: "image" }
+			);
 		}
 		if ( arr.length > MAX_SLIDES ) {
 			return arr.slice( 0, MAX_SLIDES );
@@ -83,12 +124,51 @@
 				return ensureMinSlides( slides );
 			}, [ slides ] );
 
-			const current = normalizedSlides[ active ] || {};
+			const [ previewDevice, setPreviewDevice ] = useState( getPreviewDeviceType() );
+			useEffect( function () {
+				if ( ! wp.data || ! wp.data.subscribe ) return;
+				let last = getPreviewDeviceType();
+				const unsub = wp.data.subscribe( function () {
+					const next = getPreviewDeviceType();
+					if ( next !== last ) {
+						last = next;
+						setPreviewDevice( next );
+					}
+				} );
+				return function () { try { unsub(); } catch ( e ) {} };
+			}, [] );
+
+			const current = normalizedSlides[ active ] || normalizedSlides[ 0 ] || {};
 
 			function updateSlide( idx, patch ) {
 				const next = normalizedSlides.slice();
 				next[ idx ] = Object.assign( {}, next[ idx ] || {}, patch || {}, { mediaType: "image" } );
-				setAttributes( { slides: next } );
+				setAttributes( { slides: ensureMinSlides( next ) } );
+			}
+
+			function updateSlides( next ) {
+				setAttributes( { slides: ensureMinSlides( next ) } );
+			}
+
+			function setActiveSlideField( field, value ) {
+				const next = normalizedSlides.slice();
+				const cur = Object.assign( {}, next[ active ] || {} );
+				cur[ field ] = value;
+				next[ active ] = cur;
+				updateSlides( next );
+			}
+
+			function onSelectTablet( media ) {
+				const url = ( media && media.url ) ? media.url : "";
+				const id = ( media && media.id ) ? media.id : 0;
+				setActiveSlideField( "mediaIdTablet", id );
+				setActiveSlideField( "mediaUrlTablet", url );
+			}
+			function onSelectMobile( media ) {
+				const url = ( media && media.url ) ? media.url : "";
+				const id = ( media && media.id ) ? media.id : 0;
+				setActiveSlideField( "mediaIdMobile", id );
+				setActiveSlideField( "mediaUrlMobile", url );
 			}
 
 			function addSlide() {
@@ -96,6 +176,10 @@
 				const next = normalizedSlides.concat( [ {
 					mediaId: 0,
 					mediaUrl: "",
+					mediaIdTablet: 0,
+					mediaUrlTablet: "",
+					mediaIdMobile: 0,
+					mediaUrlMobile: "",
 					mediaType: "image",
 					title: "",
 					subtitle: "",
@@ -106,7 +190,7 @@
 					buttonTextColor: "",
 					buttonBgColor: ""
 				} ] );
-				setAttributes( { slides: next } );
+				setAttributes( { slides: ensureMinSlides( next ) } );
 				setActive( next.length - 1 );
 			}
 
@@ -114,7 +198,7 @@
 				if ( normalizedSlides.length <= 1 ) return;
 				const next = normalizedSlides.slice();
 				next.splice( idx, 1 );
-				setAttributes( { slides: next } );
+				setAttributes( { slides: ensureMinSlides( next ) } );
 				setActive( Math.max( 0, Math.min( active, next.length - 1 ) ) );
 			}
 
@@ -125,7 +209,7 @@
 				const tmp = next[ idx ];
 				next[ idx ] = next[ to ];
 				next[ to ] = tmp;
-				setAttributes( { slides: next } );
+				setAttributes( { slides: ensureMinSlides( next ) } );
 				setActive( to );
 			}
 
@@ -225,10 +309,11 @@
 			}
 
 			function renderMedia( s ) {
-				if ( s && s.mediaUrl ) {
+				const bgUrl = s ? pickMediaUrlForDevice( s, previewDevice ) : "";
+				if ( bgUrl ) {
 					return wp.element.createElement( "div", {
 						className: "hmpro-hero__bgImage",
-						style: { backgroundImage: "url(" + s.mediaUrl + ")" }
+						style: { backgroundImage: "url(" + bgUrl + ")" }
 					} );
 				}
 				return wp.element.createElement( "div", { className: "hmpro-hero__bgImage is-empty" } );
@@ -478,6 +563,91 @@
 							Button,
 							{ isPrimary: true, onClick: addSlide, disabled: normalizedSlides.length >= MAX_SLIDES },
 							"Add Slide"
+						)
+					),
+					wp.element.createElement(
+						PanelBody,
+						{ title: "Active Slide Media", initialOpen: false },
+						wp.element.createElement(
+							"div",
+							{ style: { marginBottom: "10px" } },
+							"Active: Slide " + ( active + 1 )
+						),
+						wp.element.createElement(
+							"div",
+							{ style: { display: "grid", gap: "10px" } },
+							wp.element.createElement(
+								"div",
+								null,
+								wp.element.createElement( "div", { style: { fontSize: "12px", opacity: 0.8, marginBottom: "6px" } }, "Tablet image (optional)" ),
+								wp.element.createElement(
+									MediaUploadCheck,
+									null,
+									wp.element.createElement( MediaUpload, {
+										onSelect: onSelectTablet,
+										allowedTypes: [ "image" ],
+										value: current.mediaIdTablet || 0,
+										render: function ( obj ) {
+											return wp.element.createElement(
+												Fragment,
+												null,
+												wp.element.createElement(
+													Button,
+													{ isSecondary: true, onClick: obj.open },
+													current.mediaUrlTablet ? "Replace Tablet Image" : "Select Tablet Image"
+												),
+												current.mediaUrlTablet
+													? wp.element.createElement( Button, {
+														isLink: true,
+														isDestructive: true,
+														onClick: function () {
+															setActiveSlideField( "mediaIdTablet", 0 );
+															setActiveSlideField( "mediaUrlTablet", "" );
+														},
+														style: { marginLeft: "8px" }
+													}, "Remove" )
+													: null
+											);
+										}
+									} )
+								)
+							),
+							wp.element.createElement(
+								"div",
+								null,
+								wp.element.createElement( "div", { style: { fontSize: "12px", opacity: 0.8, marginBottom: "6px" } }, "Mobile image (optional)" ),
+								wp.element.createElement(
+									MediaUploadCheck,
+									null,
+									wp.element.createElement( MediaUpload, {
+										onSelect: onSelectMobile,
+										allowedTypes: [ "image" ],
+										value: current.mediaIdMobile || 0,
+										render: function ( obj ) {
+											return wp.element.createElement(
+												Fragment,
+												null,
+												wp.element.createElement(
+													Button,
+													{ isSecondary: true, onClick: obj.open },
+													current.mediaUrlMobile ? "Replace Mobile Image" : "Select Mobile Image"
+												),
+												current.mediaUrlMobile
+													? wp.element.createElement( Button, {
+														isLink: true,
+														isDestructive: true,
+														onClick: function () {
+															setActiveSlideField( "mediaIdMobile", 0 );
+															setActiveSlideField( "mediaUrlMobile", "" );
+														},
+														style: { marginLeft: "8px" }
+													}, "Remove" )
+													: null
+											);
+										}
+									} )
+								)
+							)
 						)
 					)
 				),

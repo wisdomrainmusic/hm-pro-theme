@@ -119,13 +119,13 @@ if ( ! empty( $attrs['slides'] ) && is_array( $attrs['slides'] ) ) {
 	$slides = $attrs['slides'];
 }
 
-// Normalize slides to 1..6.
+// Normalize slides to 1..12.
 $slides = array_values( array_filter( $slides, 'is_array' ) );
 while ( count( $slides ) < 1 ) {
 	$slides[] = [];
 }
-if ( count( $slides ) > 6 ) {
-	$slides = array_slice( $slides, 0, 6 );
+if ( count( $slides ) > 12 ) {
+	$slides = array_slice( $slides, 0, 12 );
 }
 
 $classes = [
@@ -165,6 +165,12 @@ foreach ( $slides as $i => $s ) {
 
 	$media_id   = isset( $s['mediaId'] ) ? absint( $s['mediaId'] ) : 0;
 	$media_url  = isset( $s['mediaUrl'] ) ? esc_url_raw( (string) $s['mediaUrl'] ) : '';
+
+	$media_id_t  = isset( $s['mediaIdTablet'] ) ? absint( $s['mediaIdTablet'] ) : 0;
+	$media_url_t = isset( $s['mediaUrlTablet'] ) ? esc_url_raw( (string) $s['mediaUrlTablet'] ) : '';
+
+	$media_id_m  = isset( $s['mediaIdMobile'] ) ? absint( $s['mediaIdMobile'] ) : 0;
+	$media_url_m = isset( $s['mediaUrlMobile'] ) ? esc_url_raw( (string) $s['mediaUrlMobile'] ) : '';
 	
 	$title      = isset( $s['title'] ) ? sanitize_text_field( (string) $s['title'] ) : '';
 	$subtitle   = isset( $s['subtitle'] ) ? sanitize_text_field( (string) $s['subtitle'] ) : '';
@@ -187,11 +193,42 @@ foreach ( $slides as $i => $s ) {
 		$resolved_url = $media_url;
 	}
 
+	$resolved_t = '';
+	if ( $media_id_t ) {
+		$resolved_t = wp_get_attachment_image_url( $media_id_t, 'full' );
+		if ( ! $resolved_t ) {
+			$resolved_t = wp_get_attachment_url( $media_id_t );
+		}
+	}
+	if ( ! $resolved_t && $media_url_t ) {
+		$resolved_t = $media_url_t;
+	}
+
+	$resolved_m = '';
+	if ( $media_id_m ) {
+		$resolved_m = wp_get_attachment_image_url( $media_id_m, 'full' );
+		if ( ! $resolved_m ) {
+			$resolved_m = wp_get_attachment_url( $media_id_m );
+		}
+	}
+	if ( ! $resolved_m && $media_url_m ) {
+		$resolved_m = $media_url_m;
+	}
+
 
 	$is_active = ( $i === 0 );
 	$slide_classes = 'hmpro-hero-slide' . ( $is_active ? ' is-active' : '' );
 
 	$style_bits = [];
+	if ( $resolved_url ) {
+		$style_bits[] = '--hmpro-hero-bg-d:url(' . esc_url( $resolved_url ) . ')';
+	}
+	if ( $resolved_t ) {
+		$style_bits[] = '--hmpro-hero-bg-t:url(' . esc_url( $resolved_t ) . ')';
+	}
+	if ( $resolved_m ) {
+		$style_bits[] = '--hmpro-hero-bg-m:url(' . esc_url( $resolved_m ) . ')';
+	}
 	if ( $t_col ) {
 		$style_bits[] = '--hmpro-hero-title-color:' . $t_col;
 	}
@@ -208,9 +245,7 @@ foreach ( $slides as $i => $s ) {
 
 	echo '<div class="' . esc_attr( $slide_classes ) . '" data-index="' . esc_attr( (string) $i ) . '" aria-hidden="' . esc_attr( $is_active ? 'false' : 'true' ) . '"' . $slide_style . '>';
 	echo '<div class="hmpro-hero-slide__media">';
-
-	$bg = $resolved_url ? ' style="background-image:url(' . esc_url( $resolved_url ) . ')"' : '';
-	echo '<div class="hmpro-hero-slide__bg"' . $bg . '></div>';
+	echo '<div class="hmpro-hero-slide__bg"></div>';
 
 	echo '</div>'; // media
 
