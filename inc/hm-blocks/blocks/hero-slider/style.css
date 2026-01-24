@@ -232,7 +232,7 @@
 	.hmpro-hero-slider,
 	.hmpro-hero__frame,
 	.hmpro-hero__inner{
-		min-height: min(var(--hmpro-hero-h, 520px), 72vh);
+		min-height: min(var(--hmpro-hero-h, 520px), 68vh);
 	}
 
 	.hmpro-hero__inner{
@@ -273,6 +273,21 @@
 }
 
 @media (max-width: 480px){
+	/* Phone-specific height tuning */
+	.hmpro-hero-slider.is-mobile-compact,
+	.hmpro-hero-slider.is-mobile-compact .hmpro-hero__frame,
+	.hmpro-hero-slider.is-mobile-compact .hmpro-hero__inner{
+		min-height: min(var(--hmpro-hero-h, 520px), var(--hmpro-hero-h-m, 56vh));
+	}
+
+	.hmpro-hero-slider.is-mobile-square,
+	.hmpro-hero-slider.is-mobile-square .hmpro-hero__frame,
+	.hmpro-hero-slider.is-mobile-square .hmpro-hero__inner{
+		/* square-ish: width-driven, but capped on very short viewports */
+		min-height: min(100vw, 70vh);
+		height: min(100vw, 70vh);
+	}
+
 	/* Slightly tighter controls on very small phones */
 	.hmpro-hero__arrow--prev{ left: 12px; }
 	.hmpro-hero__arrow--next{ right: 12px; }
