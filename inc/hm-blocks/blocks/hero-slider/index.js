@@ -6,6 +6,8 @@
 	const { PanelBody, ToggleControl, RangeControl, SelectControl, Button, TextControl, ToolbarGroup, ToolbarButton, BaseControl, ColorPalette } = wp.components;
 	const { Fragment, useEffect, useMemo, useRef, useState } = wp.element;
 
+	const MAX_SLIDES = 12;
+
 	function clamp( n, min, max ) {
 		n = parseFloat( n );
 		if ( isNaN( n ) ) n = min;
@@ -35,8 +37,8 @@
 		for ( let i = 0; i < arr.length; i++ ) {
 			arr[ i ] = Object.assign( {}, arr[ i ] || {}, { mediaType: "image" } );
 		}
-		if ( arr.length > 6 ) {
-			return arr.slice( 0, 6 );
+		if ( arr.length > MAX_SLIDES ) {
+			return arr.slice( 0, MAX_SLIDES );
 		}
 		return arr;
 	}
@@ -90,7 +92,7 @@
 			}
 
 			function addSlide() {
-				if ( normalizedSlides.length >= 6 ) return;
+				if ( normalizedSlides.length >= MAX_SLIDES ) return;
 				const next = normalizedSlides.concat( [ {
 					mediaId: 0,
 					mediaUrl: "",
@@ -430,7 +432,7 @@
 					),
 					wp.element.createElement(
 						PanelBody,
-						{ title: "Slides (1–6)", initialOpen: true },
+						{ title: "Slides (1–12)", initialOpen: true },
 						wp.element.createElement(
 							"div",
 							{ className: "hmpro-hero-editor__slideList" },
@@ -474,7 +476,7 @@
 						),
 						wp.element.createElement(
 							Button,
-							{ isPrimary: true, onClick: addSlide, disabled: normalizedSlides.length >= 6 },
+							{ isPrimary: true, onClick: addSlide, disabled: normalizedSlides.length >= MAX_SLIDES },
 							"Add Slide"
 						)
 					)
