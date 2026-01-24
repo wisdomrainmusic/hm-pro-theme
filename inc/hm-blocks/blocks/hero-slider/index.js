@@ -90,6 +90,8 @@
 			const {
 				slides,
 				imageFit,
+				mobileHeightMode,
+				mobileHeightVh,
 				onlyHomepage,
 				fullWidth,
 				maxWidth,
@@ -250,12 +252,14 @@
 				className: [
 					"hmpro-block",
 					"hmpro-hero-slider",
+					( mobileHeightMode && mobileHeightMode !== "auto" ) ? ( mobileHeightMode === "square" ? "is-mobile-square" : "is-mobile-compact" ) : "",
 					fullWidth ? "is-fullwidth" : "is-boxed",
 					hideOnMobile ? "is-hide-mobile" : ""
 				].filter( Boolean ).join( " " ),
 				style: {
 					"--hmpro-hero-h": clamp( height, 200, 1200 ) + "px",
 					"--hmpro-hero-bg-fit": ( imageFit === "contain" ? "contain" : "cover" ),
+					"--hmpro-hero-h-m": clamp( mobileHeightVh || 56, 40, 80 ) + "vh",
 					"--hmpro-hero-overlay": clamp( overlayOpacity, 0, 0.8 ),
 					"--hmpro-hero-maxw": clamp( maxWidth, 720, 1800 ) + "px",
 					"--hmpro-hero-group-x": clamp( groupX, -300, 300 ) + "px",
@@ -366,6 +370,25 @@
 							],
 							onChange: function ( v ) { setAttributes( { imageFit: ( v === "contain" ? "contain" : "cover" ) } ); }
 						} ),
+						wp.element.createElement( SelectControl, {
+							label: "Mobile height mode",
+							help: "Tune phone layout without affecting desktop/tablet.",
+							value: ( mobileHeightMode === "compact" || mobileHeightMode === "square" ) ? mobileHeightMode : "auto",
+							options: [
+								{ label: "Auto (use Hero Height)", value: "auto" },
+								{ label: "Compact (vh)", value: "compact" },
+								{ label: "Square-ish (min(100vw, 70vh))", value: "square" }
+							],
+							onChange: function ( v ) { setAttributes( { mobileHeightMode: v } ); }
+						} ),
+						( ( mobileHeightMode === "compact" ) ? wp.element.createElement( RangeControl, {
+							label: "Mobile height (vh)",
+							help: "Recommended: 50–62",
+							value: clamp( mobileHeightVh || 56, 40, 80 ),
+							min: 40,
+							max: 80,
+							onChange: function ( v ) { setAttributes( { mobileHeightVh: v } ); }
+						} ) : null ),
 						wp.element.createElement( RangeControl, {
 							label: "Max width (boxed mode)",
 							value: clamp( maxWidth, 720, 1800 ),

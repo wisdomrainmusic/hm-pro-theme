@@ -16,6 +16,14 @@
     "html": false
   },
   "attributes": {
+    "mobileHeightMode": {
+      "type": "string",
+      "default": "auto"
+    },
+    "mobileHeightVh": {
+      "type": "number",
+      "default": 56
+    },
     "imageFit": {
       "type": "string",
       "default": "cover"
