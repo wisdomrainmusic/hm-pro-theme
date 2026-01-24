@@ -127,10 +127,7 @@ function hmpro_register_admin_menu() {
 
 	/**
 	 * Hidden page for editing presets (not shown in menu).
-	 *
-	 * Using null as parent_slug can trigger PHP 8.1+ deprecations in WP core
-	 * (plugin_basename/wp_normalize_path receiving null). We register under the
-	 * parent menu and then immediately remove it from the visible submenu.
+	 * IMPORTANT: Do NOT pass null as parent_slug (triggers PHP 8.1+ deprecations via plugin_basename()).
 	 */
 	add_submenu_page(
 		'hmpro-theme',
@@ -140,6 +137,7 @@ function hmpro_register_admin_menu() {
 		'hmpro-preset-edit',
 		'hmpro_render_preset_edit_page'
 	);
+	// Keep it accessible by URL, but hide it from the submenu list:
 	remove_submenu_page( 'hmpro-theme', 'hmpro-preset-edit' );
 }
 
