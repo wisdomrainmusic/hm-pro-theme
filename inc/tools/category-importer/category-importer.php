@@ -8,12 +8,9 @@
 
 if (!defined('ABSPATH')) exit;
 
-// Safety guard: this file may be loaded more than once (theme tools loader, migrations,
-// or admin bootstrap). Avoid fatal "Cannot declare class ... already in use".
-if ( class_exists( 'HM_Pro_Category_Importer', false ) ) {
-	return;
-}
-
+// Safety: avoid re-declaring the class, BUT do not return from file
+// because helper functions below must always be available for admin callbacks.
+if ( ! class_exists( 'HM_Pro_Category_Importer', false ) ) :
 final class HM_Pro_Category_Importer {
     const NONCE_ACTION = 'hm_pro_cat_importer_upload';
     const OPTION_LAST_LOG = 'hm_pro_cat_importer_last_log';
@@ -406,6 +403,7 @@ $log[] = 'Header parsed. Indices: ' . json_encode($idx);
         return 0;
     }
 }
+endif;
 
 
 
