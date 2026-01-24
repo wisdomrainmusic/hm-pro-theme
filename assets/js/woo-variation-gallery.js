@@ -83,11 +83,9 @@
 
 		// 2) Remove leftover wrappers/nav created by flexslider (prevents duplicate slides & weird crop states).
 		$gallery.find('.flex-control-nav, .flex-direction-nav').remove();
-		$gallery.find('.flex-viewport').each(function(){
-			var $vp = $(this);
-			var $children = $vp.children().detach();
-			$vp.replaceWith($children);
-		});
+		$gallery.css({ height: '', 'min-height': '' });
+		$gallery.find('.woocommerce-product-gallery__wrapper').css({ height: '', 'min-height': '' });
+		$gallery.find('.flex-viewport').css({ height: '', 'min-height': '' });
 		$gallery.removeData('flexslider');
 		$gallery.find('.woocommerce-product-gallery__wrapper').removeData('flexslider');
 
