@@ -1209,11 +1209,15 @@ class HM_Master_Importer {
     }
     $variation->set_attributes($varAttrs);
 
+    $variation_image = '';
     if (!empty($d['varyasyon_gorsel'])) {
+      $variation_image = self::normalize_csv_url_value($d['varyasyon_gorsel']);
+    }
+    if ($variation_image !== '') {
       $baseText = self::build_image_base_text($d);
       $fileBase = $baseText !== '' ? $baseText : (string)($d['urun_adi'] ?? 'image');
 
-      $attId = self::get_or_import_attachment_from_url(trim((string)$d['varyasyon_gorsel']), $fileBase);
+      $attId = self::get_or_import_attachment_from_url($variation_image, $fileBase);
       if ($attId) {
         $variation->set_image_id($attId);
 
@@ -1284,7 +1288,7 @@ class HM_Master_Importer {
     if ($youtube === '' && !empty($d['video_url'])) $youtube = trim((string)$d['video_url']);
 
     $poster_url = '';
-    if (!empty($d['video_poster_url'])) $poster_url = trim((string)$d['video_poster_url']);
+    if (!empty($d['video_poster_url'])) $poster_url = self::normalize_csv_url_value($d['video_poster_url']);
 
     $placement = '';
     if (!empty($d['video_placement'])) $placement = trim((string)$d['video_placement']);
@@ -1441,7 +1445,7 @@ class HM_Master_Importer {
     for ($i=1; $i<=8; $i++) {
       $k = 'gorsel_'.$i;
       if (!empty($d[$k])) {
-        $u = trim((string)$d[$k]);
+        $u = self::normalize_csv_url_value($d[$k]);
         if ($u !== '') $urls[] = $u;
       }
     }
@@ -1719,7 +1723,7 @@ class HM_Master_Importer {
   }
 
   private static function get_or_import_attachment_from_url(string $url, string $desired_base_filename = ''): int {
-    $url = trim($url);
+    $url = self::normalize_csv_url_value($url);
     if ($url === '') return 0;
 
     $canon = self::canonical_url_no_query($url);
@@ -2074,6 +2078,39 @@ class HM_Master_Importer {
     if ($s >= $c && $s >= $t) return ';';
     if ($t >= $c && $t >= $s) return "\t";
     return ',';
+  }
+
+  private static function normalize_csv_url_value($value): string {
+    $value = trim((string)$value);
+    if ($value === '') return '';
+
+    $value = preg_replace('/^\s*=\s*/', '', $value);
+    $value = trim((string)$value);
+
+    $pairs = [
+      '"' => '"',
+      "'" => "'",
+      '“' => '”',
+      '‘' => '’',
+    ];
+    $len_fn = function_exists('mb_strlen') ? 'mb_strlen' : 'strlen';
+    $sub_fn = function_exists('mb_substr') ? 'mb_substr' : 'substr';
+    $changed = true;
+    while ($changed && $value !== '') {
+      $changed = false;
+      $first = $sub_fn($value, 0, 1);
+      $last = $sub_fn($value, -1, 1);
+      if (isset($pairs[$first]) && $pairs[$first] === $last) {
+        $length = $len_fn($value);
+        if ($length <= 1) break;
+        $value = $sub_fn($value, 1, $length - 2);
+        $value = trim($value);
+        $changed = true;
+      }
+    }
+
+    $value = preg_replace('/\s+/', '', (string)$value);
+    return (string)$value;
   }
 
   private static function norm_header(string $h): string {
