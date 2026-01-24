@@ -133,17 +133,25 @@
 			return html;
 		})();
 
-		function swapToVariation(variation){
-			lockHeight($gallery);
+		var customGalleryActive = false;
 
-			// If this variation has no custom gallery -> keep DEFAULT product gallery.
-			// Do NOT allow Woo to leave the gallery in a half-state (single image / zoomed crop).
-			if (!variation || !hasGallery(variation)) {
-				$wrapper.html(originalSlidesHtml);
-				hardResetGallery($gallery);
-				waitImages($gallery, function(){ unlockHeight($gallery); });
+		function swapToVariation(variation){
+			var hasCustomGallery = hasGallery(variation);
+
+			// If this variation has no custom gallery -> leave Woo default behavior.
+			// Only restore the parent gallery if we previously applied a custom gallery.
+			if (!variation || !hasCustomGallery) {
+				if (customGalleryActive) {
+					lockHeight($gallery);
+					$wrapper.html(originalSlidesHtml);
+					hardResetGallery($gallery);
+					waitImages($gallery, function(){ unlockHeight($gallery); });
+					customGalleryActive = false;
+				}
 				return;
 			}
+
+			lockHeight($gallery);
 
 			var html = '';
 			variation.hmpro_gallery.forEach(function(img){
@@ -153,15 +161,19 @@
 			});
 
 			if (!html) {
-				$wrapper.html(originalSlidesHtml);
-				hardResetGallery($gallery);
-				waitImages($gallery, function(){ unlockHeight($gallery); });
+				if (customGalleryActive) {
+					$wrapper.html(originalSlidesHtml);
+					hardResetGallery($gallery);
+					waitImages($gallery, function(){ unlockHeight($gallery); });
+					customGalleryActive = false;
+				}
 				return;
 			}
 
 			$wrapper.html(html);
 			hardResetGallery($gallery);
 			waitImages($gallery, function(){ unlockHeight($gallery); });
+			customGalleryActive = true;
 		}
 
 		/**
@@ -182,6 +194,7 @@
 				setTimeout(function(){
 					$wrapper.html(originalSlidesHtml);
 					hardResetGallery($gallery);
+					customGalleryActive = false;
 				}, 0);
 			});
 		});
