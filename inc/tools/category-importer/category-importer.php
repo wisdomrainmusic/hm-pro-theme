@@ -8,6 +8,12 @@
 
 if (!defined('ABSPATH')) exit;
 
+// Safety guard: this file may be loaded more than once (theme tools loader, migrations,
+// or admin bootstrap). Avoid fatal "Cannot declare class ... already in use".
+if ( class_exists( 'HM_Pro_Category_Importer', false ) ) {
+	return;
+}
+
 final class HM_Pro_Category_Importer {
     const NONCE_ACTION = 'hm_pro_cat_importer_upload';
     const OPTION_LAST_LOG = 'hm_pro_cat_importer_last_log';
