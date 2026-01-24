@@ -1,4 +1,25 @@
 # HM Pro Theme — Development Rules (Stability Guide)
+## 2026-01-24 – Woo Variation Gallery Operational Rule (Variation Image Required)
+
+Decision:
+To ensure stable variation image switching and avoid edge-case blank gallery states,
+we enforce an operational rule: every product variation must have its own featured
+image set (variation image is required).
+
+Context:
+A gallery “blank/empty” state was observed only when a variation had no image and
+relied on WooCommerce fallback behavior. When all variations have images, the
+frontend behavior remains stable across products and does not require additional
+fallback hacks.
+
+Rationale:
+This approach minimizes regression risk and keeps the system predictable for clients
+using the theme/importer in production.
+
+Action:
+Update product data entry/import guidelines to require a featured image for each
+variation. Custom variation galleries remain optional.
+
 ## 2026-01-24 – Woo Variation Gallery Race Condition Fix
 
 Issue:
