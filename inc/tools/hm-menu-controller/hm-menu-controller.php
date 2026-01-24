@@ -12,16 +12,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Avoid double-loading.
 if ( defined( 'HM_MC_EMBEDDED' ) ) {
-    return;
+	return;
 }
 
-define( 'HM_MC_EMBEDDED', true );
+// Mark as loaded (idempotent).
+if ( ! defined( 'HM_MC_EMBEDDED' ) ) {
+	define( 'HM_MC_EMBEDDED', true );
+}
 
-define( 'HM_MC_VERSION', '0.1.0' );
+// Idempotent constant definitions (prevents "already defined" warnings on some hosts).
+if ( ! defined( 'HM_MC_VERSION' ) ) {
+	define( 'HM_MC_VERSION', '0.1.0' );
+}
+
 // Base path for embedded tool.
-define( 'HM_MC_PATH', trailingslashit( __DIR__ ) );
+if ( ! defined( 'HM_MC_PATH' ) ) {
+	define( 'HM_MC_PATH', trailingslashit( __DIR__ ) );
+}
 
-define( 'HM_MC_TEXTDOMAIN', 'hm-menu-controller' );
+if ( ! defined( 'HM_MC_TEXTDOMAIN' ) ) {
+	define( 'HM_MC_TEXTDOMAIN', 'hm-menu-controller' );
+}
 
 require_once HM_MC_PATH . 'includes/class-hm-loader.php';
 
