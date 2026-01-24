@@ -28,13 +28,16 @@ if ( is_admin() && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 
 			// Log an actionable trace (requires WP_DEBUG_LOG).
 			if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
-				$trace = function_exists( 'wp_debug_backtrace_summary' )
-					? wp_debug_backtrace_summary( null, 0, false )
-					: '';
+				$trace = '';
+				if ( function_exists( 'wp_debug_backtrace_summary' ) ) {
+					// Use pretty=true so WP returns a STRING, not an array (prevents "Array to string conversion").
+					$trace = wp_debug_backtrace_summary( null, 0, true );
+				}
+				$trace = is_array( $trace ) ? implode( ' | ', array_map( 'strval', $trace ) ) : (string) $trace;
 				error_log(
 					'[HMPRO PHP8.1 Deprecated Guard] ' . $msg .
 					' | at ' . $errfile . ':' . $errline .
-					( $trace ? ' | trace: ' . $trace : '' )
+					( $trace !== '' ? ' | trace: ' . $trace : '' )
 				);
 			}
 
