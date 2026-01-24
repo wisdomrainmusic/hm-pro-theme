@@ -3,8 +3,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * PHP 8.1+ Deprecation Guard (Admin only)
+ *
+ * Some environments emit "Deprecated: strpos()/str_replace() passing null..." from WP core
+ * when a theme/plugin passes null into sanitizers. This does NOT break the site, but clutters
+ * admin screens when WP_DEBUG_DISPLAY is enabled.
+ *
+ * We suppress ONLY these two noisy deprecations in wp-admin output and log a backtrace
+ * to debug.log so we can pinpoint and permanently fix the culprit safely.
+ */
+if ( is_admin() && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	set_error_handler(
+		function ( $errno, $errstr, $errfile, $errline ) {
+			if ( E_DEPRECATED !== $errno ) {
+				return false; // let PHP handle others
+			}
 
+			$msg = (string) $errstr;
+			// Only target the two known noisy deprecations.
+			if ( false === strpos( $msg, 'strpos()' ) && false === strpos( $msg, 'str_replace()' ) ) {
+				return false;
+			}
 
+			// Log an actionable trace (requires WP_DEBUG_LOG).
+			if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+				$trace = function_exists( 'wp_debug_backtrace_summary' )
+					? wp_debug_backtrace_summary( null, 0, false )
+					: '';
+				error_log(
+					'[HMPRO PHP8.1 Deprecated Guard] ' . $msg .
+					' | at ' . $errfile . ':' . $errline .
+					( $trace ? ' | trace: ' . $trace : '' )
+				);
+			}
+
+			return true; // handled: suppress from screen
+		}
+	);
+}
 
 /**
  * REST JSON Output Guard
