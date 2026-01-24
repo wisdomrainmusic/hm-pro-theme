@@ -3,7 +3,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Ensure tool render callbacks exist before admin_menu registers submenu callbacks.
+// tools-loader is idempotent (safe to require_once).
+if ( defined( 'HMPRO_PATH' ) ) {
+	$tools_loader = HMPRO_PATH . '/inc/tools/tools-loader.php';
+	if ( file_exists( $tools_loader ) ) {
+		require_once $tools_loader;
+	}
+}
+
 add_action( 'admin_menu', 'hmpro_register_admin_menu' );
+
+/**
+ * Fallback renderer to prevent fatal errors if a tool page callback is missing.
+ */
+function hmpro_render_missing_tool_page( $title, $details = '' ) {
+	echo '<div class="wrap">';
+	echo '<h1>' . esc_html( $title ) . '</h1>';
+	echo '<div class="notice notice-error"><p><strong>Tool page callback is missing.</strong></p>';
+	if ( $details ) {
+		echo '<p>' . esc_html( $details ) . '</p>';
+	}
+	echo '<p>Try reloading the page. If the issue persists, verify that <code>inc/tools/tools-loader.php</code> is loading correctly.</p>';
+	echo '</div>';
+	echo '</div>';
+}
 
 function hmpro_register_admin_menu() {
 
@@ -86,15 +110,23 @@ function hmpro_register_admin_menu() {
 		'hmpro_render_importers_page'
 	);
 
+	$cb_category = function_exists( 'hmpro_render_category_importer_page' )
+		? 'hmpro_render_category_importer_page'
+		: function () { hmpro_render_missing_tool_page( 'Category Importer', 'Missing: hmpro_render_category_importer_page' ); };
+
 	add_submenu_page(
 		'hmpro-theme',
 		__( 'Category Importer', 'hmpro' ),
 		__( 'Category Importer', 'hmpro' ),
 		'manage_options',
 		'hmpro-category-importer',
-		'hmpro_render_category_importer_page'
+		$cb_category
 	);
 
+
+	$cb_slug = function_exists( 'hmpro_render_slug_menu_builder_page' )
+		? 'hmpro_render_slug_menu_builder_page'
+		: function () { hmpro_render_missing_tool_page( 'Slug Menu Builder', 'Missing: hmpro_render_slug_menu_builder_page' ); };
 
 	add_submenu_page(
 		'hmpro-theme',
@@ -102,9 +134,13 @@ function hmpro_register_admin_menu() {
 		__( 'Slug Menu Builder', 'hmpro' ),
 		'manage_options',
 		'hmpro-slug-menu-builder',
-		'hmpro_render_slug_menu_builder_page'
+		$cb_slug
 	);
 
+
+	$cb_product_import = function_exists( 'hmpro_render_product_importer_page' )
+		? 'hmpro_render_product_importer_page'
+		: function () { hmpro_render_missing_tool_page( 'Product Importer', 'Missing: hmpro_render_product_importer_page' ); };
 
 	add_submenu_page(
 		'hmpro-theme',
@@ -112,9 +148,13 @@ function hmpro_register_admin_menu() {
 		__( 'Product Importer', 'hmpro' ),
 		'manage_woocommerce',
 		'hmpro-product-importer',
-		'hmpro_render_product_importer_page'
+		$cb_product_import
 	);
 
+
+	$cb_product_export = function_exists( 'hmpro_render_product_exporter_page' )
+		? 'hmpro_render_product_exporter_page'
+		: function () { hmpro_render_missing_tool_page( 'Product Exporter', 'Missing: hmpro_render_product_exporter_page' ); };
 
 	add_submenu_page(
 		'hmpro-theme',
@@ -122,7 +162,7 @@ function hmpro_register_admin_menu() {
 		__( 'Product Exporter', 'hmpro' ),
 		'manage_woocommerce',
 		'hmpro-product-exporter',
-		'hmpro_render_product_exporter_page'
+		$cb_product_export
 	);
 
 	/**
