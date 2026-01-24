@@ -125,15 +125,22 @@ function hmpro_register_admin_menu() {
 		'hmpro_render_product_exporter_page'
 	);
 
-	// Hidden page for editing presets (not shown in menu).
+	/**
+	 * Hidden page for editing presets (not shown in menu).
+	 *
+	 * Using null as parent_slug can trigger PHP 8.1+ deprecations in WP core
+	 * (plugin_basename/wp_normalize_path receiving null). We register under the
+	 * parent menu and then immediately remove it from the visible submenu.
+	 */
 	add_submenu_page(
-		null,
+		'hmpro-theme',
 		__( 'Edit Preset', 'hmpro' ),
 		__( 'Edit Preset', 'hmpro' ),
 		'manage_options',
 		'hmpro-preset-edit',
 		'hmpro_render_preset_edit_page'
 	);
+	remove_submenu_page( 'hmpro-theme', 'hmpro-preset-edit' );
 }
 
 function hmpro_theme_dashboard_page_render() {

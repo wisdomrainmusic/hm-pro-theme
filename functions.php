@@ -30,7 +30,7 @@ if ( is_admin() && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
 				$trace = '';
 				if ( function_exists( 'wp_debug_backtrace_summary' ) ) {
-					// Use pretty=true so WP returns a STRING, not an array (prevents "Array to string conversion").
+					// Use pretty=true for readable frames; normalize to a string below.
 					$trace = wp_debug_backtrace_summary( null, 0, true );
 				}
 				$trace = is_array( $trace ) ? implode( ' | ', array_map( 'strval', $trace ) ) : (string) $trace;
