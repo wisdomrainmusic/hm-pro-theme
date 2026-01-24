@@ -1,3 +1,20 @@
+/* Per-device background selection via CSS vars:
+   --hmpro-hero-bg-d (desktop), --hmpro-hero-bg-t (tablet), --hmpro-hero-bg-m (mobile)
+*/
+.hmpro-hero-slide{
+	--hmpro-hero-bg: var(--hmpro-hero-bg-d);
+}
+@media (max-width: 1024px){
+	.hmpro-hero-slide{
+		--hmpro-hero-bg: var(--hmpro-hero-bg-t, var(--hmpro-hero-bg-d));
+	}
+}
+@media (max-width: 767px){
+	.hmpro-hero-slide{
+		--hmpro-hero-bg: var(--hmpro-hero-bg-m, var(--hmpro-hero-bg-t, var(--hmpro-hero-bg-d)));
+	}
+}
+
 .hmpro-hero-slider{
 	position: relative;
 	width: 100%;
@@ -151,6 +168,7 @@
 .hmpro-hero-slide__bg{
 	position:absolute;
 	inset:0;
+	background-image: var(--hmpro-hero-bg, none);
 	background-size: var(--hmpro-hero-bg-fit, cover);
 	background-position: center center;
 	background-repeat: no-repeat;
@@ -210,9 +228,40 @@
 }
 
 @media (max-width: 782px){
+	/* Cap hero height on smaller screens so it doesn't look "too tall" */
+	.hmpro-hero-slider,
+	.hmpro-hero__frame,
 	.hmpro-hero__inner{
-		padding: 72px 18px 52px;
+		min-height: min(var(--hmpro-hero-h, 520px), 72vh);
 	}
+
+	.hmpro-hero__inner{
+		padding: clamp(44px, 10vw, 72px) 16px 44px;
+	}
+
+	/* Let content breathe on mobile and avoid overly wide constraints */
+	.hmpro-hero__content{
+		max-width: min(560px, 100%);
+	}
+
+	/* Typography & CTA sizing for tablet/mobile */
+	.hmpro-hero__title{
+		font-size: clamp(24px, 6.2vw, 38px);
+		line-height: 1.10;
+		margin-bottom: 8px;
+	}
+
+	.hmpro-hero__subtitle{
+		font-size: 15px;
+		line-height: 1.45;
+		margin-bottom: 14px;
+	}
+
+	.hmpro-hero__btn{
+		padding: 10px 14px;
+		font-size: 14px;
+	}
+
 	.hmpro-hero__content{
 		transform: translate3d(var(--hmpro-hero-group-x-m, 0px), var(--hmpro-hero-group-y-m, 0px), 0) scale(var(--hmpro-hero-scale-m, 0.92));
 		transform-origin: left center;
@@ -220,5 +269,20 @@
 	.hmpro-hero__arrow{
 		width: 40px;
 		height: 40px;
+	}
+}
+
+@media (max-width: 480px){
+	/* Slightly tighter controls on very small phones */
+	.hmpro-hero__arrow--prev{ left: 12px; }
+	.hmpro-hero__arrow--next{ right: 12px; }
+
+	.hmpro-hero__dots{
+		bottom: 12px;
+		gap: 6px;
+	}
+	.hmpro-hero__dot{
+		width: 9px;
+		height: 9px;
 	}
 }

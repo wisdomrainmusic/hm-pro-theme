@@ -5,7 +5,7 @@
   "title": "HM Hero Slider",
   "category": "hmpro",
   "icon": "images-alt2",
-  "description": "Full-width hero slider with per-slide media + CTA (1\u20136 slides).",
+  "description": "Full-width hero slider with per-slide media + CTA (1\u201312 slides).",
   "textdomain": "hm-pro-theme",
   "supports": {
     "align": [
