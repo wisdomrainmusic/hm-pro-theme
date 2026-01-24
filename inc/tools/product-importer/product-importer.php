@@ -1579,23 +1579,49 @@ class HM_Master_Importer {
     if ($rel === false || $rel === '') return null;
 
     $rel = ltrim($rel, '/');
-    $abs = rtrim($basedir, '/\\') . '/' . $rel;
+
+    $ext_candidates = ['jpg', 'jpeg', 'png', 'webp'];
+    $rel_candidates = [$rel];
+    $filename = pathinfo($rel, PATHINFO_FILENAME);
+    $dirname = pathinfo($rel, PATHINFO_DIRNAME);
+    $ext = strtolower(pathinfo($rel, PATHINFO_EXTENSION));
+    $dir_prefix = ($dirname && $dirname !== '.') ? $dirname . '/' : '';
+
+    if ($filename !== '') {
+      foreach ($ext_candidates as $candidate_ext) {
+        if ($candidate_ext === $ext) continue;
+        $candidate_rel = $dir_prefix . $filename . '.' . $candidate_ext;
+        if (!in_array($candidate_rel, $rel_candidates, true)) {
+          $rel_candidates[] = $candidate_rel;
+        }
+      }
+    }
 
     $real_base = realpath($basedir);
-    $real_abs  = realpath($abs);
-    if (!$real_base || !$real_abs) return null;
-    if (strpos($real_abs, $real_base) !== 0) return null;
-    if (!file_exists($real_abs) || !is_file($real_abs) || !is_readable($real_abs)) return null;
+    if (!$real_base) return null;
 
-    $served_url = rtrim($baseurl, '/') . '/' . str_replace('\\', '/', $rel);
-    $key = 'local:uploads:' . str_replace('\\', '/', $rel);
+    foreach ($rel_candidates as $candidate_rel) {
+      $abs = rtrim($basedir, '/\\') . '/' . $candidate_rel;
+      if (!file_exists($abs) || !is_file($abs) || !is_readable($abs)) {
+        continue;
+      }
 
-    return [
-      'abs' => $real_abs,
-      'rel' => str_replace('\\', '/', $rel),
-      'url' => $served_url,
-      'key' => $key,
-    ];
+      $real_abs = realpath($abs);
+      if (!$real_abs) continue;
+      if (strpos($real_abs, $real_base) !== 0) continue;
+
+      $served_url = rtrim($baseurl, '/') . '/' . str_replace('\\', '/', $candidate_rel);
+      $key = 'local:uploads:' . str_replace('\\', '/', $candidate_rel);
+
+      return [
+        'abs' => $real_abs,
+        'rel' => str_replace('\\', '/', $candidate_rel),
+        'url' => $served_url,
+        'key' => $key,
+      ];
+    }
+
+    return null;
   }
 
   private static function canonical_url_no_query(string $url): string {
