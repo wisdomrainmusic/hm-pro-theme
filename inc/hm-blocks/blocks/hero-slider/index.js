@@ -7,6 +7,32 @@
 	const { Fragment, useEffect, useMemo, useRef, useState } = wp.element;
 
 	const MAX_SLIDES = 12;
+	const TYPO_PRESETS = {
+		"modern_store": {
+			label: "Modern Store (inter / poppins)",
+			titleFamily: "Poppins, sans-serif",
+			subtitleFamily: "Inter, sans-serif",
+			buttonFamily: "Inter, sans-serif"
+		},
+		"editorial_fashion": {
+			label: "Editorial / Fashion (inter / playfair_display)",
+			titleFamily: "\"Playfair Display\", serif",
+			subtitleFamily: "Inter, sans-serif",
+			buttonFamily: "Inter, sans-serif"
+		},
+		"soft_elegant": {
+			label: "Soft Elegant (lato / poppins)",
+			titleFamily: "Poppins, sans-serif",
+			subtitleFamily: "Lato, sans-serif",
+			buttonFamily: "Lato, sans-serif"
+		},
+		"signature_handwritten": {
+			label: "Signature Brand (Handwritten) (inter / dancing_script)",
+			titleFamily: "\"Dancing Script\", cursive",
+			subtitleFamily: "Inter, sans-serif",
+			buttonFamily: "Inter, sans-serif"
+		}
+	};
 
 	function getPreviewDeviceType() {
 		try {
@@ -120,7 +146,8 @@
 				buttonFontFamily,
 				buttonFontWeight,
 				buttonFontSize,
-				buttonFontSizeMobile
+				buttonFontSizeMobile,
+				typographyPreset
 			} = attributes;
 
 			// Ensure minimum slides.
@@ -153,6 +180,35 @@
 			}, [] );
 
 			const current = normalizedSlides[ active ] || normalizedSlides[ 0 ] || {};
+
+			function applyTypographyPreset( key ) {
+				if ( !key || !TYPO_PRESETS[ key ] ) return;
+				const preset = TYPO_PRESETS[ key ];
+				setAttributes( {
+					typographyPreset: key,
+					titleFontFamily: preset.titleFamily || "",
+					subtitleFontFamily: preset.subtitleFamily || "",
+					buttonFontFamily: preset.buttonFamily || ""
+				} );
+			}
+
+			function resetTypographyPreset() {
+				setAttributes( {
+					typographyPreset: "",
+					titleFontFamily: "",
+					titleFontWeight: "",
+					titleFontSize: 0,
+					titleFontSizeMobile: 0,
+					subtitleFontFamily: "",
+					subtitleFontWeight: "",
+					subtitleFontSize: 0,
+					subtitleFontSizeMobile: 0,
+					buttonFontFamily: "",
+					buttonFontWeight: "",
+					buttonFontSize: 0,
+					buttonFontSizeMobile: 0
+				} );
+			}
 
 			function updateSlide( idx, patch ) {
 				const next = normalizedSlides.slice();
@@ -529,6 +585,26 @@
 					wp.element.createElement(
 						PanelBody,
 						{ title: "Typography", initialOpen: false },
+						wp.element.createElement( SelectControl, {
+							label: "Typography preset",
+							help: "Applies a curated font combo. Make sure these fonts are loaded by the theme/site.",
+							value: typographyPreset || "",
+							options: [
+								{ label: "— Select —", value: "" },
+								{ label: "Modern Store (inter / poppins)", value: "modern_store" },
+								{ label: "Editorial / Fashion (inter / playfair_display)", value: "editorial_fashion" },
+								{ label: "Soft Elegant (lato / poppins)", value: "soft_elegant" },
+								{ label: "Signature Brand (Handwritten) (inter / dancing_script)", value: "signature_handwritten" },
+								{ label: "Reset (default)", value: "__reset" }
+							],
+							onChange: function ( value ) {
+								if ( value === "__reset" ) {
+									resetTypographyPreset();
+									return;
+								}
+								applyTypographyPreset( value );
+							}
+						} ),
 						wp.element.createElement( TextControl, {
 							label: "Title font family",
 							value: titleFontFamily || "",
