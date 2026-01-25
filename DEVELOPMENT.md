@@ -1,4 +1,59 @@
 # HM Pro Theme — Development Rules (Stability Guide)
+Date
+
+2026-01-25
+
+Module
+
+HM Hero Slider Block (inc/hm-blocks/blocks/hero-slider/)
+
+Summary
+
+Added Typography Presets dropdown to the Hero Slider block to allow fast application of curated font combinations (Title / Subtitle / Button) without manual input.
+
+Details
+
+Introduced a Typography Preset selector in the block inspector.
+
+Presets apply font-family only via CSS variables (no layout or JS changes).
+
+Existing manual typography controls (weight / size / mobile size) remain fully functional.
+
+Selecting Reset (default) clears all typography-related attributes and falls back to theme defaults.
+
+All changes are additive; no existing render logic or slider behavior was modified.
+
+Presets Included
+
+Modern Store (Inter / Poppins)
+
+Editorial / Fashion (Inter / Playfair Display)
+
+Soft Elegant (Lato / Poppins)
+
+Signature Brand – Handwritten (Inter / Dancing Script)
+
+Technical Notes
+
+Presets map to block attributes and are rendered via CSS variables.
+
+Fonts must be loaded by the theme or site (no automatic font loading included).
+
+Asset versions bumped to ensure cache refresh.
+
+Backward Compatibility
+
+✅ Fully backward compatible
+✅ No breaking changes
+✅ Existing pages remain visually unchanged unless a preset is selected
+
+Bu not:
+
+Demo / müşteri tesliminde “neden böyle yapıldı”yı açıklar
+
+İleride font loader eklenirse referans olur
+
+Temayı devralan başka biri için altın değerinde
 📅 2026-01-24 — HM Hero Slider Major Update (Gutenberg)
 Summary
 
