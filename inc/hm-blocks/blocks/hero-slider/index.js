@@ -108,7 +108,19 @@
 				mobileGroupY,
 				mobileTitleScale,
 				contentScale,
-				mobileContentScale
+				mobileContentScale,
+				titleFontFamily,
+				titleFontWeight,
+				titleFontSize,
+				titleFontSizeMobile,
+				subtitleFontFamily,
+				subtitleFontWeight,
+				subtitleFontSize,
+				subtitleFontSizeMobile,
+				buttonFontFamily,
+				buttonFontWeight,
+				buttonFontSize,
+				buttonFontSizeMobile
 			} = attributes;
 
 			// Ensure minimum slides.
@@ -196,6 +208,22 @@
 				setActive( next.length - 1 );
 			}
 
+			function duplicateSlide( idx ) {
+				if ( normalizedSlides.length >= MAX_SLIDES ) return;
+				const src = normalizedSlides[ idx ] || {};
+				let clone;
+				try {
+					clone = JSON.parse( JSON.stringify( src ) );
+				} catch ( e ) {
+					clone = Object.assign( {}, src );
+				}
+				clone = Object.assign( {}, clone, { mediaType: "image" } );
+				const next = normalizedSlides.slice();
+				next.splice( idx + 1, 0, clone );
+				setAttributes( { slides: ensureMinSlides( next ) } );
+				setActive( idx + 1 );
+			}
+
 			function removeSlide( idx ) {
 				if ( normalizedSlides.length <= 1 ) return;
 				const next = normalizedSlides.slice();
@@ -272,7 +300,19 @@
 					"--hmpro-hero-title-color": current.titleColor || "",
 					"--hmpro-hero-subtitle-color": current.subtitleColor || "",
 					"--hmpro-hero-btn-color": current.buttonTextColor || "",
-					"--hmpro-hero-btn-bg": current.buttonBgColor || ""
+					"--hmpro-hero-btn-bg": current.buttonBgColor || "",
+					"--hmpro-hero-title-ff": titleFontFamily || "",
+					"--hmpro-hero-title-fw": titleFontWeight || "",
+					"--hmpro-hero-title-fs": titleFontSize ? ( clamp( titleFontSize, 12, 120 ) + "px" ) : "",
+					"--hmpro-hero-title-fs-m": titleFontSizeMobile ? ( clamp( titleFontSizeMobile, 12, 96 ) + "px" ) : "",
+					"--hmpro-hero-subtitle-ff": subtitleFontFamily || "",
+					"--hmpro-hero-subtitle-fw": subtitleFontWeight || "",
+					"--hmpro-hero-subtitle-fs": subtitleFontSize ? ( clamp( subtitleFontSize, 10, 60 ) + "px" ) : "",
+					"--hmpro-hero-subtitle-fs-m": subtitleFontSizeMobile ? ( clamp( subtitleFontSizeMobile, 10, 54 ) + "px" ) : "",
+					"--hmpro-hero-btn-ff": buttonFontFamily || "",
+					"--hmpro-hero-btn-fw": buttonFontWeight || "",
+					"--hmpro-hero-btn-fs": buttonFontSize ? ( clamp( buttonFontSize, 10, 42 ) + "px" ) : "",
+					"--hmpro-hero-btn-fs-m": buttonFontSizeMobile ? ( clamp( buttonFontSizeMobile, 10, 38 ) + "px" ) : ""
 				}
 			} );
 
@@ -488,6 +528,97 @@
 					),
 					wp.element.createElement(
 						PanelBody,
+						{ title: "Typography", initialOpen: false },
+						wp.element.createElement( TextControl, {
+							label: "Title font family",
+							value: titleFontFamily || "",
+							onChange: function ( v ) { setAttributes( { titleFontFamily: v } ); }
+						} ),
+						wp.element.createElement( TextControl, {
+							label: "Title font weight",
+							help: "e.g. 400, 600, 700",
+							value: titleFontWeight || "",
+							onChange: function ( v ) { setAttributes( { titleFontWeight: v } ); }
+						} ),
+						wp.element.createElement( RangeControl, {
+							label: "Title size (desktop)",
+							help: "0 = default",
+							value: titleFontSize || 0,
+							min: 0,
+							max: 120,
+							step: 1,
+							onChange: function ( v ) { setAttributes( { titleFontSize: v || 0 } ); }
+						} ),
+						wp.element.createElement( RangeControl, {
+							label: "Title size (mobile)",
+							help: "0 = default",
+							value: titleFontSizeMobile || 0,
+							min: 0,
+							max: 96,
+							step: 1,
+							onChange: function ( v ) { setAttributes( { titleFontSizeMobile: v || 0 } ); }
+						} ),
+						wp.element.createElement( TextControl, {
+							label: "Subtitle font family",
+							value: subtitleFontFamily || "",
+							onChange: function ( v ) { setAttributes( { subtitleFontFamily: v } ); }
+						} ),
+						wp.element.createElement( TextControl, {
+							label: "Subtitle font weight",
+							help: "e.g. 400, 500, 600",
+							value: subtitleFontWeight || "",
+							onChange: function ( v ) { setAttributes( { subtitleFontWeight: v } ); }
+						} ),
+						wp.element.createElement( RangeControl, {
+							label: "Subtitle size (desktop)",
+							help: "0 = default",
+							value: subtitleFontSize || 0,
+							min: 0,
+							max: 60,
+							step: 1,
+							onChange: function ( v ) { setAttributes( { subtitleFontSize: v || 0 } ); }
+						} ),
+						wp.element.createElement( RangeControl, {
+							label: "Subtitle size (mobile)",
+							help: "0 = default",
+							value: subtitleFontSizeMobile || 0,
+							min: 0,
+							max: 54,
+							step: 1,
+							onChange: function ( v ) { setAttributes( { subtitleFontSizeMobile: v || 0 } ); }
+						} ),
+						wp.element.createElement( TextControl, {
+							label: "Button font family",
+							value: buttonFontFamily || "",
+							onChange: function ( v ) { setAttributes( { buttonFontFamily: v } ); }
+						} ),
+						wp.element.createElement( TextControl, {
+							label: "Button font weight",
+							help: "e.g. 500, 600, 700",
+							value: buttonFontWeight || "",
+							onChange: function ( v ) { setAttributes( { buttonFontWeight: v } ); }
+						} ),
+						wp.element.createElement( RangeControl, {
+							label: "Button size (desktop)",
+							help: "0 = default",
+							value: buttonFontSize || 0,
+							min: 0,
+							max: 42,
+							step: 1,
+							onChange: function ( v ) { setAttributes( { buttonFontSize: v || 0 } ); }
+						} ),
+						wp.element.createElement( RangeControl, {
+							label: "Button size (mobile)",
+							help: "0 = default",
+							value: buttonFontSizeMobile || 0,
+							min: 0,
+							max: 38,
+							step: 1,
+							onChange: function ( v ) { setAttributes( { buttonFontSizeMobile: v || 0 } ); }
+						} )
+					),
+					wp.element.createElement(
+						PanelBody,
 						{ title: "Content Position (Desktop/Mobile)", initialOpen: false },
 						wp.element.createElement( RangeControl, {
 							label: "Desktop X offset (px)",
@@ -560,6 +691,12 @@
 									wp.element.createElement(
 										"div",
 										{ className: "hmpro-hero-editor__slideRowBtns" },
+										wp.element.createElement( Button, {
+											isSmall: true,
+											isSecondary: true,
+											disabled: normalizedSlides.length >= MAX_SLIDES,
+											onClick: function () { duplicateSlide( idx ); }
+										}, "Duplicate" ),
 										wp.element.createElement( Button, {
 											isSmall: true,
 											isSecondary: true,

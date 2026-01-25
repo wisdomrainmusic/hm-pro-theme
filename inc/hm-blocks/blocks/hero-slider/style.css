@@ -112,17 +112,20 @@
 }
 
 .hmpro-hero__title{
-	font-size: clamp(32px, 4vw, 54px);
+	font-family: var(--hmpro-hero-title-ff, inherit);
+	font-size: var(--hmpro-hero-title-fs, clamp(32px, 4vw, 54px));
 	line-height: 1.08;
-	font-weight: 700;
+	font-weight: var(--hmpro-hero-title-fw, 700);
 	margin: 0 0 10px 0;
 	color: var(--hmpro-hero-title-color, #fff);
 }
 
 .hmpro-hero__subtitle{
-	font-size: 18px;
+	font-family: var(--hmpro-hero-subtitle-ff, inherit);
+	font-size: var(--hmpro-hero-subtitle-fs, 18px);
 	line-height: 1.45;
 	margin: 0 0 18px 0;
+	font-weight: var(--hmpro-hero-subtitle-fw, 400);
 	color: var(--hmpro-hero-subtitle-color, rgba(255,255,255,0.9));
 }
 
@@ -135,7 +138,9 @@
 	color: var(--hmpro-hero-btn-color, #111);
 	padding: 12px 18px;
 	border-radius: 999px;
-	font-weight: 700;
+	font-family: var(--hmpro-hero-btn-ff, inherit);
+	font-weight: var(--hmpro-hero-btn-fw, 700);
+	font-size: var(--hmpro-hero-btn-fs, inherit);
 	text-decoration: none;
 }
 
@@ -246,20 +251,20 @@
 
 	/* Typography & CTA sizing for tablet/mobile */
 	.hmpro-hero__title{
-		font-size: clamp(24px, 6.2vw, 38px);
+		font-size: var(--hmpro-hero-title-fs-m, clamp(24px, 6.2vw, 38px));
 		line-height: 1.10;
 		margin-bottom: 8px;
 	}
 
 	.hmpro-hero__subtitle{
-		font-size: 15px;
+		font-size: var(--hmpro-hero-subtitle-fs-m, 15px);
 		line-height: 1.45;
 		margin-bottom: 14px;
 	}
 
 	.hmpro-hero__btn{
 		padding: 10px 14px;
-		font-size: 14px;
+		font-size: var(--hmpro-hero-btn-fs-m, 14px);
 	}
 
 	.hmpro-hero__content{

@@ -96,6 +96,54 @@
       "type": "number",
       "default": 0.92
     },
+    "titleFontFamily": {
+      "type": "string",
+      "default": ""
+    },
+    "titleFontWeight": {
+      "type": "string",
+      "default": ""
+    },
+    "titleFontSize": {
+      "type": "number",
+      "default": 0
+    },
+    "titleFontSizeMobile": {
+      "type": "number",
+      "default": 0
+    },
+    "subtitleFontFamily": {
+      "type": "string",
+      "default": ""
+    },
+    "subtitleFontWeight": {
+      "type": "string",
+      "default": ""
+    },
+    "subtitleFontSize": {
+      "type": "number",
+      "default": 0
+    },
+    "subtitleFontSizeMobile": {
+      "type": "number",
+      "default": 0
+    },
+    "buttonFontFamily": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonFontWeight": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonFontSize": {
+      "type": "number",
+      "default": 0
+    },
+    "buttonFontSizeMobile": {
+      "type": "number",
+      "default": 0
+    },
     "slides": {
       "type": "array",
       "default": [],

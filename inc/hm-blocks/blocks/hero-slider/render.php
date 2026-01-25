@@ -25,6 +25,17 @@ if ( ! function_exists( 'hmpro_hero_sanitize_color' ) ) {
 	}
 }
 
+if ( ! function_exists( 'hmpro_hero_sanitize_css_text' ) ) {
+	function hmpro_hero_sanitize_css_text( $v ) {
+		$v = trim( (string) $v );
+		$v = str_replace( [ ';', '{', '}', '<', '>', '"' ], '', $v );
+		if ( strlen( $v ) > 200 ) {
+			$v = substr( $v, 0, 200 );
+		}
+		return trim( $v );
+	}
+}
+
 $attrs = isset( $attributes ) && is_array( $attributes ) ? $attributes : [];
 
 $only_homepage = ! empty( $attrs['onlyHomepage'] );
@@ -142,23 +153,87 @@ $classes = [
 	( $mobile_height_mode === 'compact' ) ? 'is-mobile-compact' : '',
 ];
 
+$title_ff = hmpro_hero_sanitize_css_text( $attrs['titleFontFamily'] ?? '' );
+$title_fw = hmpro_hero_sanitize_css_text( $attrs['titleFontWeight'] ?? '' );
+$subtitle_ff = hmpro_hero_sanitize_css_text( $attrs['subtitleFontFamily'] ?? '' );
+$subtitle_fw = hmpro_hero_sanitize_css_text( $attrs['subtitleFontWeight'] ?? '' );
+$button_ff = hmpro_hero_sanitize_css_text( $attrs['buttonFontFamily'] ?? '' );
+$button_fw = hmpro_hero_sanitize_css_text( $attrs['buttonFontWeight'] ?? '' );
+
+$title_fs = isset( $attrs['titleFontSize'] ) ? (float) $attrs['titleFontSize'] : 0;
+$title_fs_m = isset( $attrs['titleFontSizeMobile'] ) ? (float) $attrs['titleFontSizeMobile'] : 0;
+$subtitle_fs = isset( $attrs['subtitleFontSize'] ) ? (float) $attrs['subtitleFontSize'] : 0;
+$subtitle_fs_m = isset( $attrs['subtitleFontSizeMobile'] ) ? (float) $attrs['subtitleFontSizeMobile'] : 0;
+$button_fs = isset( $attrs['buttonFontSize'] ) ? (float) $attrs['buttonFontSize'] : 0;
+$button_fs_m = isset( $attrs['buttonFontSizeMobile'] ) ? (float) $attrs['buttonFontSizeMobile'] : 0;
+
+$style = sprintf(
+	'--hmpro-hero-h:%dpx;--hmpro-hero-h-m:%dvh;--hmpro-hero-bg-fit:%s;--hmpro-hero-overlay:%s;--hmpro-hero-maxw:%dpx;--hmpro-hero-group-x:%dpx;--hmpro-hero-group-y:%dpx;--hmpro-hero-group-x-m:%dpx;--hmpro-hero-group-y-m:%dpx;--hmpro-hero-scale:%s;--hmpro-hero-scale-m:%s;--hmpro-hero-title-scale-m:%s;',
+	$height,
+	$mobile_height_vh,
+	esc_attr( $image_fit ),
+	rtrim( rtrim( (string) $overlay, '0' ), '.' ),
+	$max_width,
+	$group_x,
+	$group_y,
+	$m_group_x,
+	$m_group_y,
+	rtrim( rtrim( (string) $content_scale, '0' ), '.' ),
+	rtrim( rtrim( (string) $m_content_scale, '0' ), '.' ),
+	rtrim( rtrim( (string) $m_title_scale, '0' ), '.' )
+);
+
+$typo_vars = [];
+if ( $title_ff !== '' ) {
+	$typo_vars[] = '--hmpro-hero-title-ff:' . $title_ff;
+}
+if ( $title_fw !== '' ) {
+	$typo_vars[] = '--hmpro-hero-title-fw:' . $title_fw;
+}
+if ( $title_fs > 0 ) {
+	$title_fs = max( 12, min( 120, $title_fs ) );
+	$typo_vars[] = '--hmpro-hero-title-fs:' . rtrim( rtrim( (string) $title_fs, '0' ), '.' ) . 'px';
+}
+if ( $title_fs_m > 0 ) {
+	$title_fs_m = max( 12, min( 96, $title_fs_m ) );
+	$typo_vars[] = '--hmpro-hero-title-fs-m:' . rtrim( rtrim( (string) $title_fs_m, '0' ), '.' ) . 'px';
+}
+if ( $subtitle_ff !== '' ) {
+	$typo_vars[] = '--hmpro-hero-subtitle-ff:' . $subtitle_ff;
+}
+if ( $subtitle_fw !== '' ) {
+	$typo_vars[] = '--hmpro-hero-subtitle-fw:' . $subtitle_fw;
+}
+if ( $subtitle_fs > 0 ) {
+	$subtitle_fs = max( 10, min( 60, $subtitle_fs ) );
+	$typo_vars[] = '--hmpro-hero-subtitle-fs:' . rtrim( rtrim( (string) $subtitle_fs, '0' ), '.' ) . 'px';
+}
+if ( $subtitle_fs_m > 0 ) {
+	$subtitle_fs_m = max( 10, min( 54, $subtitle_fs_m ) );
+	$typo_vars[] = '--hmpro-hero-subtitle-fs-m:' . rtrim( rtrim( (string) $subtitle_fs_m, '0' ), '.' ) . 'px';
+}
+if ( $button_ff !== '' ) {
+	$typo_vars[] = '--hmpro-hero-btn-ff:' . $button_ff;
+}
+if ( $button_fw !== '' ) {
+	$typo_vars[] = '--hmpro-hero-btn-fw:' . $button_fw;
+}
+if ( $button_fs > 0 ) {
+	$button_fs = max( 10, min( 42, $button_fs ) );
+	$typo_vars[] = '--hmpro-hero-btn-fs:' . rtrim( rtrim( (string) $button_fs, '0' ), '.' ) . 'px';
+}
+if ( $button_fs_m > 0 ) {
+	$button_fs_m = max( 10, min( 38, $button_fs_m ) );
+	$typo_vars[] = '--hmpro-hero-btn-fs-m:' . rtrim( rtrim( (string) $button_fs_m, '0' ), '.' ) . 'px';
+}
+
+if ( $typo_vars ) {
+	$style .= implode( ';', $typo_vars ) . ';';
+}
+
 $wrapper_attrs = get_block_wrapper_attributes( [
 	'class' => implode( ' ', array_filter( $classes ) ),
-	'style' => sprintf(
-		'--hmpro-hero-h:%dpx;--hmpro-hero-h-m:%dvh;--hmpro-hero-bg-fit:%s;--hmpro-hero-overlay:%s;--hmpro-hero-maxw:%dpx;--hmpro-hero-group-x:%dpx;--hmpro-hero-group-y:%dpx;--hmpro-hero-group-x-m:%dpx;--hmpro-hero-group-y-m:%dpx;--hmpro-hero-scale:%s;--hmpro-hero-scale-m:%s;--hmpro-hero-title-scale-m:%s;',
-		$height,
-		$mobile_height_vh,
-		esc_attr( $image_fit ),
-		rtrim( rtrim( (string) $overlay, '0' ), '.' ),
-		$max_width,
-		$group_x,
-		$group_y,
-		$m_group_x,
-		$m_group_y,
-		rtrim( rtrim( (string) $content_scale, '0' ), '.' ),
-		rtrim( rtrim( (string) $m_content_scale, '0' ), '.' ),
-		rtrim( rtrim( (string) $m_title_scale, '0' ), '.' )
-	),
+	'style' => $style,
 ] );
 
 $has_multiple = count( $slides ) > 1;
