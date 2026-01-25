@@ -13,5 +13,5 @@ return array(
 		'wp-block-editor',
 		'wp-editor',
 	),
-	'version' => '0.1.5',
+	'version' => '0.1.6',
 );

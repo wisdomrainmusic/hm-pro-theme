@@ -144,6 +144,10 @@
       "type": "number",
       "default": 0
     },
+    "typographyPreset": {
+      "type": "string",
+      "default": ""
+    },
     "slides": {
       "type": "array",
       "default": [],
