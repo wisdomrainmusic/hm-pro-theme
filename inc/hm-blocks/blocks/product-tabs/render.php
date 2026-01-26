@@ -110,7 +110,8 @@ $styles .= '--hmpro-pft-panel-border-width:' . esc_attr( (string) max( 0, $panel
 $styles .= '--hmpro-pft-panel-radius:' . esc_attr( (string) max( 0, $panel_radius ) ) . 'px;';
 
 $styles .= 'width:100%;';
-if ( $grid_max_width > 0 ) {
+// When fullwidth is enabled, do not constrain the wrapper with max-width.
+if ( ! $full_width && $grid_max_width > 0 ) {
 	$styles .= 'max-width:' . esc_attr( (string) $grid_max_width ) . 'px;margin-left:auto;margin-right:auto;';
 }
 
