@@ -2,7 +2,7 @@
 	const { registerBlockType } = wp.blocks;
 	const { __ } = wp.i18n;
 	const { InspectorControls, RichText, useBlockProps, URLInputButton } = wp.blockEditor;
-	const { PanelBody, SelectControl, RangeControl, TextControl, TextareaControl, BaseControl } = wp.components;
+	const { PanelBody, SelectControl, RangeControl, TextControl, TextareaControl, BaseControl, ColorPalette } = wp.components;
 
 	const PRESETS = [
 		{ label: 'Check', value: 'check', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' },
@@ -32,10 +32,49 @@
 		return found ? found.svg : PRESETS[0].svg;
 	}
 
+	function applyTypographyPreset( key, setAttributes ) {
+		// Mirrors hero-slider preset names for consistency.
+		const presets = {
+			modern_store: { titleFontFamily: 'Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial', titleFontWeight: '700', textFontFamily: 'Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial', textFontWeight: '400', linkFontFamily: 'Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial', linkFontWeight: '600' },
+			editorial_fashion: { titleFontFamily: 'Playfair Display, Georgia, serif', titleFontWeight: '700', textFontFamily: 'Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial', textFontWeight: '400', linkFontFamily: 'Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial', linkFontWeight: '600' },
+			soft_elegant: { titleFontFamily: 'Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial', titleFontWeight: '600', textFontFamily: 'Lato, system-ui, -apple-system, Segoe UI, Roboto, Arial', textFontWeight: '400', linkFontFamily: 'Lato, system-ui, -apple-system, Segoe UI, Roboto, Arial', linkFontWeight: '700' },
+			signature_handwritten: { titleFontFamily: 'Dancing Script, cursive', titleFontWeight: '700', textFontFamily: 'Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial', textFontWeight: '400', linkFontFamily: 'Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial', linkFontWeight: '600' }
+		};
+		if ( ! presets[ key ] ) {
+			return;
+		}
+		setAttributes( Object.assign( { typographyPreset: key }, presets[ key ] ) );
+	}
+
 	registerBlockType( 'hmpro/feature-item', {
 		edit: function ( props ) {
 			const { attributes, setAttributes } = props;
-			const { layout, align, iconMode, iconPreset, customSvg, iconSize, titleSize, textSize, title, text, linkUrl, linkLabel } = attributes;
+			const {
+				layout,
+				align,
+				iconMode,
+				iconPreset,
+				customSvg,
+				iconSize,
+				titleSize,
+				textSize,
+				iconColor,
+				titleColor,
+				textColor,
+				linkColor,
+				bgColor,
+				typographyPreset,
+				titleFontFamily,
+				titleFontWeight,
+				textFontFamily,
+				textFontWeight,
+				linkFontFamily,
+				linkFontWeight,
+				title,
+				text,
+				linkUrl,
+				linkLabel
+			} = attributes;
 
 			const blockProps = useBlockProps( {
 				className: [
@@ -46,7 +85,18 @@
 				style: {
 					'--hmpro-fi-icon': ( iconSize || 28 ) + 'px',
 					'--hmpro-fi-title': ( titleSize || 18 ) + 'px',
-					'--hmpro-fi-text': ( textSize || 14 ) + 'px'
+					'--hmpro-fi-text': ( textSize || 14 ) + 'px',
+					'--hmpro-fi-ic': iconColor || '',
+					'--hmpro-fi-tc': titleColor || '',
+					'--hmpro-fi-xc': textColor || '',
+					'--hmpro-fi-lc': linkColor || '',
+					'--hmpro-fi-bg': bgColor || '',
+					'--hmpro-fi-title-ff': titleFontFamily || '',
+					'--hmpro-fi-title-fw': titleFontWeight || '',
+					'--hmpro-fi-text-ff': textFontFamily || '',
+					'--hmpro-fi-text-fw': textFontWeight || '',
+					'--hmpro-fi-link-ff': linkFontFamily || '',
+					'--hmpro-fi-link-fw': linkFontWeight || ''
 				}
 			} );
 
@@ -139,6 +189,61 @@
 							url: linkUrl,
 							onChange: function ( url ) { setAttributes( { linkUrl: url } ); }
 						} )
+					)
+				),
+				wp.element.createElement(
+					InspectorControls,
+					null,
+					wp.element.createElement(
+						PanelBody,
+						{ title: __( 'Colors', 'hm-pro-theme' ), initialOpen: false },
+						wp.element.createElement(
+							BaseControl,
+							{ label: __( 'Background', 'hm-pro-theme' ) },
+							wp.element.createElement( ColorPalette, { value: bgColor || '', onChange: function ( value ) { setAttributes( { bgColor: value || '' } ); } } )
+						),
+						wp.element.createElement(
+							BaseControl,
+							{ label: __( 'Icon color', 'hm-pro-theme' ) },
+							wp.element.createElement( ColorPalette, { value: iconColor || '', onChange: function ( value ) { setAttributes( { iconColor: value || '' } ); } } )
+						),
+						wp.element.createElement(
+							BaseControl,
+							{ label: __( 'Title color', 'hm-pro-theme' ) },
+							wp.element.createElement( ColorPalette, { value: titleColor || '', onChange: function ( value ) { setAttributes( { titleColor: value || '' } ); } } )
+						),
+						wp.element.createElement(
+							BaseControl,
+							{ label: __( 'Text color', 'hm-pro-theme' ) },
+							wp.element.createElement( ColorPalette, { value: textColor || '', onChange: function ( value ) { setAttributes( { textColor: value || '' } ); } } )
+						),
+						wp.element.createElement(
+							BaseControl,
+							{ label: __( 'Link color', 'hm-pro-theme' ) },
+							wp.element.createElement( ColorPalette, { value: linkColor || '', onChange: function ( value ) { setAttributes( { linkColor: value || '' } ); } } )
+						)
+					),
+					wp.element.createElement(
+						PanelBody,
+						{ title: __( 'Typography', 'hm-pro-theme' ), initialOpen: false },
+						wp.element.createElement( SelectControl, {
+							label: __( 'Typography preset', 'hm-pro-theme' ),
+							value: typographyPreset || '',
+							options: [
+								{ label: '— Select —', value: '' },
+								{ label: 'Modern Store (inter / poppins)', value: 'modern_store' },
+								{ label: 'Editorial / Fashion (inter / playfair_display)', value: 'editorial_fashion' },
+								{ label: 'Soft Elegant (lato / poppins)', value: 'soft_elegant' },
+								{ label: 'Signature Brand (Handwritten) (inter / dancing_script)', value: 'signature_handwritten' }
+							],
+							onChange: function ( value ) { applyTypographyPreset( value, setAttributes ); }
+						} ),
+						wp.element.createElement( TextControl, { label: __( 'Title font family', 'hm-pro-theme' ), value: titleFontFamily || '', onChange: function ( value ) { setAttributes( { titleFontFamily: value } ); } } ),
+						wp.element.createElement( TextControl, { label: __( 'Title font weight', 'hm-pro-theme' ), help: __( 'e.g. 400, 600, 700', 'hm-pro-theme' ), value: titleFontWeight || '', onChange: function ( value ) { setAttributes( { titleFontWeight: value } ); } } ),
+						wp.element.createElement( TextControl, { label: __( 'Text font family', 'hm-pro-theme' ), value: textFontFamily || '', onChange: function ( value ) { setAttributes( { textFontFamily: value } ); } } ),
+						wp.element.createElement( TextControl, { label: __( 'Text font weight', 'hm-pro-theme' ), help: __( 'e.g. 400, 500, 600', 'hm-pro-theme' ), value: textFontWeight || '', onChange: function ( value ) { setAttributes( { textFontWeight: value } ); } } ),
+						wp.element.createElement( TextControl, { label: __( 'Link font family', 'hm-pro-theme' ), value: linkFontFamily || '', onChange: function ( value ) { setAttributes( { linkFontFamily: value } ); } } ),
+						wp.element.createElement( TextControl, { label: __( 'Link font weight', 'hm-pro-theme' ), help: __( 'e.g. 500, 600, 700', 'hm-pro-theme' ), value: linkFontWeight || '', onChange: function ( value ) { setAttributes( { linkFontWeight: value } ); } } )
 					)
 				),
 				wp.element.createElement(
