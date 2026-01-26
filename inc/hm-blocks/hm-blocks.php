@@ -102,15 +102,15 @@ function hmpro_blocks_enqueue_editor_assets() {
 
 	$inline = 'window.hmproPft=' . wp_json_encode( $payload ) . ';';
 
-	// 1) Shared editor bundle (kept)
-	wp_add_inline_script( 'hmpro-blocks-editor', $inline, 'before' );
+	/**
+	 * CRITICAL: Inject via core 'wp-blocks' which is always enqueued in the block editor.
+	 * This avoids timing/handle mismatches where our block script runs before the inline
+	 * config exists (and the admin-ajax term request never fires).
+	 */
+	wp_add_inline_script( 'wp-blocks', $inline, 'before' );
 
-	// 2) IMPORTANT: Product Tabs block uses its own generated editor script handle.
-	// If we don't inject here, the block code won't see window.hmproPft and will never call admin-ajax.
-	$block_editor_handle = 'hmpro-product-tabs-editor-script';
-	if ( wp_script_is( $block_editor_handle, 'registered' ) || wp_script_is( $block_editor_handle, 'enqueued' ) ) {
-		wp_add_inline_script( $block_editor_handle, $inline, 'before' );
-	}
+	// Keep also on our bundle (harmless redundancy).
+	wp_add_inline_script( 'hmpro-blocks-editor', $inline, 'before' );
 }
 add_action( 'enqueue_block_editor_assets', 'hmpro_blocks_enqueue_editor_assets' );
 
