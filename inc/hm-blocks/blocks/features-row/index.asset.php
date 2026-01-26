@@ -11,5 +11,6 @@ return array(
 		'wp-block-editor',
 		'wp-editor',
 	),
-	'version' => '0.1.0',
+	// Auto bust cache when index.js changes.
+	'version' => file_exists( __DIR__ . '/index.js' ) ? filemtime( __DIR__ . '/index.js' ) : '0.1.0',
 );
