@@ -16,8 +16,9 @@
 		Notice,
 	} = wp.components;
 
-	const { useSelect } = wp.data;
+	const { useState, useEffect } = wp.element;
 	const ServerSideRender = wp.serverSideRender;
+	const apiFetch = wp.apiFetch;
 	const el = wp.element.createElement;
 
 	// (Preview helper removed; we render SSR directly in the wrapper below.)
@@ -32,6 +33,67 @@
 
 	function normalizeColor( v ) {
 		return v ? String( v ) : '';
+	}
+
+	function useAllTerms( taxonomy ) {
+		const [ terms, setTerms ] = useState( [] );
+		const [ isLoading, setIsLoading ] = useState( true );
+		const [ error, setError ] = useState( null );
+
+		useEffect( function () {
+			let isActive = true;
+
+			async function fetchTerms() {
+				setIsLoading( true );
+				setError( null );
+
+				try {
+					const fetched = [];
+					let page = 1;
+					let totalPages = 1;
+
+					while ( page <= totalPages ) {
+						const response = await apiFetch( {
+							path: `/wp/v2/${ taxonomy }?per_page=100&hide_empty=0&page=${ page }`,
+							parse: false,
+						} );
+						const totalHeader = response.headers.get( 'X-WP-TotalPages' );
+						totalPages = totalHeader ? parseInt( totalHeader, 10 ) : 1;
+						const data = await response.json();
+
+						if ( ! isActive ) {
+							return;
+						}
+
+						if ( Array.isArray( data ) ) {
+							fetched.push( ...data );
+						}
+
+						page += 1;
+					}
+
+					if ( isActive ) {
+						setTerms( fetched );
+					}
+				} catch ( fetchError ) {
+					if ( isActive ) {
+						setError( fetchError );
+					}
+				} finally {
+					if ( isActive ) {
+						setIsLoading( false );
+					}
+				}
+			}
+
+			fetchTerms();
+
+			return function () {
+				isActive = false;
+			};
+		}, [ taxonomy ] );
+
+		return { terms, isLoading, error };
 	}
 
 	registerBlockType( 'hmpro/product-tabs', {
@@ -68,12 +130,8 @@
 			} = attributes;
 
 			// Fetch terms (searchable dropdown)
-			const catTerms = useSelect( function ( select ) {
-				return select( 'core' ).getEntityRecords( 'taxonomy', 'product_cat', { per_page: 100, hide_empty: false } );
-			}, [] );
-			const tagTerms = useSelect( function ( select ) {
-				return select( 'core' ).getEntityRecords( 'taxonomy', 'product_tag', { per_page: 100, hide_empty: false } );
-			}, [] );
+			const { terms: catTerms, error: catError } = useAllTerms( 'product_cat' );
+			const { terms: tagTerms, error: tagError } = useAllTerms( 'product_tag' );
 
 			function getTermOptions( queryType ) {
 				const list = queryType === 'tag' ? tagTerms : catTerms;
@@ -314,7 +372,10 @@ const tabsControls = tabs.map( function ( tab, index ) {
 				PanelBody,
 				{ title: __( 'Tabs', 'hm-pro-theme' ), initialOpen: true },
 				el( Notice, { status: 'info', isDismissible: false },
-					__( 'Term selection is searchable. If your taxonomy list is huge, we can add pagination in a later commit.', 'hm-pro-theme' )
+					__( 'Term selection is searchable and loads all product categories/tags automatically.', 'hm-pro-theme' )
+				),
+				( catError || tagError ) && el( Notice, { status: 'warning', isDismissible: false },
+					__( 'Some terms could not be loaded. Please refresh or try again later.', 'hm-pro-theme' )
 				),
 				...tabsControls,
 				el(
