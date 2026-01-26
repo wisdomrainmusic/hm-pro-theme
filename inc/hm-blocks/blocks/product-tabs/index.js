@@ -51,13 +51,15 @@
 				// and security plugins that may block custom REST namespaces.
 				try {
 					const cfg = window.hmproPft || {};
-					const ajaxUrl = cfg.ajaxUrl || window.ajaxurl;
-					const nonce = cfg.nonce;
-					if ( ajaxUrl && nonce ) {
+					const ajaxUrl = window.ajaxurl || cfg.ajaxUrl; // wp-admin always exposes window.ajaxurl
+					const nonce = cfg.nonce; // optional
+					if ( ajaxUrl ) {
 						const form = new window.URLSearchParams();
 						form.append( 'action', 'hmpro_pft_get_terms' );
 						form.append( 'taxonomy', taxonomy );
-						form.append( 'nonce', nonce );
+						if ( nonce ) {
+							form.append( 'nonce', nonce );
+						}
 						const res = await window.fetch( ajaxUrl, {
 							method: 'POST',
 							credentials: 'same-origin',
