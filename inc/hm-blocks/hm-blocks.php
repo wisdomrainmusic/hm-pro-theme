@@ -137,12 +137,21 @@ function hmpro_pft_ajax_get_terms() {
 		wp_send_json_error( array( 'message' => 'Invalid taxonomy.' ), 400 );
 	}
 
+	$search = isset( $_POST['search'] ) ? sanitize_text_field( wp_unslash( $_POST['search'] ) ) : '';
+	$search = trim( $search );
+	if ( strlen( $search ) > 80 ) {
+		$search = substr( $search, 0, 80 );
+	}
+
 	$terms = get_terms(
 		array(
 			'taxonomy'   => $taxonomy,
 			'hide_empty' => false,
 			'orderby'    => 'name',
 			'order'      => 'ASC',
+			// Elementor-style: allow server-side search for the editor combobox.
+			'search'     => $search ? $search : '',
+			'number'     => $search ? 50 : 0,
 		)
 	);
 
