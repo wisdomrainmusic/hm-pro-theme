@@ -28,6 +28,7 @@ if ( ! defined( 'HMPRO_BLOCKS_URL' ) ) {
 // Shared renderer utilities.
 require_once HMPRO_BLOCKS_PATH . '/render/shared/helpers.php';
 require_once HMPRO_BLOCKS_PATH . '/render/shared/sanitize.php';
+require_once HMPRO_BLOCKS_PATH . '/render/shared/svg-presets.php';
 require_once HMPRO_BLOCKS_PATH . '/render/shared/templates.php';
 
 /**

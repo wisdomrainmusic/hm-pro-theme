@@ -1,0 +1,49 @@
+.hmpro-feature-item {
+  --hmpro-fi-icon: 28px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.hmpro-feature-item.is-layout-top {
+  flex-direction: column;
+}
+
+.hmpro-feature-item.is-layout-left {
+  flex-direction: row;
+}
+
+.hmpro-feature-item.is-align-center {
+  text-align: center;
+  align-items: center;
+}
+
+.hmpro-feature-item__icon {
+  width: var(--hmpro-fi-icon);
+  height: var(--hmpro-fi-icon);
+  line-height: 0;
+  flex: 0 0 auto;
+}
+
+.hmpro-feature-item__icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hmpro-feature-item__title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.hmpro-feature-item__text {
+  margin: 6px 0 0;
+  opacity: 0.85;
+}
+
+.hmpro-feature-item__link {
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+}

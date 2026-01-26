@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "hmpro/feature-item",
+  "title": "HM Feature Item",
+  "category": "hmpro",
+  "icon": "awards",
+  "description": "Single feature item: icon + title + text + link (SVG preset/custom).",
+  "parent": ["hmpro/features-row"],
+  "supports": {
+    "anchor": true,
+    "reusable": false
+  },
+  "attributes": {
+    "layout": { "type": "string", "default": "top" },
+    "align": { "type": "string", "default": "left" },
+    "iconMode": { "type": "string", "default": "preset" },
+    "iconPreset": { "type": "string", "default": "check" },
+    "customSvg": { "type": "string", "default": "" },
+    "iconSize": { "type": "number", "default": 28 },
+    "title": { "type": "string", "default": "" },
+    "text": { "type": "string", "default": "" },
+    "linkUrl": { "type": "string", "default": "" },
+    "linkLabel": { "type": "string", "default": "" }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}
