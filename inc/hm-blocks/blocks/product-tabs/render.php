@@ -109,18 +109,10 @@ if ( $panel_border_color !== '' ) {
 $styles .= '--hmpro-pft-panel-border-width:' . esc_attr( (string) max( 0, $panel_border_width ) ) . 'px;';
 $styles .= '--hmpro-pft-panel-radius:' . esc_attr( (string) max( 0, $panel_radius ) ) . 'px;';
 
-
-	// Layout: constrain overall block width when not full-width.
-	// IMPORTANT: Inline width styles override CSS; so full-width must be expressed inline as well.
-	if ( $full_width ) {
-		// Full-bleed like Promo Grid: break out of theme content max-width containers.
-		$styles .= 'width:100vw;max-width:none;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);';
-	} else {
-		$styles .= 'width:100%;';
-		if ( $grid_max_width > 0 ) {
-			$styles .= 'max-width:' . $grid_max_width . 'px;margin-left:auto;margin-right:auto;';
-		}
-	}
+$styles .= 'width:100%;';
+if ( $grid_max_width > 0 ) {
+	$styles .= 'max-width:' . esc_attr( (string) $grid_max_width ) . 'px;margin-left:auto;margin-right:auto;';
+}
 
 $wrapper_classes = 'hmpro-pft';
 if ( $tabs_layout === 'vertical' ) {
