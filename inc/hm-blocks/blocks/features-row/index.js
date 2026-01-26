@@ -91,7 +91,15 @@
 
 		// Dynamic render in PHP (stable frontend HTML).
 		save: function () {
-			return null;
+			/**
+			 * IMPORTANT:
+			 * This block uses InnerBlocks (hmpro/feature-item). We must serialize
+			 * inner blocks into post_content so the PHP renderer receives them
+			 * in $content. Otherwise frontend output is empty.
+			 *
+			 * Wrapper markup is generated in render.php, so only serialize children.
+			 */
+			return wp.element.createElement( InnerBlocks.Content, null );
 		}
 	} );
 } )( window.wp );
