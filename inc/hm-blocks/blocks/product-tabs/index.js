@@ -59,7 +59,9 @@
 						let response;
 						try {
 							response = await apiFetch( {
-								path: `/wp/v2/${ taxonomy }?per_page=${ perPage }&hide_empty=0&page=${ page }`,
+								// Keep the payload small (important on large catalogs).
+								// Order by name so the list is stable and searchable.
+								path: `/wp/v2/${ taxonomy }?per_page=${ perPage }&hide_empty=0&page=${ page }&orderby=name&order=asc&_fields=id,name`,
 								parse: false,
 							} );
 						} catch ( requestError ) {
@@ -67,7 +69,15 @@
 							// WordPress may respond with an invalid page error. In headerless mode, treat
 							// that as end-of-list instead of failing the entire dropdown.
 							if ( ! headerBasedPagination ) {
-								break;
+								const errCode = requestError?.code || requestError?.data?.code;
+								const errStatus = requestError?.data?.status;
+								const isInvalidPage =
+									errCode === 'rest_post_invalid_page_number' ||
+									errCode === 'rest_invalid_param' ||
+									errStatus === 400;
+								if ( isInvalidPage ) {
+									break;
+								}
 							}
 							throw requestError;
 						}
