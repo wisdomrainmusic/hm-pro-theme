@@ -92,8 +92,63 @@ add_action( 'enqueue_block_assets', 'hmpro_blocks_enqueue_block_assets' );
 function hmpro_blocks_enqueue_editor_assets() {
 	wp_enqueue_style( 'hmpro-blocks-editor' );
 	wp_enqueue_script( 'hmpro-blocks-editor' );
+
+	// Provide a reliable term loader for editor controls (admin-ajax), to avoid REST header stripping
+	// or security plugins that block custom REST namespaces.
+	$payload = array(
+		'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+		'nonce'   => wp_create_nonce( 'hmpro_pft_terms' ),
+	);
+	wp_add_inline_script( 'hmpro-blocks-editor', 'window.hmproPft=' . wp_json_encode( $payload ) . ';', 'before' );
 }
 add_action( 'enqueue_block_editor_assets', 'hmpro_blocks_enqueue_editor_assets' );
+
+/**
+ * AJAX: Return ALL WooCommerce terms for editor dropdowns.
+ *
+ * This mirrors the Elementor approach (server-side get_terms) and avoids issues with
+ * REST pagination headers and custom REST namespace blocks.
+ */
+function hmpro_pft_ajax_get_terms() {
+	$nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+	if ( ! wp_verify_nonce( $nonce, 'hmpro_pft_terms' ) ) {
+		wp_send_json_error( array( 'message' => 'Invalid nonce.' ), 403 );
+	}
+
+	if ( ! current_user_can( 'edit_posts' ) ) {
+		wp_send_json_error( array( 'message' => 'Forbidden.' ), 403 );
+	}
+
+	$taxonomy = isset( $_POST['taxonomy'] ) ? sanitize_key( wp_unslash( $_POST['taxonomy'] ) ) : '';
+	if ( ! in_array( $taxonomy, array( 'product_cat', 'product_tag' ), true ) ) {
+		wp_send_json_error( array( 'message' => 'Invalid taxonomy.' ), 400 );
+	}
+
+	$terms = get_terms(
+		array(
+			'taxonomy'   => $taxonomy,
+			'hide_empty' => false,
+			'orderby'    => 'name',
+			'order'      => 'ASC',
+		)
+	);
+
+	if ( is_wp_error( $terms ) ) {
+		wp_send_json_error( array( 'message' => $terms->get_error_message() ), 500 );
+	}
+
+	$data = array();
+	foreach ( $terms as $term ) {
+		$data[] = array(
+			'id'     => (int) $term->term_id,
+			'name'   => (string) $term->name,
+			'parent' => (int) $term->parent,
+		);
+	}
+
+	wp_send_json_success( $data );
+}
+add_action( 'wp_ajax_hmpro_pft_get_terms', 'hmpro_pft_ajax_get_terms' );
 
 /**
  * Register blocks located under /inc/hm-blocks/blocks/*

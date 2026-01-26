@@ -15,7 +15,8 @@ Details
 
 Term fetching now:
 
-Uses a custom REST endpoint (`/hmpro/v1/terms`) to return all product categories/tags in a single response (avoids pagination header stripping issues).
+Uses an admin-ajax endpoint (`hmpro_pft_get_terms`) to return all product categories/tags in a single response (Elementor-style; avoids REST header stripping / namespace blocking).
+Keeps a REST fallback (`/hmpro/v1/terms`) plus wp/v2 pagination fallback for compatibility.
 Uses a smaller REST payload via `_fields=id,name` (faster + less memory on large catalogs).
 
 Orders results by name for a stable, predictable dropdown.
