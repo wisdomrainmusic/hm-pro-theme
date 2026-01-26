@@ -29,15 +29,15 @@
   padding: 24px 0;
 }
 
-	/* Full-bleed (Hero Like) — matches Promo Grid behavior */
-	.hmpro-pft.is-fullwidth,
-	.hmpro-product-tabs.is-fullwidth {
-	  width: 100vw;
-	  max-width: none;
-	  margin-left: calc(50% - 50vw);
-	  margin-right: calc(50% - 50vw);
-	  overflow-x: clip;
-	}
+/* Fullwidth (safe): keep within container to avoid horizontal overflow */
+.hmpro-pft.is-fullwidth,
+.hmpro-product-tabs.is-fullwidth {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  overflow-x: clip;
+}
 
 .hmpro-pft__tabs,
 .hmpro-product-tabs__tabs {
