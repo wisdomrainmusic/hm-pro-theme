@@ -238,6 +238,7 @@ $wrapper_attrs = get_block_wrapper_attributes( [
 
 $has_multiple = count( $slides ) > 1;
 
+echo '<div class="hmpro-bleed-clip">';
 echo '<div ' . $wrapper_attrs . '>';
 echo '<div class="hmpro-hero__frame">';
 
@@ -371,3 +372,4 @@ if ( $has_multiple && $show_dots ) {
 
 echo '</div>'; // frame
 echo '</div>'; // wrapper
+echo '</div>'; // bleed clip
