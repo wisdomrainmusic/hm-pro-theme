@@ -121,6 +121,62 @@ function hmpro_blocks_register_blocks() {
 add_action( 'init', 'hmpro_blocks_register_blocks', 20 );
 
 /**
+ * REST: Return ALL WooCommerce terms (categories/tags) for editor controls.
+ *
+ * Some hosts/caches strip REST pagination headers which can cause incomplete term lists
+ * in editor combobox controls. This endpoint returns the full list in a single response.
+ */
+function hmpro_pft_register_terms_rest_route() {
+	register_rest_route(
+		'hmpro/v1',
+		'/terms',
+		array(
+			'methods'             => 'GET',
+			'permission_callback' => function () {
+				return current_user_can( 'edit_posts' );
+			},
+			'args'                => array(
+				'taxonomy' => array(
+					'required'          => true,
+					'sanitize_callback' => 'sanitize_key',
+				),
+			),
+			'callback'            => function ( WP_REST_Request $request ) {
+				$taxonomy = $request->get_param( 'taxonomy' );
+				if ( ! in_array( $taxonomy, array( 'product_cat', 'product_tag' ), true ) ) {
+					return new WP_Error( 'hmpro_invalid_taxonomy', 'Invalid taxonomy.', array( 'status' => 400 ) );
+				}
+
+				$terms = get_terms(
+					array(
+						'taxonomy'   => $taxonomy,
+						'hide_empty' => false,
+						'orderby'    => 'name',
+						'order'      => 'ASC',
+					)
+				);
+
+				if ( is_wp_error( $terms ) ) {
+					return $terms;
+				}
+
+				$data = array();
+				foreach ( $terms as $term ) {
+					$data[] = array(
+						'id'     => (int) $term->term_id,
+						'name'   => (string) $term->name,
+						'parent' => (int) $term->parent,
+					);
+				}
+
+				return rest_ensure_response( $data );
+			},
+		)
+	);
+}
+add_action( 'rest_api_init', 'hmpro_pft_register_terms_rest_route' );
+
+/**
  * AJAX: Fetch paged products HTML for HM Product Tabs.
  */
 function hmpro_pft_ajax_fetch_products() {

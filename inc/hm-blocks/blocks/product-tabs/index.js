@@ -48,6 +48,19 @@
 				setError( null );
 
 				try {
+					// Prefer our single-shot endpoint (avoids REST pagination header stripping on some hosts).
+					const all = await apiFetch( {
+						path: `/hmpro/v1/terms?taxonomy=${ taxonomy }`,
+					} );
+					if ( isActive ) {
+						setTerms( Array.isArray( all ) ? all : [] );
+					}
+					return;
+				} catch ( e ) {
+					// Fallback to wp/v2 pagination.
+				}
+
+				try {
 					const fetched = [];
 					let page = 1;
 					let totalPages = 1;
