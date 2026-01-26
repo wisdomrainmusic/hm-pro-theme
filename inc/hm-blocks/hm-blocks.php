@@ -333,3 +333,86 @@ function hmpro_pft_ajax_fetch_products() {
 
 add_action( 'wp_ajax_hmpro_pft_fetch_products', 'hmpro_pft_ajax_fetch_products' );
 add_action( 'wp_ajax_nopriv_hmpro_pft_fetch_products', 'hmpro_pft_ajax_fetch_products' );
+
+/**
+ * Fallback: ensure HMPro blocks render on the frontend even if the_content output
+ * is overridden by a builder/template layer (e.g., Elementor, custom renderer, aggressive cache).
+ *
+ * We do NOT touch normal output when blocks already appear.
+ * We only append rendered HMPro blocks if:
+ * - raw post_content contains wp:hmpro/
+ * - and final $content does NOT contain our block HTML markers
+ */
+function hmpro_render_only_hmpro_blocks_from_parsed( $blocks ) {
+	$out = '';
+	foreach ( (array) $blocks as $block ) {
+		if ( empty( $block ) || ! is_array( $block ) ) {
+			continue;
+		}
+
+		$name = isset( $block['blockName'] ) ? (string) $block['blockName'] : '';
+
+		// If this is an HMPro block, render it fully (it will render its innerBlocks too).
+		if ( $name && 0 === strpos( $name, 'hmpro/' ) ) {
+			$out .= render_block( $block );
+			continue;
+		}
+
+		// Otherwise, traverse inner blocks for HMPro blocks.
+		if ( ! empty( $block['innerBlocks'] ) ) {
+			$out .= hmpro_render_only_hmpro_blocks_from_parsed( $block['innerBlocks'] );
+		}
+	}
+	return $out;
+}
+
+function hmpro_blocks_frontend_fallback_render( $content ) {
+	if ( is_admin() || wp_doing_ajax() || wp_is_json_request() ) {
+		return $content;
+	}
+
+	if ( ! is_singular() ) {
+		return $content;
+	}
+
+	global $post;
+	if ( ! $post instanceof WP_Post ) {
+		return $content;
+	}
+
+	$raw = (string) $post->post_content;
+	if ( $raw === '' ) {
+		return $content;
+	}
+
+	// Only act when HMPro blocks exist in raw content.
+	if ( false === strpos( $raw, 'wp:hmpro/' ) ) {
+		return $content;
+	}
+
+	// If already rendered, do nothing.
+	if (
+		false !== strpos( $content, 'hmpro-features-row' ) ||
+		false !== strpos( $content, 'hmpro-feature-item' ) ||
+		false !== strpos( $content, 'hmpro-hero-slider' ) ||
+		false !== strpos( $content, 'hmpro-promo-grid' )
+	) {
+		return $content;
+	}
+
+	// Render only HMPro blocks from parsed structure (prevents duplicating whole page content).
+	$parsed = parse_blocks( $raw );
+	if ( empty( $parsed ) ) {
+		return $content;
+	}
+
+	$hmpro_out = hmpro_render_only_hmpro_blocks_from_parsed( $parsed );
+	$hmpro_out = trim( (string) $hmpro_out );
+	if ( $hmpro_out === '' ) {
+		return $content;
+	}
+
+	// Append to the end (safe default). If needed, later we can insert before/after specific blocks.
+	return $content . "\n\n" . $hmpro_out;
+}
+add_filter( 'the_content', 'hmpro_blocks_frontend_fallback_render', 999 );
