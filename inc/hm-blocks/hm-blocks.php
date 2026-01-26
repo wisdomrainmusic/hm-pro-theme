@@ -99,7 +99,18 @@ function hmpro_blocks_enqueue_editor_assets() {
 		'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 		'nonce'   => wp_create_nonce( 'hmpro_pft_terms' ),
 	);
-	wp_add_inline_script( 'hmpro-blocks-editor', 'window.hmproPft=' . wp_json_encode( $payload ) . ';', 'before' );
+
+	$inline = 'window.hmproPft=' . wp_json_encode( $payload ) . ';';
+
+	// 1) Shared editor bundle (kept)
+	wp_add_inline_script( 'hmpro-blocks-editor', $inline, 'before' );
+
+	// 2) IMPORTANT: Product Tabs block uses its own generated editor script handle.
+	// If we don't inject here, the block code won't see window.hmproPft and will never call admin-ajax.
+	$block_editor_handle = 'hmpro-product-tabs-editor-script';
+	if ( wp_script_is( $block_editor_handle, 'registered' ) || wp_script_is( $block_editor_handle, 'enqueued' ) ) {
+		wp_add_inline_script( $block_editor_handle, $inline, 'before' );
+	}
 }
 add_action( 'enqueue_block_editor_assets', 'hmpro_blocks_enqueue_editor_assets' );
 
