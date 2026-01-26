@@ -47,6 +47,35 @@
 				setIsLoading( true );
 				setError( null );
 
+				// 1) Prefer admin-ajax (Elementor-style) to avoid REST pagination/header stripping
+				// and security plugins that may block custom REST namespaces.
+				try {
+					const cfg = window.hmproPft || {};
+					const ajaxUrl = cfg.ajaxUrl || window.ajaxurl;
+					const nonce = cfg.nonce;
+					if ( ajaxUrl && nonce ) {
+						const form = new window.URLSearchParams();
+						form.append( 'action', 'hmpro_pft_get_terms' );
+						form.append( 'taxonomy', taxonomy );
+						form.append( 'nonce', nonce );
+						const res = await window.fetch( ajaxUrl, {
+							method: 'POST',
+							credentials: 'same-origin',
+							headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+							body: form.toString(),
+						} );
+						const json = await res.json();
+						if ( json && json.success && Array.isArray( json.data ) ) {
+							if ( isActive ) {
+								setTerms( json.data );
+							}
+							return;
+						}
+					}
+				} catch ( e ) {
+					// fall through to REST methods
+				}
+
 				try {
 					// Prefer our single-shot endpoint (avoids REST pagination header stripping on some hosts).
 					const all = await apiFetch( {
