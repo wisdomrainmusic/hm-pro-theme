@@ -314,3 +314,14 @@
 		height: 9px;
 	}
 }
+
+/* Local fix: prevent full-bleed slider from creating page-level horizontal overflow */
+.hmpro-bleed-clip{
+	width: 100%;
+	overflow-x: clip;
+	clip-path: inset(0);
+}
+
+@supports not (overflow-x: clip){
+	.hmpro-bleed-clip{ overflow-x: hidden; }
+}
