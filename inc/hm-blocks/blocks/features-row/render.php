@@ -3,23 +3,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Ensure frontend styles are loaded (promo-grid pattern).
-if ( ! is_admin() ) {
-	$style_handle = 'hmpro-features-row-style';
-	if ( ! wp_style_is( $style_handle, 'enqueued' ) ) {
-		$css = __DIR__ . '/style.css';
-		if ( file_exists( $css ) ) {
-			wp_register_style(
-				$style_handle,
-				get_theme_file_uri( 'inc/hm-blocks/blocks/features-row/style.css' ),
-				array(),
-				filemtime( $css )
-			);
-			wp_enqueue_style( $style_handle );
-		}
-	}
-}
-
 $columns       = isset( $attributes['columns'] ) ? (int) $attributes['columns'] : 3;
 $gap           = isset( $attributes['gap'] ) ? (int) $attributes['gap'] : 20;
 $content_width = isset( $attributes['contentWidth'] ) ? sanitize_key( $attributes['contentWidth'] ) : 'wide';

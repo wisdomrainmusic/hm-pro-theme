@@ -3,23 +3,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Ensure frontend styles are loaded (promo-grid pattern).
-if ( ! is_admin() ) {
-	$style_handle = 'hmpro-feature-item-style';
-	if ( ! wp_style_is( $style_handle, 'enqueued' ) ) {
-		$css = __DIR__ . '/style.css';
-		if ( file_exists( $css ) ) {
-			wp_register_style(
-				$style_handle,
-				get_theme_file_uri( 'inc/hm-blocks/blocks/feature-item/style.css' ),
-				array(),
-				filemtime( $css )
-			);
-			wp_enqueue_style( $style_handle );
-		}
-	}
-}
-
 $layout     = isset( $attributes['layout'] ) ? sanitize_key( $attributes['layout'] ) : 'top';
 $align      = isset( $attributes['align'] ) ? sanitize_key( $attributes['align'] ) : 'left';
 $icon_mode  = isset( $attributes['iconMode'] ) ? sanitize_key( $attributes['iconMode'] ) : 'preset';
