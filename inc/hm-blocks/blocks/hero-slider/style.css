@@ -32,8 +32,15 @@
 .hmpro-hero-slider.is-fullwidth{
 	width: 100vw;
 	max-width: 100vw;
-	margin-left: calc(50% - 50vw - var(--hmpro-container-pad, 0px));
-	margin-right: calc(50% - 50vw - var(--hmpro-container-pad, 0px));
+	/*
+	 * Full-bleed centering.
+	 * NOTE: We intentionally avoid subtracting container padding here.
+	 * That subtraction introduces a subtle horizontal overflow (extra scrollbar)
+	 * and can indirectly create layout/height artifacts on some pages.
+	 */
+	margin-left: calc(50% - 50vw);
+	margin-right: calc(50% - 50vw);
+	overflow-x: clip;
 }
 
 /* Boxed mode: constrain the whole hero frame */
