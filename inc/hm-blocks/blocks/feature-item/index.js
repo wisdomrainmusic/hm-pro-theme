@@ -2,7 +2,7 @@
 	const { registerBlockType } = wp.blocks;
 	const { __ } = wp.i18n;
 	const { InspectorControls, RichText, useBlockProps, URLInputButton } = wp.blockEditor;
-	const { PanelBody, SelectControl, RangeControl, TextControl, TextareaControl } = wp.components;
+	const { PanelBody, SelectControl, RangeControl, TextControl, TextareaControl, BaseControl } = wp.components;
 
 	const PRESETS = [
 		{ label: 'Check', value: 'check', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' },
@@ -111,6 +111,12 @@
 							options: PRESETS.map( function ( p ) { return { label: p.label, value: p.value }; } ),
 							onChange: function ( v ) { setAttributes( { iconPreset: v } ); }
 						} ),
+						( iconMode === 'preset' ) && wp.element.createElement( BaseControl, {
+							label: __( 'Selected Icon Preview', 'hm-pro-theme' ),
+							className: 'hmpro-fi-icon-preview-control'
+						},
+							wp.element.createElement( 'div', { className: 'hmpro-fi-icon-preview', dangerouslySetInnerHTML: { __html: getPresetSvg( iconPreset ) } } )
+						),
 						( iconMode === 'custom' ) && wp.element.createElement( TextareaControl, {
 							label: __( 'Custom SVG', 'hm-pro-theme' ),
 							help: __( 'Paste inline <svg>…</svg>. Script tags will be stripped on frontend.', 'hm-pro-theme' ),
