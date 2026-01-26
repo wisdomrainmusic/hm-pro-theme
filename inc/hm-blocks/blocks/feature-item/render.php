@@ -34,6 +34,7 @@ $title_size = max( 12, min( 48, $title_size ) );
 $text_size  = max( 10, min( 32, $text_size ) );
 
 $classes = array(
+	'hmpro-block',
 	'hmpro-feature-item',
 	'is-layout-' . $layout,
 	'is-align-' . $align,

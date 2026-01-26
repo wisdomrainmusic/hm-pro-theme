@@ -78,6 +78,7 @@
 
 			const blockProps = useBlockProps( {
 				className: [
+					'hmpro-block',
 					'hmpro-feature-item',
 					'is-layout-' + layout,
 					'is-align-' + align
@@ -99,6 +100,27 @@
 					'--hmpro-fi-link-fw': linkFontWeight || ''
 				}
 			} );
+
+			// Inline style fallback for editor canvas (like Hero Slider / Promo Grid behavior)
+			const wrapInlineStyle = bgColor ? { background: bgColor } : undefined;
+			const iconInlineStyle = iconColor ? { color: iconColor } : undefined;
+			const titleInlineStyle = {
+				fontSize: ( titleSize || 18 ) + 'px',
+				...( titleColor ? { color: titleColor } : {} ),
+				...( titleFontFamily ? { fontFamily: titleFontFamily } : {} ),
+				...( titleFontWeight ? { fontWeight: titleFontWeight } : {} )
+			};
+			const textInlineStyle = {
+				fontSize: ( textSize || 14 ) + 'px',
+				...( textColor ? { color: textColor } : {} ),
+				...( textFontFamily ? { fontFamily: textFontFamily } : {} ),
+				...( textFontWeight ? { fontWeight: textFontWeight } : {} )
+			};
+			const linkInlineStyle = {
+				...( linkColor ? { color: linkColor } : {} ),
+				...( linkFontFamily ? { fontFamily: linkFontFamily } : {} ),
+				...( linkFontWeight ? { fontWeight: linkFontWeight } : {} )
+			};
 
 			const iconHtml = ( iconMode === 'custom' && customSvg )
 				? customSvg
@@ -251,14 +273,16 @@
 					blockProps,
 					iconHtml ? wp.element.createElement( 'div', {
 						className: 'hmpro-feature-item__icon',
+						style: iconInlineStyle,
 						dangerouslySetInnerHTML: { __html: iconHtml }
 					} ) : null,
 					wp.element.createElement(
 						'div',
-						{ className: 'hmpro-feature-item__content' },
+						{ className: 'hmpro-feature-item__content', style: wrapInlineStyle },
 						wp.element.createElement( RichText, {
 							tagName: 'h3',
 							className: 'hmpro-feature-item__title',
+							style: titleInlineStyle,
 							value: title,
 							placeholder: __( 'Feature title…', 'hm-pro-theme' ),
 							onChange: function ( v ) { setAttributes( { title: v } ); }
@@ -266,13 +290,14 @@
 						wp.element.createElement( RichText, {
 							tagName: 'p',
 							className: 'hmpro-feature-item__text',
+							style: textInlineStyle,
 							value: text,
 							placeholder: __( 'Feature description…', 'hm-pro-theme' ),
 							onChange: function ( v ) { setAttributes( { text: v } ); }
 						} ),
 						( linkUrl && linkLabel ) ? wp.element.createElement(
 							'a',
-							{ className: 'hmpro-feature-item__link', href: linkUrl, onClick: function ( e ) { e.preventDefault(); } },
+							{ className: 'hmpro-feature-item__link', href: linkUrl, style: linkInlineStyle, onClick: function ( e ) { e.preventDefault(); } },
 							linkLabel
 						) : null
 					)
