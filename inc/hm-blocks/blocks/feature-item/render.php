@@ -9,6 +9,8 @@ $icon_mode  = isset( $attributes['iconMode'] ) ? sanitize_key( $attributes['icon
 $preset     = isset( $attributes['iconPreset'] ) ? sanitize_key( $attributes['iconPreset'] ) : 'check';
 $custom_svg = isset( $attributes['customSvg'] ) ? (string) $attributes['customSvg'] : '';
 $icon_size  = isset( $attributes['iconSize'] ) ? (int) $attributes['iconSize'] : 28;
+$title_size = isset( $attributes['titleSize'] ) ? (int) $attributes['titleSize'] : 18;
+$text_size  = isset( $attributes['textSize'] ) ? (int) $attributes['textSize'] : 14;
 $title      = isset( $attributes['title'] ) ? (string) $attributes['title'] : '';
 $text       = isset( $attributes['text'] ) ? (string) $attributes['text'] : '';
 $link_url   = isset( $attributes['linkUrl'] ) ? esc_url_raw( (string) $attributes['linkUrl'] ) : '';
@@ -17,6 +19,8 @@ $link_label = isset( $attributes['linkLabel'] ) ? (string) $attributes['linkLabe
 $layout = in_array( $layout, array( 'top', 'left' ), true ) ? $layout : 'top';
 $align  = in_array( $align, array( 'left', 'center' ), true ) ? $align : 'left';
 $icon_size = max( 14, min( 128, $icon_size ) );
+$title_size = max( 12, min( 48, $title_size ) );
+$text_size  = max( 10, min( 32, $text_size ) );
 
 $classes = array(
 	'hmpro-feature-item',
@@ -34,7 +38,7 @@ if ( $icon_mode === 'custom' && trim( $custom_svg ) !== '' ) {
 $wrapper_attributes = get_block_wrapper_attributes(
 	array(
 		'class' => implode( ' ', $classes ),
-		'style' => '--hmpro-fi-icon:' . $icon_size . 'px;',
+		'style' => '--hmpro-fi-icon:' . $icon_size . 'px;--hmpro-fi-title:' . $title_size . 'px;--hmpro-fi-text:' . $text_size . 'px;',
 	)
 );
 

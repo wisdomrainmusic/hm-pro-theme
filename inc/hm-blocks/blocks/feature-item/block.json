@@ -18,6 +18,8 @@
     "iconPreset": { "type": "string", "default": "check" },
     "customSvg": { "type": "string", "default": "" },
     "iconSize": { "type": "number", "default": 28 },
+    "titleSize": { "type": "number", "default": 18 },
+    "textSize": { "type": "number", "default": 14 },
     "title": { "type": "string", "default": "" },
     "text": { "type": "string", "default": "" },
     "linkUrl": { "type": "string", "default": "" },
