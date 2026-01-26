@@ -238,29 +238,45 @@ add_action( 'wp_enqueue_scripts', function () {
 		hmpro_asset_ver( 'assets/css/footer.css' )
 	);
 
-	wp_enqueue_style(
-		'hmpro-mega-menu',
-		HMPRO_URL . '/assets/css/mega-menu.css',
-		[ 'hmpro-base' ],
-		hmpro_asset_ver( 'assets/css/mega-menu.css' )
-	);
+	/**
+	 * Conditional assets (mobile-first performance):
+	 * - Mega menu assets: only when a Primary menu is assigned (filterable).
+	 * - Mobile header JS: only when a mobile menu exists OR header builder layout is present (filterable).
+	 */
+	$should_enqueue_mega = has_nav_menu( 'primary' );
+	$should_enqueue_mega = (bool) apply_filters( 'hmpro/should_enqueue_mega_menu_assets', $should_enqueue_mega );
+	if ( $should_enqueue_mega ) {
+		wp_enqueue_style(
+			'hmpro-mega-menu',
+			HMPRO_URL . '/assets/css/mega-menu.css',
+			[ 'hmpro-base' ],
+			hmpro_asset_ver( 'assets/css/mega-menu.css' )
+		);
 
-	wp_enqueue_script(
-		'hmpro-mega-menu',
-		get_template_directory_uri() . '/assets/js/mega-menu.js',
-		array(),
-		hmpro_asset_ver( 'assets/js/mega-menu.js' ),
-		true
-	);
+		wp_enqueue_script(
+			'hmpro-mega-menu',
+			get_template_directory_uri() . '/assets/js/mega-menu.js',
+			array(),
+			hmpro_asset_ver( 'assets/js/mega-menu.js' ),
+			true
+		);
+	}
 
-	// Mobile header hamburger + drawer (right side)
-	wp_enqueue_script(
-		'hmpro-mobile-header',
-		get_template_directory_uri() . '/assets/js/mobile-header.js',
-		array(),
-		hmpro_asset_ver( 'assets/js/mobile-header.js' ),
-		true
-	);
+	$should_enqueue_mobile_header = has_nav_menu( 'mobile_menu' );
+	if ( ! $should_enqueue_mobile_header && function_exists( 'hmpro_has_builder_layout' ) ) {
+		$should_enqueue_mobile_header = (bool) hmpro_has_builder_layout( 'header' );
+	}
+	$should_enqueue_mobile_header = (bool) apply_filters( 'hmpro/should_enqueue_mobile_header_js', $should_enqueue_mobile_header );
+	if ( $should_enqueue_mobile_header ) {
+		// Mobile header hamburger + drawer (right side)
+		wp_enqueue_script(
+			'hmpro-mobile-header',
+			get_template_directory_uri() . '/assets/js/mobile-header.js',
+			array(),
+			hmpro_asset_ver( 'assets/js/mobile-header.js' ),
+			true
+		);
+	}
 
 	if ( class_exists( 'WooCommerce' ) ) {
 		wp_enqueue_style(

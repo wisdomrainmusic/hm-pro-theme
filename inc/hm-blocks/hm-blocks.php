@@ -83,7 +83,12 @@ add_action( 'init', 'hmpro_blocks_register_shared_assets', 5 );
  * Enqueue shared frontend styles for any HM Pro block.
  */
 function hmpro_blocks_enqueue_block_assets() {
-	wp_enqueue_style( 'hmpro-blocks' );
+	// Keep editor compatibility: enqueue shared styles in the block editor.
+	if ( is_admin() ) {
+		wp_enqueue_style( 'hmpro-blocks' );
+	} else {
+		return;
+	}
 
 	/**
 	 * Block styles from block.json may enqueue too late when blocks are rendered
@@ -113,6 +118,61 @@ function hmpro_blocks_enqueue_block_assets() {
 	}
 }
 add_action( 'enqueue_block_assets', 'hmpro_blocks_enqueue_block_assets' );
+
+/**
+ * Enqueue HM Pro block frontend styles only when needed.
+ * Builder-aware: homepage and header/footer builder regions may render blocks outside post_content.
+ */
+function hmpro_blocks_enqueue_frontend_assets() {
+	if ( is_admin() ) {
+		return;
+	}
+
+	$should = false;
+	// Homepage often renders landing blocks via builder regions.
+	if ( is_front_page() ) {
+		$should = true;
+	}
+
+	// Singular content: load if any hmpro/* block is present in post content.
+	if ( ! $should && is_singular() ) {
+		$should = has_block( 'hmpro/' );
+	}
+
+	// Builder-aware fallback: if header/footer builder layout exists, load to avoid late widget renders.
+	if ( ! $should && function_exists( 'hmpro_has_builder_layout' ) ) {
+		$should = (bool) ( hmpro_has_builder_layout( 'header' ) || hmpro_has_builder_layout( 'footer' ) );
+	}
+
+	$should = (bool) apply_filters( 'hmpro/should_enqueue_blocks_css', $should );
+	if ( ! $should ) {
+		return;
+	}
+
+	wp_enqueue_style( 'hmpro-blocks' );
+
+	// Preload critical block styles (see note above about widget/builder renders after wp_head).
+	$preload = array(
+		'features-row' => array(
+			'path' => HMPRO_BLOCKS_PATH . '/blocks/features-row/style.css',
+			'url'  => HMPRO_BLOCKS_URL  . '/blocks/features-row/style.css',
+		),
+		'feature-item' => array(
+			'path' => HMPRO_BLOCKS_PATH . '/blocks/feature-item/style.css',
+			'url'  => HMPRO_BLOCKS_URL  . '/blocks/feature-item/style.css',
+		),
+	);
+
+	foreach ( $preload as $key => $asset ) {
+		wp_enqueue_style(
+			'hmpro-block-' . $key,
+			$asset['url'],
+			array( 'hmpro-blocks' ),
+			file_exists( $asset['path'] ) ? filemtime( $asset['path'] ) : HMPRO_VERSION
+		);
+	}
+}
+add_action( 'wp_enqueue_scripts', 'hmpro_blocks_enqueue_frontend_assets', 9 );
 
 /**
  * Enqueue editor-only assets.
