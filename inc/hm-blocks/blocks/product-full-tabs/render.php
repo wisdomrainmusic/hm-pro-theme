@@ -84,6 +84,8 @@ $tab_bg        = isset( $attrs['tabBg'] ) ? (string) $attrs['tabBg'] : '';
 $tab_color     = isset( $attrs['tabColor'] ) ? (string) $attrs['tabColor'] : '';
 $tab_bg_active = isset( $attrs['tabBgActive'] ) ? (string) $attrs['tabBgActive'] : '';
 $tab_c_active  = isset( $attrs['tabColorActive'] ) ? (string) $attrs['tabColorActive'] : '';
+$tab_bg_hover  = isset( $attrs['tabBgHover'] ) ? (string) $attrs['tabBgHover'] : '';
+$tab_c_hover   = isset( $attrs['tabColorHover'] ) ? (string) $attrs['tabColorHover'] : '';
 
 $title_color = isset( $attrs['titleColor'] ) ? (string) $attrs['titleColor'] : '';
 $price_color = isset( $attrs['priceColor'] ) ? (string) $attrs['priceColor'] : '';
@@ -174,15 +176,15 @@ $wrapper_classes = [
                 <article class="hm-pft__slide">
                   <div class="hm-pft__card">
                     <div class="hm-pft__img">
-                      <?php echo $link_open; ?>
+                      <a href="<?php echo esc_url( $permalink ); ?>">
                         <?php echo $img ? $img : ''; ?>
-                      <?php echo $link_close; ?>
+                      </a>
                     </div>
 
                     <h3 class="hm-pft__title">
-                      <?php echo $link_open; ?>
+                      <a href="<?php echo esc_url( $permalink ); ?>">
                         <?php echo esc_html( $title ); ?>
-                      <?php echo $link_close; ?>
+                      </a>
                     </h3>
 
                     <div class="hm-pft__price">
