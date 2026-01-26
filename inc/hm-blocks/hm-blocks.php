@@ -84,6 +84,33 @@ add_action( 'init', 'hmpro_blocks_register_shared_assets', 5 );
  */
 function hmpro_blocks_enqueue_block_assets() {
 	wp_enqueue_style( 'hmpro-blocks' );
+
+	/**
+	 * Block styles from block.json may enqueue too late when blocks are rendered
+	 * from widget areas (dynamic_sidebar) after wp_head(). That causes editor ↔
+	 * frontend mismatch for HM Features Row / Feature Item.
+	 *
+	 * Preload their frontend styles so layout/gap/icon sizing/colors match on the homepage.
+	 */
+	$preload = array(
+		'features-row' => array(
+			'path' => HMPRO_BLOCKS_PATH . '/blocks/features-row/style.css',
+			'url'  => HMPRO_BLOCKS_URL  . '/blocks/features-row/style.css',
+		),
+		'feature-item' => array(
+			'path' => HMPRO_BLOCKS_PATH . '/blocks/feature-item/style.css',
+			'url'  => HMPRO_BLOCKS_URL  . '/blocks/feature-item/style.css',
+		),
+	);
+
+	foreach ( $preload as $key => $asset ) {
+		wp_enqueue_style(
+			'hmpro-block-' . $key,
+			$asset['url'],
+			array( 'hmpro-blocks' ),
+			file_exists( $asset['path'] ) ? filemtime( $asset['path'] ) : HMPRO_VERSION
+		);
+	}
 }
 add_action( 'enqueue_block_assets', 'hmpro_blocks_enqueue_block_assets' );
 
