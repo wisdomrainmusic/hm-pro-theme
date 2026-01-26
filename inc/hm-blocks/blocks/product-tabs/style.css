@@ -34,8 +34,8 @@
 	.hmpro-product-tabs.is-fullwidth {
 	  width: 100vw;
 	  max-width: none;
-	  margin-left: calc(50% - 50vw);
-	  margin-right: calc(50% - 50vw);
+	  margin-left: calc(50% - 50vw - var(--hmpro-container-pad, 0px));
+	  margin-right: calc(50% - 50vw - var(--hmpro-container-pad, 0px));
 	}
 
 .hmpro-pft__tabs,

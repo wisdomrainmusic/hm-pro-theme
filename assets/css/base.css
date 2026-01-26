@@ -18,6 +18,7 @@
 	 */
 	--hmpro-header-side-slot-width: clamp(220px, 26vw, 380px);
 	--hmpro-footer-logo-max-height: 96px;
+	--hmpro-container-pad: 24px;
 
 	--hm-body-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 	--hm-heading-font: inherit;
@@ -74,7 +75,7 @@ h6 {
 .hmpro-container {
 	max-width: 1200px;
 	margin: 0 auto;
-	padding: 24px;
+	padding: var(--hmpro-container-pad, 24px);
 }
 
 /* Buttons */

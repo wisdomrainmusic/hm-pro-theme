@@ -51,14 +51,31 @@
 					const fetched = [];
 					let page = 1;
 					let totalPages = 1;
+					let headerBasedPagination = false;
+					const perPage = 100;
+					const safetyMaxPages = 50;
 
-					while ( page <= totalPages ) {
-						const response = await apiFetch( {
-							path: `/wp/v2/${ taxonomy }?per_page=100&hide_empty=0&page=${ page }`,
-							parse: false,
-						} );
+					while ( page <= totalPages && page <= safetyMaxPages ) {
+						let response;
+						try {
+							response = await apiFetch( {
+								path: `/wp/v2/${ taxonomy }?per_page=${ perPage }&hide_empty=0&page=${ page }`,
+								parse: false,
+							} );
+						} catch ( requestError ) {
+							// Some hosts/caches strip pagination headers; if we overshoot the last page
+							// WordPress may respond with an invalid page error. In headerless mode, treat
+							// that as end-of-list instead of failing the entire dropdown.
+							if ( ! headerBasedPagination ) {
+								break;
+							}
+							throw requestError;
+						}
 						const totalHeader = response.headers.get( 'X-WP-TotalPages' );
-						totalPages = totalHeader ? parseInt( totalHeader, 10 ) : 1;
+						if ( totalHeader ) {
+							headerBasedPagination = true;
+							totalPages = parseInt( totalHeader, 10 ) || 1;
+						}
 						const data = await response.json();
 
 						if ( ! isActive ) {
@@ -67,6 +84,15 @@
 
 						if ( Array.isArray( data ) ) {
 							fetched.push( ...data );
+						}
+
+						// Fallback pagination when REST pagination headers are missing
+						if ( ! headerBasedPagination ) {
+							if ( ! Array.isArray( data ) || data.length < perPage ) {
+								break;
+							}
+							// No headers: keep going until we hit a short page or safetyMaxPages
+							totalPages = safetyMaxPages;
 						}
 
 						page += 1;
