@@ -1,6 +1,32 @@
 # HM Pro Theme — Development Rules (Stability Guide)
 Date
 
+2026-01-26
+
+Module
+
+HM Product Tabs Block (inc/hm-blocks/blocks/product-tabs/)
+
+Summary
+
+Fixed missing product categories/tags in the "Select Term" searchable dropdown by making REST term fetching more robust on hosts that strip pagination headers.
+
+Details
+
+Term fetching now:
+
+Uses a smaller REST payload via `_fields=id,name` (faster + less memory on large catalogs).
+
+Orders results by name for a stable, predictable dropdown.
+
+Treats "invalid page" REST responses as end-of-list in headerless pagination mode, instead of stopping early.
+
+Backward Compatibility
+
+✅ No breaking changes
+✅ Only affects editor term dropdown fetching
+✅ Front-end rendering unchanged
+
 2026-01-25
 
 Module
