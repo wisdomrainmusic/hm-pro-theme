@@ -9,12 +9,13 @@ HM Product Tabs Block (inc/hm-blocks/blocks/product-tabs/)
 
 Summary
 
-Fixed missing product categories/tags in the "Select Term" searchable dropdown by making REST term fetching more robust on hosts that strip pagination headers.
+Fixed missing product categories/tags in the "Select Term" searchable dropdown by ensuring the editor can always load the full taxonomy term list.
 
 Details
 
 Term fetching now:
 
+Uses a custom REST endpoint (`/hmpro/v1/terms`) to return all product categories/tags in a single response (avoids pagination header stripping issues).
 Uses a smaller REST payload via `_fields=id,name` (faster + less memory on large catalogs).
 
 Orders results by name for a stable, predictable dropdown.
