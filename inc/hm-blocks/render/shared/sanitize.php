@@ -68,3 +68,40 @@ function hmpro_kses_svg( $svg ) {
 	// wp_kses expects allowed tags array.
 	return wp_kses( $svg, $allowed );
 }
+
+/**
+ * Sanitize a CSS color string.
+ * Accepts: hex (#fff/#ffffff), rgb/rgba, hsl/hsla, currentColor, transparent, var(--token)
+ */
+function hmpro_sanitize_css_color( $value ) {
+	if ( ! is_string( $value ) ) {
+		return '';
+	}
+	$value = trim( $value );
+	if ( $value === '' ) {
+		return '';
+	}
+
+	// Hex.
+	$hex = sanitize_hex_color( $value );
+	if ( $hex ) {
+		return $hex;
+	}
+
+	$lower = strtolower( $value );
+	if ( in_array( $lower, array( 'currentcolor', 'transparent' ), true ) ) {
+		return $lower;
+	}
+
+	// rgb/rgba/hsl/hsla.
+	if ( preg_match( '/^(rgb|rgba|hsl|hsla)\(([^)]+)\)$/i', $value ) ) {
+		return $value;
+	}
+
+	// CSS var().
+	if ( preg_match( '/^var\(--[a-z0-9\-_]+\)$/i', $value ) ) {
+		return $value;
+	}
+
+	return '';
+}
