@@ -114,7 +114,7 @@ $styles .= '--hmpro-pft-panel-radius:' . esc_attr( (string) max( 0, $panel_radiu
 	// IMPORTANT: Inline width styles override CSS; so full-width must be expressed inline as well.
 	if ( $full_width ) {
 		// Full-bleed like Promo Grid: break out of theme content max-width containers.
-		$styles .= 'width:100vw;max-width:none;margin-left:calc(50% - 50vw - var(--hmpro-container-pad, 0px));margin-right:calc(50% - 50vw - var(--hmpro-container-pad, 0px));';
+		$styles .= 'width:100vw;max-width:none;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);';
 	} else {
 		$styles .= 'width:100%;';
 		if ( $grid_max_width > 0 ) {
