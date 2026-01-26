@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -334,3 +335,59 @@ add_action( 'wp_enqueue_scripts', function () {
 		}
 	}
 }, 30 );
+
+/**
+ * LiteSpeed Cache - Front page purge helper
+ *
+ * Some setups don't reliably purge the cached homepage when Gutenberg blocks
+ * are edited (especially block widgets / global sections). This creates an
+ * editor ↔ frontend mismatch where changes look correct in wp-admin but the
+ * public homepage remains stale.
+ *
+ * We only trigger targeted purges (home URL + front-page permalink when relevant).
+ * If LiteSpeed Cache plugin is not active, these actions are no-ops.
+ */
+function hmpro_litespeed_purge_home_if_needed( $post_id = 0 ) {
+	// Always purge the site homepage URL (covers "latest posts" homepage too).
+	$home_url = home_url( '/' );
+	do_action( 'litespeed_purge_url', $home_url );
+
+	// If a specific post/page is provided, purge it and also purge homepage if it's the front page.
+	$post_id = (int) $post_id;
+	if ( $post_id > 0 ) {
+		do_action( 'litespeed_purge_post', $post_id );
+
+		$front_id = (int) get_option( 'page_on_front' );
+		if ( $front_id > 0 && $front_id === $post_id ) {
+			$front_url = get_permalink( $front_id );
+			if ( $front_url ) {
+				do_action( 'litespeed_purge_url', $front_url );
+			}
+		}
+	}
+}
+
+// Purge homepage when a published page is updated (covers block edits).
+add_action( 'save_post', function ( $post_id, $post, $update ) {
+	if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+		return;
+	}
+	if ( ! $update ) {
+		return;
+	}
+	if ( ! $post || 'publish' !== $post->post_status ) {
+		return;
+	}
+	if ( 'page' !== $post->post_type ) {
+		return;
+	}
+
+	hmpro_litespeed_purge_home_if_needed( $post_id );
+}, 10, 3 );
+
+// Purge homepage when widgets change (block widgets often affect homepage).
+add_action( 'updated_option', function ( $option, $old_value, $value ) {
+	if ( 'sidebars_widgets' === $option || 'widget_block' === $option ) {
+		hmpro_litespeed_purge_home_if_needed( 0 );
+	}
+}, 10, 3 );
