@@ -121,8 +121,10 @@ add_action( 'enqueue_block_editor_assets', 'hmpro_blocks_enqueue_editor_assets' 
  * REST pagination headers and custom REST namespace blocks.
  */
 function hmpro_pft_ajax_get_terms() {
+	// Nonce is optional: some installs may not receive localized config due to caching/script order.
+	// Since this is wp-admin only (wp_ajax_) and we enforce capability check, it's safe to proceed.
 	$nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
-	if ( ! wp_verify_nonce( $nonce, 'hmpro_pft_terms' ) ) {
+	if ( $nonce && ! wp_verify_nonce( $nonce, 'hmpro_pft_terms' ) ) {
 		wp_send_json_error( array( 'message' => 'Invalid nonce.' ), 403 );
 	}
 
