@@ -99,9 +99,17 @@ foreach ( $tiles as $tile ) {
 		continue;
 	}
 
-	$image_url = '';
-	if ( ! empty( $tile['imageId'] ) ) {
-		$image_url = wp_get_attachment_image_url( (int) $tile['imageId'], 'full' );
+	$image_id     = ! empty( $tile['imageId'] ) ? (int) $tile['imageId'] : 0;
+	$image_url    = '';
+	$image_markup = '';
+	if ( $image_id ) {
+		// Use responsive image markup (srcset/sizes + width/height) to reduce bytes and CLS.
+		$image_markup = wp_get_attachment_image( $image_id, 'large', false, array(
+			'class'    => 'hmpro-pg__img',
+			'loading'  => 'lazy',
+			'decoding' => 'async',
+		) );
+		$image_url = wp_get_attachment_image_url( $image_id, 'large' );
 	}
 	if ( empty( $image_url ) && ! empty( $tile['imageUrl'] ) ) {
 		$image_url = (string) $tile['imageUrl'];
@@ -193,7 +201,11 @@ foreach ( $tiles as $tile ) {
 	echo '>';
 
 	echo '<div class="hmpro-pg__media">';
-	echo '<img src="' . esc_url( $image_url ) . '" alt="' . esc_attr( $title ) . '" loading="lazy" />';
+	if ( $image_markup ) {
+		echo $image_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	} else {
+		echo '<img class="hmpro-pg__img" src="' . esc_url( $image_url ) . '" alt="' . esc_attr( $title ) . '" loading="lazy" decoding="async" />';
+	}
 	echo '</div>';
 
 	$overlay_classes = array( 'hmpro-pg__overlay' );
