@@ -16,7 +16,7 @@
 		Notice,
 	} = wp.components;
 
-	const { useState, useEffect } = wp.element;
+	const { useState, useEffect, useRef } = wp.element;
 	const ServerSideRender = wp.serverSideRender;
 	const apiFetch = wp.apiFetch;
 	const el = wp.element.createElement;
@@ -185,6 +185,8 @@
 
 		edit: function ( props ) {
 			const { attributes, setAttributes } = props;
+			const [ liveOptions, setLiveOptions ] = useState( {} );
+			const timersRef = useRef( {} );
 			const {
 				fullWidth,
 				columnsDesktop,
@@ -219,6 +221,56 @@
 				return list.map( function ( t ) {
 					return { label: t.name, value: String( t.id ) };
 				} );
+			}
+
+			function fetchTermsBySearch( index, queryType, input ) {
+				const q = ( input || '' ).trim();
+				if ( q.length < 2 ) {
+					setLiveOptions( function ( prev ) {
+						const next = { ...prev };
+						delete next[ index ];
+						return next;
+					} );
+					return;
+				}
+
+				if ( timersRef.current[ index ] ) {
+					window.clearTimeout( timersRef.current[ index ] );
+				}
+
+				timersRef.current[ index ] = window.setTimeout( async function () {
+					try {
+						const taxonomy = queryType === 'tag' ? 'product_tag' : 'product_cat';
+						const ajaxUrl = window.ajaxurl || ( window.hmproPft && window.hmproPft.ajaxUrl );
+						if ( ! ajaxUrl ) return;
+
+						const form = new window.URLSearchParams();
+						form.append( 'action', 'hmpro_pft_get_terms' );
+						form.append( 'taxonomy', taxonomy );
+						form.append( 'search', q );
+						if ( window.hmproPft && window.hmproPft.nonce ) {
+							form.append( 'nonce', window.hmproPft.nonce );
+						}
+
+						const res = await window.fetch( ajaxUrl, {
+							method: 'POST',
+							credentials: 'same-origin',
+							headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+							body: form.toString(),
+						} );
+						const json = await res.json();
+						if ( json && json.success && Array.isArray( json.data ) ) {
+							const opts = json.data.map( function ( t ) {
+								return { label: t.name, value: String( t.id ) };
+							} );
+							setLiveOptions( function ( prev ) {
+								return { ...prev, [ index ]: opts };
+							} );
+						}
+					} catch ( e ) {
+						// ignore silently; fallback options still exist
+					}
+				}, 250 );
 			}
 
 			function updateTab( index, patch ) {
@@ -415,8 +467,11 @@ const tabsControls = tabs.map( function ( tab, index ) {
 					el( ComboboxControl, {
 						label: __( 'Select Term', 'hm-pro-theme' ),
 						value: String( tab.termId ?? 0 ),
-						options: getTermOptions( queryType ),
+						options: liveOptions[ index ] || getTermOptions( queryType ),
 						onChange: function ( v ) { updateTab( index, { termId: clampInt( v, 0, 999999 ) } ); },
+						onFilterValueChange: function ( input ) {
+							fetchTermsBySearch( index, queryType, input );
+						},
 						help: __( 'Search and pick a product category or tag.', 'hm-pro-theme' ),
 					} ),
 					el( RangeControl, {
