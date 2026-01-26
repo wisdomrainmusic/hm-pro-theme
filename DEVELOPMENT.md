@@ -1,4 +1,73 @@
 # HM Pro Theme — Development Rules (Stability Guide)
+Gutenberg Blocks: InnerBlocks + PHP Render Gotcha
+
+When developing HM blocks that use InnerBlocks together with PHP-based rendering (render.php), it is critical to correctly serialize child blocks into post_content.
+
+The Issue We Hit
+
+HM Features Row uses InnerBlocks to contain hmpro/feature-item.
+
+The block is rendered dynamically in PHP (render.php).
+
+However, the block’s save() function returned null.
+
+Result:
+
+Inner blocks (hmpro/feature-item) were not reliably serialized into post_content.
+
+In the editor, everything looked correct.
+
+On the frontend, $content passed to render.php was empty → Feature Items did not appear.
+
+Other HM blocks worked because they:
+
+did not use InnerBlocks, or
+
+stored all data in attributes instead of child blocks.
+
+The Correct Pattern
+
+If a block:
+
+uses InnerBlocks, and
+
+relies on PHP (render.php) for frontend markup,
+
+then save() must serialize the inner blocks, even if the wrapper markup is generated in PHP.
+
+Correct save() Implementation
+save() {
+	return <InnerBlocks.Content />;
+}
+
+
+Key point:
+
+PHP renders the wrapper/layout.
+
+Gutenberg must still store inner blocks so they are available as $content in PHP.
+
+What NOT to Do
+save() {
+	return null;
+}
+
+
+Returning null is only safe when:
+
+the block has no InnerBlocks, or
+
+all frontend data is stored in attributes and rebuilt entirely in PHP.
+
+Rule of Thumb
+
+InnerBlocks + PHP render = always serialize InnerBlocks.Content.
+
+If child blocks disappear on frontend but exist in editor, check save() first.
+
+CSS, enqueue, cache, and widget logic are secondary until serialization is confirmed.
+
+This guideline prevents editor ↔ frontend mismatches and ensures block content survives caching, templates, and dynamic rendering.
 2026-01-26 – HM Product Tabs (Gutenberg) – Taxonomy Search Fix
 
 Problem
