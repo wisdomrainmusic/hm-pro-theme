@@ -1,4 +1,45 @@
 # HM Pro Theme — Development Rules (Stability Guide)
+2026-01-26 – HM Product Tabs (Gutenberg) – Taxonomy Search Fix
+
+Problem
+HM Product Tabs block’unda kategori / etiket seçimi için kullanılan Gutenberg ComboboxControl, büyük taxonomy listelerinde preload (tüm terimleri baştan çekme) yaklaşımıyla stabil çalışmadı.
+REST pagination, header stripping, cache ve script timing sorunları nedeniyle bazı kategoriler (örn. Sevgililer Günü) editörde hiç görünmüyordu.
+
+Root Cause
+Gutenberg, çok büyük taxonomy setleri için “tüm terimleri baştan yükle + client-side filtrele” modeline uygun değil.
+Elementor widget’larının stabil olmasının sebebi, bu modeli kullanmaması.
+
+Solution
+Elementor-style server-side search (remote search) yaklaşımına geçildi:
+
+Editörde kullanıcı yazdıkça (onFilterValueChange)
+
+admin-ajax.php üzerinden
+
+get_terms() + search parametresi ile
+
+Sadece eşleşen terimler çekiliyor
+
+Bu sayede:
+
+Büyük taxonomy’lerde performans ve stabilite sağlandı
+
+REST / pagination / header sorunları tamamen aşıldı
+
+Block widget Elementor bağımlılığı olmadan kullanılabilir hale geldi
+
+Decision / Guideline
+
+Gutenberg block’larda ağır taxonomy / ürün seçimleri için preload yaklaşımı kULLANILMAYACAK
+
+Bunun yerine her zaman server-side search (AJAX + search) tercih edilecek
+
+Bu pattern, diğer HM block’lar için de referans kabul edilecek
+
+Status
+✅ Fixed
+✅ Tested with large product category sets
+✅ Elementor parity achieved without reverting to Elementor
 Date
 
 2026-01-26
