@@ -188,6 +188,13 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 					$comp_id = isset( $comp['id'] ) ? sanitize_key( $comp['id'] ) : '';
 					$type    = isset( $comp['type'] ) ? sanitize_key( $comp['type'] ) : '';
 
+					// Back-compat: older layouts may store component types with dashes
+					// (e.g. "footer-info"). Normalize to underscore variants so sanitize + renderer
+					// treat them as the same component.
+					if ( '' !== $type && false !== strpos( $type, '-' ) ) {
+						$type = str_replace( '-', '_', $type );
+					}
+
 					if ( '' === $comp_id || '' === $type || ! in_array( $type, $allowed_types, true ) ) {
 						continue;
 					}
