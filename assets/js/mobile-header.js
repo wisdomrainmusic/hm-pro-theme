@@ -3,6 +3,7 @@
  * - Keeps CTA /hesabim visible in drawer head
  */
 (function () {
+  // Emit events for lazy loaders (e.g., translate) when drawer opens/closes.
   function qs(sel, root) {
     return (root || document).querySelector(sel);
   }
@@ -22,6 +23,10 @@
     drawer.setAttribute("aria-hidden", "false");
     setAriaExpanded(btn, true);
     lockBody(true);
+
+    try {
+      window.dispatchEvent(new CustomEvent("hmpro:drawer:open"));
+    } catch (e) {}
   }
 
   function closeDrawer(drawer, btn) {
@@ -30,6 +35,10 @@
     drawer.setAttribute("aria-hidden", "true");
     setAriaExpanded(btn, false);
     lockBody(false);
+
+    try {
+      window.dispatchEvent(new CustomEvent("hmpro:drawer:close"));
+    } catch (e) {}
   }
 
   document.addEventListener("DOMContentLoaded", function () {

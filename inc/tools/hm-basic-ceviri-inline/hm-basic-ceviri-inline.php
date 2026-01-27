@@ -133,6 +133,55 @@ final class HM_Basic_Ceviri_Inline {
     return false;
   }
 
+  private static function builder_layout_has_shortcode( $layout, $shortcode ) {
+    if ( empty( $layout['regions'] ) || ! is_array( $layout['regions'] ) ) {
+      return false;
+    }
+
+    foreach ( $layout['regions'] as $rows ) {
+      if ( empty( $rows ) || ! is_array( $rows ) ) {
+        continue;
+      }
+      foreach ( $rows as $row ) {
+        if ( empty( $row['columns'] ) || ! is_array( $row['columns'] ) ) {
+          continue;
+        }
+        foreach ( $row['columns'] as $column ) {
+          if ( empty( $column['components'] ) || ! is_array( $column['components'] ) ) {
+            continue;
+          }
+          foreach ( $column['components'] as $component ) {
+            if ( empty( $component['settings'] ) || ! is_array( $component['settings'] ) ) {
+              continue;
+            }
+            $content = isset( $component['settings']['content'] ) ? (string) $component['settings']['content'] : '';
+            if ( '' !== $content && has_shortcode( $content, $shortcode ) ) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  private static function should_enqueue_lazy_loader() {
+    $post = get_post();
+    if ( $post && has_shortcode( (string) $post->post_content, 'hm_translate_inline' ) ) {
+      return true;
+    }
+
+    if ( function_exists( 'hmpro_builder_get_layout' ) ) {
+      $layout = hmpro_builder_get_layout( 'header' );
+      if ( self::builder_layout_has_shortcode( $layout, 'hm_translate_inline' ) ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   private static function theme_css_vars($useTheme) {
     if (!$useTheme) {
       return [
@@ -197,6 +246,16 @@ final class HM_Basic_Ceviri_Inline {
     wp_enqueue_script('hm-bc-inline-script');
     wp_add_inline_script('hm-bc-inline-script', 'window.HMBC_INLINE=' . wp_json_encode($data) . ';');
 
+    if ( ! is_admin() && self::should_enqueue_lazy_loader() ) {
+      wp_enqueue_script(
+        'hm-translate-lazy',
+        get_template_directory_uri() . '/assets/js/hm-translate-lazy.js',
+        [],
+        defined( 'HMPRO_VERSION' ) ? HMPRO_VERSION : '1.0.0',
+        true
+      );
+    }
+
     $js = <<<JS
 (function(){
   function setCookie(name,value,days){
@@ -247,13 +306,18 @@ final class HM_Basic_Ceviri_Inline {
   }
 
   function ensureGoogleTranslateInline(){
-    if (window.google && window.google.translate && window.google.translate.TranslateElement) return;
-    if (document.getElementById("google-translate-inline-script")) return;
+    if (window.google && window.google.translate && window.google.translate.TranslateElement) return true;
+    if (document.getElementById("google-translate-inline-script")) return true;
+    if (typeof window.HMBCInlineLoadGoogle === "function") {
+      window.HMBCInlineLoadGoogle();
+      return true;
+    }
     var s=document.createElement("script");
     s.id="google-translate-inline-script";
     s.src="https://translate.google.com/translate_a/element.js?cb=HMBCInlineInit";
     s.async=true;
     document.head.appendChild(s);
+    return true;
   }
 
   window.HMBCInlineInit = function(){
@@ -310,6 +374,7 @@ final class HM_Basic_Ceviri_Inline {
     var urlLang = detectLangFromPath();
     var cookieLang = getCookie(window.HMBC_INLINE.cookieName);
     var saved = urlLang || cookieLang || window.HMBC_INLINE.defaultLang;
+    var pendingLang = saved;
 
     if(saved){
       // persist our cookie as well so subsequent pages keep language even if prefix missing
@@ -321,6 +386,7 @@ final class HM_Basic_Ceviri_Inline {
       if(saved) sel.value = saved;
       sel.addEventListener("change", function(e){
         var lang = e.target.value;
+        pendingLang = lang;
         setCookie(window.HMBC_INLINE.cookieName, lang, 60);
         setGoogTrans(lang);
         ensureInlineTarget();
@@ -329,12 +395,15 @@ final class HM_Basic_Ceviri_Inline {
       });
     });
 
-    if(saved){
+    function activateSaved(){
+      if(!pendingLang) return;
       ensureInlineTarget();
       ensureGoogleTranslateInline();
-      applyInlineLang(saved);
-      oneTimeReloadIfNeeded(saved);
+      applyInlineLang(pendingLang);
+      oneTimeReloadIfNeeded(pendingLang);
     }
+
+    window.addEventListener("hmpro:translate:inline:activate", activateSaved);
   }
 
   function init(){ bindSelects(); }
@@ -379,7 +448,7 @@ JS;
 
     ob_start();
     ?>
-    <div class="hm-bc-wrap <?php echo esc_attr($wrap_class); ?>">
+    <div class="hm-bc-wrap <?php echo esc_attr($wrap_class); ?>" data-hm-translate-inline="1">
       <?php if (!$hideLabel && !empty($label)) : ?>
         <span class="hm-bc-label notranslate" translate="no"><?php echo esc_html($label); ?></span>
       <?php endif; ?>
