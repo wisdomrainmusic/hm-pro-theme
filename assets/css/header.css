@@ -752,3 +752,23 @@ body {
 	top: 0 !important;
 	position: static !important;
 }
+/* =========================================================
+   Mobile: hide Header TOP region (Top Bar) completely
+   ========================================================= */
+@media (max-width: 767px) {
+	.hmpro-header-builder .hmpro-region-header_top {
+		display: none !important;
+	}
+}
+
+/* =========================================================
+   Mobile Drawer: builder region container styling
+   ========================================================= */
+.hmpro-mobile-drawer-builder {
+	padding: 12px 14px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.hmpro-mobile-drawer-builder .hmpro-builder-region {
+	margin: 0;
+}

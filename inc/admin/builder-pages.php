@@ -85,6 +85,7 @@ $layout_json = wp_json_encode( $layout );
 			'header_top'    => __( 'Top', 'hmpro' ),
 			'header_main'   => __( 'Main', 'hmpro' ),
 			'header_bottom' => __( 'Bottom', 'hmpro' ),
+			'header_drawer' => __( 'Mobile Drawer', 'hmpro' ),
 		];
 
 	$elements = [

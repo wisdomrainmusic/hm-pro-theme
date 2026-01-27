@@ -152,6 +152,12 @@ function hmpro_icon_close() {
 					<?php echo hmpro_icon_close(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</button>
 			</div>
+			<?php
+			// Header Builder "Mobile Drawer" region (place HTML/Shortcode here, e.g. HM translate inline).
+			?>
+			<div class="hmpro-mobile-drawer-builder">
+				<?php hmpro_render_builder_region( 'header_drawer', 'header' ); ?>
+			</div>
 			<nav class="hmpro-mobile-nav" aria-label="<?php echo esc_attr__( 'Mobil Menü', 'hm-pro-theme' ); ?>">
 				<?php
 				// Prefer "Mobil Menü" location. Fallback to Primary if not assigned.

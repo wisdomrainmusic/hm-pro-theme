@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * {
  *   schema_version: 1,
  *   regions: {
- *     header_top: [rows], header_main: [rows], header_bottom: [rows]
+ *     header_top: [rows], header_main: [rows], header_bottom: [rows], header_drawer: [rows]
  *   }
  * }
  *
@@ -30,7 +30,7 @@ function hmpro_builder_default_schema( $area ) {
 
 	$regions = ( 'footer' === $area )
 		? array( 'footer_top', 'footer_main', 'footer_bottom' )
-		: array( 'header_top', 'header_main', 'header_bottom' );
+		: array( 'header_top', 'header_main', 'header_bottom', 'header_drawer' );
 
 	$out = array(
 		'schema_version' => 1,
