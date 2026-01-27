@@ -254,6 +254,7 @@
 }
 
 .hmpro-hero__dot{
+	position: relative;
 	width: 10px;
 	height: 10px;
 	border-radius: 999px;
@@ -261,6 +262,22 @@
 	background: rgba(255,255,255,0.5);
 	cursor: pointer;
 	padding: 0;
+}
+
+.hmpro-hero__dot::after{
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 44px;
+	height: 44px;
+	transform: translate(-50%, -50%);
+	border-radius: 999px;
+}
+
+.hmpro-hero__dot:focus-visible{
+	outline: 2px solid currentColor;
+	outline-offset: 3px;
 }
 
 .hmpro-hero__dot.is-active{
