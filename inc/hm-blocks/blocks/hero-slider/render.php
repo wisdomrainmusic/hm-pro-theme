@@ -398,14 +398,14 @@ if ( $has_multiple && $show_arrows ) {
 	echo '<button class="hmpro-hero__arrow hmpro-hero__arrow--next" type="button" aria-label="Next slide">›</button>';
 }
 
-if ( $has_multiple && $show_dots ) {
-	echo '<div class="hmpro-hero__dots" role="tablist" aria-label="Slides">';
-	for ( $i = 0; $i < count( $slides ); $i++ ) {
-		$active = ( $i === 0 );
-		echo '<button class="hmpro-hero__dot' . ( $active ? ' is-active' : '' ) . '" type="button" data-index="' . esc_attr( (string) $i ) . '" aria-label="Go to slide ' . esc_attr( (string) ( $i + 1 ) ) . '"></button>';
+	if ( $has_multiple && $show_dots ) {
+		echo '<div class="hmpro-hero__dots" role="tablist" aria-label="Slides">';
+		for ( $i = 0; $i < count( $slides ); $i++ ) {
+			$active = ( $i === 0 );
+			echo '<button class="hmpro-hero__dot' . ( $active ? ' is-active' : '' ) . '" type="button" data-index="' . esc_attr( (string) $i ) . '" aria-label="Go to slide ' . esc_attr( (string) ( $i + 1 ) ) . '"' . ( $active ? ' aria-current="true"' : '' ) . '></button>';
+		}
+		echo '</div>';
 	}
-	echo '</div>';
-}
 
 echo '</div>'; // frame
 echo '</div>'; // wrapper

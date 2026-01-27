@@ -47,8 +47,13 @@
 			});
 
 			dots.forEach(function (d, i) {
-				if (i === idx) d.classList.add("is-active");
-				else d.classList.remove("is-active");
+				if (i === idx) {
+					d.classList.add("is-active");
+					d.setAttribute("aria-current", "true");
+				} else {
+					d.classList.remove("is-active");
+					d.removeAttribute("aria-current");
+				}
 			});
 		}
 
