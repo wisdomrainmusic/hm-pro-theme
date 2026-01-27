@@ -82,15 +82,15 @@ add_action( 'admin_init', function () {
 	$json = isset( $_POST['hmpro_builder_layout'] ) ? wp_unslash( $_POST['hmpro_builder_layout'] ) : '';
 	$decoded = json_decode( (string) $json, true );
 
-	$clean = null;
-	if ( is_array( $decoded ) && isset( $decoded['regions'] ) && is_array( $decoded['regions'] ) && ! empty( $decoded['regions'] ) ) {
-		$clean = function_exists( 'hmpro_builder_sanitize_layout' )
-			? hmpro_builder_sanitize_layout( $area, $decoded )
-			: array();
-	}
+	// Always sanitize + save, even if payload is partial.
+	// This prevents "Save" from silently doing nothing for certain components/settings.
+	$payload = is_array( $decoded ) ? $decoded : array();
+	$clean   = function_exists( 'hmpro_builder_sanitize_layout' )
+		? hmpro_builder_sanitize_layout( $area, $payload )
+		: hmpro_builder_default_schema( $area );
 
 	$did_update = false;
-	if ( null !== $clean && function_exists( 'hmpro_builder_update_layout' ) ) {
+	if ( function_exists( 'hmpro_builder_update_layout' ) ) {
 		$did_update = (bool) hmpro_builder_update_layout( $area, $clean );
 	}
 
