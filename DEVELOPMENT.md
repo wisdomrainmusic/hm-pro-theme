@@ -1,4 +1,46 @@
 # HM Pro Theme — Development Rules (Stability Guide)
+2026-01-27 — HM Pro Theme Performance & Risk Audit (Report Only)
+
+Scope: Mobile-first (Google PageSpeed Insights)
+Branch status: Report only — no code changes merged to main
+
+Summary
+
+HM Pro Theme mimarisi modüler, stabil ve production-ready.
+
+Mobil PageSpeed performansı 70+ bandına çıkarıldı; masaüstü 90+ seviyesinde.
+
+Mevcut skor kayıpları mimari hatadan değil, global asset yükleme stratejisinden kaynaklanıyor.
+
+Tema, Astra ve benzeri ticari temaların mobil performansını yakalamış veya aşmıştır.
+
+Key Findings
+
+Hero slider LCP öğesi mobilde ana darboğazdır; erişilebilirlik denemeleri sırasında layout riskleri oluşmuştur.
+
+Block ve widget CSS/JS dosyalarının global enqueue edilmesi PSI’da “unused JS/CSS” uyarılarına yol açmaktadır.
+
+CLS riski oluşturan alanlar sınırlıdır ve kritik seviyede değildir.
+
+Accessibility skorları 90+ seviyesine çıkarılmıştır.
+
+Decisions
+
+Hero slider erişilebilirlik ve dot revizyonları ertelendi (layout regression riski).
+
+Son erişilebilirlik diff’leri main branch’e alınmadı.
+
+Tema stabilitesi korunarak optimizasyon süreci duraklatıldı.
+
+Next Possible Steps (Deferred)
+
+Hero slider için LCP odaklı ayrı sprint
+
+Block bazlı conditional enqueue
+
+Translate script lazy-load (menu trigger sonrası)
+
+Status: No further action required at this stage.
 Gutenberg Blocks: InnerBlocks + PHP Render Gotcha
 
 When developing HM blocks that use InnerBlocks together with PHP-based rendering (render.php), it is critical to correctly serialize child blocks into post_content.
