@@ -1,5 +1,6 @@
 # HM Pro Theme — Development Rules (Stability Guide)
 ## 2026-01-27 — External Performance & Risk Audit (Codex)
+2026-01-27 — HM Pro blocks removed from theme; blocks will be shipped as a separate plugin (hmpro/*).
 
 An external, report-only performance and risk audit was completed for HM Pro Theme
 with a mobile-first Google PageSpeed Insights focus.
