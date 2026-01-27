@@ -1,4 +1,32 @@
 # HM Pro Theme — Development Rules (Stability Guide)
+## 2026-01-27 — External Performance & Risk Audit (Codex)
+
+An external, report-only performance and risk audit was completed for HM Pro Theme
+with a mobile-first Google PageSpeed Insights focus.
+
+### Summary
+- Theme architecture is modular, stable, and production-ready.
+- No deprecated WordPress or WooCommerce APIs were identified.
+- No critical security issues were found.
+- Mobile performance is limited primarily by global asset loading strategy,
+  not by architectural flaws.
+- Hero slider and block system were identified as optional optimization targets,
+  not blockers for release.
+
+### Key Findings
+- Some render-blocking CSS is globally enqueued (base, header, footer, Woo CSS).
+- Google Fonts loading can impact mobile LCP without preconnect/self-hosting.
+- Translation tool assets are injected globally and could be scoped further.
+- One Customizer reset AJAX endpoint lacks an explicit capability check.
+- No high-risk correctness or stability issues were identified.
+
+### Decisions
+- No code changes were merged as part of this audit.
+- Optimization opportunities were logged for future iterations.
+- Theme deemed technically ready for market release.
+
+Status: Audit completed, no blocking issues.
+
 2026-01-27 — HM Pro Theme Performance & Risk Audit (Report Only)
 
 Scope: Mobile-first (Google PageSpeed Insights)
