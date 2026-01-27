@@ -36,17 +36,15 @@ require_once HMPRO_BLOCKS_PATH . '/render/shared/templates.php';
  */
 add_filter( 'block_categories_all', function ( $categories ) {
 	$slug = 'hmpro';
-	foreach ( $categories as $cat ) {
-		if ( isset( $cat['slug'] ) && $cat['slug'] === $slug ) {
-			return $categories;
-		}
-	}
+	$categories = array_values( array_filter( $categories, function ( $cat ) use ( $slug ) {
+		return ! ( isset( $cat['slug'] ) && $cat['slug'] === $slug );
+	} ) );
 
-	$categories[] = [
+	array_unshift( $categories, [
 		'slug'  => $slug,
 		'title' => __( 'HM Pro Blocks', 'hm-pro-theme' ),
 		'icon'  => null,
-	];
+	] );
 
 	return $categories;
 }, 20 );
