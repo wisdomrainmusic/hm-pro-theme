@@ -2,6 +2,7 @@
 /**
  * Render callback for HM Hero Slider block.
  */
+// LCP optimization: render first slide media as <img>/<picture> to allow fetchpriority.
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -247,6 +248,9 @@ echo '<div class="hmpro-hero__slides" data-autoplay="' . esc_attr( $autoplay ? '
 foreach ( $slides as $i => $s ) {
 	$s = is_array( $s ) ? $s : [];
 
+	// One-time preload for the first slide (media-query gated).
+	static $hmpro_hero_did_preload = false;
+
 	$media_id   = isset( $s['mediaId'] ) ? absint( $s['mediaId'] ) : 0;
 	$media_url  = isset( $s['mediaUrl'] ) ? esc_url_raw( (string) $s['mediaUrl'] ) : '';
 
@@ -299,7 +303,6 @@ foreach ( $slides as $i => $s ) {
 		$resolved_m = $media_url_m;
 	}
 
-
 	$is_active = ( $i === 0 );
 	$slide_classes = 'hmpro-hero-slide' . ( $is_active ? ' is-active' : '' );
 
@@ -327,8 +330,42 @@ foreach ( $slides as $i => $s ) {
 	}
 	$slide_style = $style_bits ? ' style="' . esc_attr( implode( ';', $style_bits ) ) . ';"' : '';
 
+	// Preload first-slide image(s) with media conditions to avoid double download.
+	if ( $is_active && ! $hmpro_hero_did_preload ) {
+		if ( $resolved_m ) {
+			echo '<link rel="preload" as="image" href="' . esc_url( $resolved_m ) . '" media="(max-width: 767px)">' . "\n";
+		}
+		if ( $resolved_t ) {
+			echo '<link rel="preload" as="image" href="' . esc_url( $resolved_t ) . '" media="(min-width: 768px) and (max-width: 1024px)">' . "\n";
+		}
+		if ( $resolved_url ) {
+			echo '<link rel="preload" as="image" href="' . esc_url( $resolved_url ) . '" media="(min-width: 1025px)">' . "\n";
+		}
+		$hmpro_hero_did_preload = true;
+	}
+
 	echo '<div class="' . esc_attr( $slide_classes ) . '" data-index="' . esc_attr( (string) $i ) . '" aria-hidden="' . esc_attr( $is_active ? 'false' : 'true' ) . '"' . $slide_style . '>';
 	echo '<div class="hmpro-hero-slide__media">';
+
+	// LCP: render first slide as real image so we can set fetchpriority/loading.
+	if ( $is_active && ( $resolved_url || $resolved_t || $resolved_m ) ) {
+		// Pick a safe fallback src (prefer mobile if exists, else desktop).
+		$fallback_src = $resolved_m ? $resolved_m : ( $resolved_url ? $resolved_url : $resolved_t );
+
+		echo '<picture class="hmpro-hero-slide__lcp-picture">';
+		if ( $resolved_m ) {
+			echo '<source media="(max-width: 767px)" srcset="' . esc_url( $resolved_m ) . '">';
+		}
+		if ( $resolved_t ) {
+			echo '<source media="(min-width: 768px) and (max-width: 1024px)" srcset="' . esc_url( $resolved_t ) . '">';
+		}
+		if ( $resolved_url ) {
+			echo '<source media="(min-width: 1025px)" srcset="' . esc_url( $resolved_url ) . '">';
+		}
+		echo '<img class="hmpro-hero-slide__lcp-img" src="' . esc_url( $fallback_src ) . '" alt="" fetchpriority="high" loading="eager" decoding="async">';
+		echo '</picture>';
+	}
+
 	echo '<div class="hmpro-hero-slide__bg"></div>';
 
 	echo '</div>'; // media
