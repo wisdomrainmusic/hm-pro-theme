@@ -38,7 +38,7 @@ function hmpro_register_admin_menu() {
 		'hmpro-theme',
 		'hmpro_theme_dashboard_page_render',
 		'dashicons-admin-customizer',
-		59
+		3
 	);
 
 	add_submenu_page(
@@ -216,3 +216,36 @@ function hmpro_render_importers_page() {
 function hmpro_render_woocommerce_notice() {
 	echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'WooCommerce is not active. Some tools require WooCommerce to function.', 'hmpro' ) . '</p></div>';
 }
+
+/**
+ * Ensure HM Pro Theme menu appears directly under Dashboard.
+ */
+add_filter( 'custom_menu_order', '__return_true' );
+add_filter(
+	'menu_order',
+	function ( $menu_order ) {
+		if ( ! $menu_order ) {
+			return true;
+		}
+
+		$hmpro     = 'hmpro-theme';
+		$dashboard = 'index.php';
+
+		if ( ! in_array( $hmpro, $menu_order, true ) ) {
+			return $menu_order;
+		}
+
+		$menu_order = array_values( array_diff( $menu_order, [ $hmpro ] ) );
+		$new_menu   = [];
+
+		foreach ( $menu_order as $item ) {
+			$new_menu[] = $item;
+
+			if ( $item === $dashboard ) {
+				$new_menu[] = $hmpro;
+			}
+		}
+
+		return $new_menu;
+	}
+);
