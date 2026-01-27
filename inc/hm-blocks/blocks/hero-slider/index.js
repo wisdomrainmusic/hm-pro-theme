@@ -961,7 +961,7 @@
 							) : null,
 							( showDots && normalizedSlides.length > 1 ) ? wp.element.createElement(
 								"div",
-								{ className: "hmpro-hero__dots", role: "tablist", "aria-label": "Slides" },
+								{ className: "hmpro-hero__dots", role: "navigation", "aria-label": "Slides" },
 								normalizedSlides.map( function ( s, idx ) {
 									return wp.element.createElement( "button", {
 										key: idx,
