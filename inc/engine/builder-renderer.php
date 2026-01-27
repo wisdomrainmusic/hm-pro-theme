@@ -288,6 +288,11 @@ function hmpro_builder_render_component( $comp, $context = 'header' ) {
 	}
 
 	$type = isset( $comp['type'] ) ? sanitize_key( $comp['type'] ) : '';
+	// Back-compat: normalize dashed component types (e.g. "footer-info")
+	// to underscore variants used by the renderer switch.
+	if ( '' !== $type && false !== strpos( $type, '-' ) ) {
+		$type = str_replace( '-', '_', $type );
+	}
 	$id   = isset( $comp['id'] ) ? sanitize_key( $comp['id'] ) : '';
 	$set  = isset( $comp['settings'] ) && is_array( $comp['settings'] ) ? $comp['settings'] : array();
 
