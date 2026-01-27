@@ -25,6 +25,14 @@
 					column.components.forEach(function (comp) {
 						if (!comp || typeof comp !== 'object' || !comp.type) return;
 						comp.type = normalizeCompType(comp.type);
+
+						// IMPORTANT:
+						// PHP sanitizers may serialize empty settings as [] (an Array) instead of {} (an Object).
+						// JSON.stringify() drops custom properties on Arrays, so component settings appear to "not save"
+						// after refresh. Normalize settings to a plain object.
+						if (!comp.settings || typeof comp.settings !== 'object' || Array.isArray(comp.settings)) {
+							comp.settings = {};
+						}
 					});
 				});
 			});
@@ -445,7 +453,11 @@
 		while (modalBody.firstChild) modalBody.removeChild(modalBody.firstChild);
 
 		var type = normalizeCompType(comp.type);
-		var settings = comp.settings || {};
+		// Ensure settings is a plain object (not Array) so JSON.stringify keeps custom props.
+		if (!comp.settings || typeof comp.settings !== 'object' || Array.isArray(comp.settings)) {
+			comp.settings = {};
+		}
+		var settings = comp.settings;
 
 		if (type === 'mega_column_menu') {
 			var wrap = document.createElement('div');
@@ -1193,7 +1205,10 @@
 			}
 
 			var comp = comps[index];
-			comp.settings = comp.settings || {};
+			// Ensure settings is always a plain object.
+			if (!comp.settings || typeof comp.settings !== 'object' || Array.isArray(comp.settings)) {
+				comp.settings = {};
+			}
 
 			var type = normalizeCompType(comp.type);
 
