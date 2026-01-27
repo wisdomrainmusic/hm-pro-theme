@@ -204,7 +204,10 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 						$v = $settings[ $k ];
 
 						// Basic sanitization by key.
-						if ( in_array( $k, array( 'text', 'placeholder', 'title', 'lines', 'alignment', 'visibility', 'spacing', 'rel', 'target', 'source', 'location', 'size', 'gap' ), true ) ) {
+						if ( in_array( $k, array( 'lines', 'text' ), true ) ) {
+							// Preserve multi-line content for textarea-like fields.
+							$clean_settings[ $k ] = is_scalar( $v ) ? sanitize_textarea_field( (string) $v ) : '';
+						} elseif ( in_array( $k, array( 'placeholder', 'title', 'alignment', 'visibility', 'spacing', 'rel', 'target', 'source', 'location', 'size', 'gap' ), true ) ) {
 							$clean_settings[ $k ] = is_scalar( $v ) ? sanitize_text_field( (string) $v ) : '';
 						} elseif ( in_array( $k, array( 'menu_id', 'depth', 'width', 'height', 'root_item_id' ), true ) ) {
 						$clean_settings[ $k ] = absint( $v );
