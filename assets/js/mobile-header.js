@@ -13,7 +13,37 @@
     btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
   }
 
-  function lockBody(lock) {
+  
+
+// When drawer is aria-hidden=true, make sure nothing inside is focusable.
+// This prevents Lighthouse warning: aria-hidden elements contain focusable descendants.
+function setDrawerFocusables(drawer, isOpen) {
+  if (!drawer) return;
+  var focusables = drawer.querySelectorAll('a, button, input, select, textarea, [tabindex]');
+  for (var i = 0; i < focusables.length; i++) {
+    var el = focusables[i];
+    if (!el) continue;
+
+    if (!isOpen) {
+      // Store previous tabindex (once)
+      if (!el.hasAttribute('data-hmpro-prev-tabindex')) {
+        var prev = el.getAttribute('tabindex');
+        el.setAttribute('data-hmpro-prev-tabindex', prev === null ? '' : prev);
+      }
+      el.setAttribute('tabindex', '-1');
+    } else {
+      var prev2 = el.getAttribute('data-hmpro-prev-tabindex');
+      if (prev2 !== null) {
+        el.removeAttribute('data-hmpro-prev-tabindex');
+        if (prev2 === '') el.removeAttribute('tabindex');
+        else el.setAttribute('tabindex', prev2);
+      } else {
+        if (el.getAttribute('tabindex') === '-1') el.removeAttribute('tabindex');
+      }
+    }
+  }
+}
+function lockBody(lock) {
     document.documentElement.classList.toggle("hmpro-mobile-drawer-open", !!lock);
   }
 
@@ -22,6 +52,7 @@
     drawer.classList.add("is-open");
     drawer.setAttribute("aria-hidden", "false");
     setAriaExpanded(btn, true);
+    setDrawerFocusables(drawer, true);
     lockBody(true);
 
     try {
@@ -34,6 +65,7 @@
     drawer.classList.remove("is-open");
     drawer.setAttribute("aria-hidden", "true");
     setAriaExpanded(btn, false);
+    setDrawerFocusables(drawer, false);
     lockBody(false);
 
     try {
@@ -55,7 +87,17 @@
     drawer.addEventListener("click", function (e) {
       var t = e.target;
       if (!t) return;
-      if (t && t.getAttribute && t.getAttribute("data-hmpro-close") === "1") {
+
+      // Close can be triggered by overlay, the close button, or any child (e.g. SVG icon).
+      // Use closest() so clicks on the inner icon still close the drawer.
+      var closeEl = null;
+      if (t && t.closest) {
+        closeEl = t.closest('[data-hmpro-close="1"]');
+      } else if (t && t.getAttribute && t.getAttribute("data-hmpro-close") === "1") {
+        closeEl = t;
+      }
+
+      if (closeEl) {
         e.preventDefault();
         closeDrawer(drawer, toggle);
       }

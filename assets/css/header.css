@@ -128,9 +128,17 @@
 }
 
 /* Ensure header regions sit above the banner */
-#site-header.hmpro-hb-enabled .hmpro-builder-region,
-#site-header.hmpro-hb-enabled .hmpro-mobile-menu-toggle{
+#site-header.hmpro-hb-enabled .hmpro-builder-region{
 	position: relative;
+	z-index: 3;
+}
+
+/* IMPORTANT:
+   Do NOT change the hamburger to position:relative when the banner is enabled.
+   The toggle is absolutely positioned (right/top) and needs to stay that way,
+   otherwise it falls back into document flow and appears on the left.
+*/
+#site-header.hmpro-hb-enabled .hmpro-mobile-menu-toggle{
 	z-index: 3;
 }
 
@@ -516,6 +524,14 @@
 }
 .hmpro-mobile-menu-toggle .hmpro-icon{
 	display:block;
+}
+
+
+
+/* Accessibility: visible focus for keyboard users */
+:where(.hmpro-mobile-menu-toggle, .hmpro-mobile-drawer-close, .hmpro-mobile-account-cta, .hmpro-mobile-nav a):focus-visible{
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
 }
 
 /* Slight hover/active polish */

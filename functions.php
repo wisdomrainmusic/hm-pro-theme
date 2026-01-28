@@ -135,6 +135,7 @@ require_once HMPRO_PATH . '/inc/core/upgrade.php';
 require_once HMPRO_PATH . '/inc/core/setup.php';
 require_once HMPRO_PATH . '/inc/core/widgets.php';
 require_once HMPRO_PATH . '/inc/core/enqueue.php';
+require_once HMPRO_PATH . '/inc/compat/mn-overflow-footer-gap.php';
 require_once HMPRO_PATH . '/inc/core/customizer.php';
 require_once HMPRO_PATH . '/inc/core/template-tags.php';
 

@@ -19,8 +19,8 @@ if ( ! function_exists( 'hmpro_render_legacy_header' ) ) {
 		$hmpro_hb_header_style = '';
 		if ( $hmpro_hb_enabled ) {
 			$gap = absint( get_theme_mod( 'hmpro_hb_after_gap', 0 ) );
-			if ( $gap > 200 ) {
-				$gap = 200;
+			if ( $gap > 1600 ) {
+				$gap = 1600;
 			}
 			$hmpro_hb_header_style = ' style="--hmpro-hb-after-gap:' . esc_attr( (string) $gap ) . 'px;"';
 		}
@@ -102,8 +102,8 @@ function hmpro_icon_close() {
 	$hmpro_hb_header_style = '';
 	if ( $hmpro_hb_enabled ) {
 		$gap = absint( get_theme_mod( 'hmpro_hb_after_gap', 0 ) );
-		if ( $gap > 200 ) {
-			$gap = 200;
+		if ( $gap > 1600 ) {
+			$gap = 1600;
 		}
 		$hmpro_hb_header_style = ' style="--hmpro-hb-after-gap:' . esc_attr( (string) $gap ) . 'px;"';
 	}
