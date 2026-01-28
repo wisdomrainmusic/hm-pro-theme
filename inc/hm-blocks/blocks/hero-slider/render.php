@@ -37,6 +37,53 @@ if ( ! function_exists( 'hmpro_hero_sanitize_css_text' ) ) {
 	}
 }
 
+
+if ( ! function_exists( 'hmpro_hero_queue_preload' ) ) {
+	/**
+	 * Queue a hero preload link for output in <head>.
+	 * Outputting preloads in the render body is too late for LCP discovery.
+	 */
+	function hmpro_hero_queue_preload( $href, $media = '' ) {
+		$href  = is_string( $href ) ? trim( $href ) : '';
+		$media = is_string( $media ) ? trim( $media ) : '';
+		if ( $href === '' ) {
+			return;
+		}
+		if ( ! isset( $GLOBALS['hmpro_hero_preloads'] ) || ! is_array( $GLOBALS['hmpro_hero_preloads'] ) ) {
+			$GLOBALS['hmpro_hero_preloads'] = [];
+		}
+		$key = md5( $href . '|' . $media );
+		$GLOBALS['hmpro_hero_preloads'][ $key ] = [ 'href' => $href, 'media' => $media ];
+
+		// Output early in head, once.
+		if ( ! has_action( 'wp_head', 'hmpro_hero_output_preloads' ) ) {
+			add_action( 'wp_head', 'hmpro_hero_output_preloads', 1 );
+		}
+	}
+}
+
+if ( ! function_exists( 'hmpro_hero_output_preloads' ) ) {
+	/**
+	 * Output queued preload links.
+	 */
+	function hmpro_hero_output_preloads() {
+		if ( is_admin() ) {
+			return;
+		}
+		$items = $GLOBALS['hmpro_hero_preloads'] ?? [];
+		if ( ! is_array( $items ) || empty( $items ) ) {
+			return;
+		}
+		foreach ( $items as $it ) {
+			$href  = isset( $it['href'] ) ? (string) $it['href'] : '';
+			$media = isset( $it['media'] ) ? (string) $it['media'] : '';
+			if ( $href === '' ) {
+				continue;
+			}
+			echo '<link rel="preload" as="image" href="' . esc_url( $href ) . '"' . ( $media !== '' ? ' media="' . esc_attr( $media ) . '"' : '' ) . '>' . "\n";
+		}
+	}
+}
 $attrs = isset( $attributes ) && is_array( $attributes ) ? $attributes : [];
 
 $only_homepage = ! empty( $attrs['onlyHomepage'] );
@@ -335,21 +382,22 @@ foreach ( $slides as $i => $s ) {
 	}
 	$slide_style = $style_bits ? ' style="' . esc_attr( implode( ';', $style_bits ) ) . ';"' : '';
 
-	// Preload first-slide image(s) with media conditions to avoid double download.
+	// Preload first-slide image(s) early in <head> (media-query gated) to improve LCP discovery.
 	if ( $is_active && ! $hmpro_hero_did_preload ) {
 		if ( $resolved_m ) {
-			echo '<link rel="preload" as="image" href="' . esc_url( $resolved_m ) . '" media="(max-width: 767px)">' . "\n";
+			hmpro_hero_queue_preload( $resolved_m, '(max-width: 767px)' );
 		}
 		if ( $resolved_t ) {
-			echo '<link rel="preload" as="image" href="' . esc_url( $resolved_t ) . '" media="(min-width: 768px) and (max-width: 1024px)">' . "\n";
+			hmpro_hero_queue_preload( $resolved_t, '(min-width: 768px) and (max-width: 1024px)' );
 		}
 		if ( $resolved_url ) {
-			echo '<link rel="preload" as="image" href="' . esc_url( $resolved_url ) . '" media="(min-width: 1025px)">' . "\n";
+			hmpro_hero_queue_preload( $resolved_url, '(min-width: 1025px)' );
 		}
 		$hmpro_hero_did_preload = true;
 	}
 
-	echo '<div class="' . esc_attr( $slide_classes ) . '" data-index="' . esc_attr( (string) $i ) . '" aria-hidden="' . esc_attr( $is_active ? 'false' : 'true' ) . '"' . $slide_style . '>';
+	
+echo '<div class="' . esc_attr( $slide_classes ) . '" data-index="' . esc_attr( (string) $i ) . '" aria-hidden="' . esc_attr( $is_active ? 'false' : 'true' ) . '"' . $slide_style . '>';
 	echo '<div class="hmpro-hero-slide__media">';
 
 	// LCP: render first slide as real image so we can set fetchpriority/loading.
@@ -367,7 +415,7 @@ foreach ( $slides as $i => $s ) {
 		if ( $resolved_url ) {
 			echo '<source media="(min-width: 1025px)" srcset="' . esc_url( $resolved_url ) . '">';
 		}
-		echo '<img class="hmpro-hero-slide__lcp-img" src="' . esc_url( $fallback_src ) . '" alt="" fetchpriority="high" loading="eager" decoding="async">';
+		echo '<img class="hmpro-hero-slide__lcp-img" src="' . esc_url( $fallback_src ) . '" alt="" fetchpriority="high" loading="eager" decoding="sync">';
 		echo '</picture>';
 	}
 
@@ -407,7 +455,7 @@ if ( $has_multiple && $show_dots ) {
 	echo '<div class="hmpro-hero__dots" role="tablist" aria-label="Slides">';
 	for ( $i = 0; $i < count( $slides ); $i++ ) {
 		$active = ( $i === 0 );
-		echo '<button class="hmpro-hero__dot' . ( $active ? ' is-active' : '' ) . '" type="button" data-index="' . esc_attr( (string) $i ) . '" aria-label="Go to slide ' . esc_attr( (string) ( $i + 1 ) ) . '"></button>';
+		echo '<button class="hmpro-hero__dot' . ( $active ? ' is-active' : '' ) . '" type="button" data-index="' . esc_attr( (string) $i ) . '" role="tab" aria-selected="' . ( $active ? 'true' : 'false' ) . '" tabindex="' . ( $active ? '0' : '-1' ) . '" aria-label="Go to slide ' . esc_attr( (string) ( $i + 1 ) ) . '"></button>';
 	}
 	echo '</div>';
 }

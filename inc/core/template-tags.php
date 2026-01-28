@@ -24,8 +24,8 @@ function hmpro_render_header_bg_banner() {
 	$show_button = (int) get_theme_mod( 'hmpro_hb_show_button', 1 ) === 1;
 
 	$after_gap = absint( get_theme_mod( 'hmpro_hb_after_gap', 0 ) );
-	if ( $after_gap > 200 ) {
-		$after_gap = 200;
+	if ( $after_gap > 1600 ) {
+		$after_gap = 1600;
 	}
 
 	$slider_enabled = (int) get_theme_mod( 'hmpro_hb_slider_enable', 0 ) === 1;

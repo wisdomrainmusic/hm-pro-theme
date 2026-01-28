@@ -688,8 +688,8 @@ add_action( 'customize_register', function ( $wp_customize ) {
 			if ( $v < 0 ) {
 				$v = 0;
 			}
-			if ( $v > 200 ) {
-				$v = 200;
+			if ( $v > 1600 ) {
+				$v = 1600;
 			}
 			return $v;
 		},
@@ -700,7 +700,7 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'description' => __( 'İlk içerik bloğunun bannerın hemen altından başlaması için 0 önerilir.', 'hm-pro-theme' ),
 		'section'     => 'hmpro_header_bg_banner',
 		'type'        => 'number',
-		'input_attrs' => [ 'min' => 0, 'max' => 200, 'step' => 1 ],
+		'input_attrs' => [ 'min' => 0, 'max' => 1600, 'step' => 1 ],
 	] );
 
 	// Slider / Gallery (playful premium upgrade).

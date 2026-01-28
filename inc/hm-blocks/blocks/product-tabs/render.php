@@ -116,7 +116,9 @@ if ( $grid_max_width > 0 ) {
 	$styles .= '--hmpro-pft-maxw:' . esc_attr( (string) $grid_max_width ) . 'px;';
 }
 
-$styles .= 'width:100%;';
+if ( ! $full_width ) {
+	$styles .= 'width:100%;';
+}
 
 $wrapper_classes = 'hmpro-pft';
 if ( $tabs_layout === 'vertical' ) {

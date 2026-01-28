@@ -47,8 +47,10 @@
 			});
 
 			dots.forEach(function (d, i) {
-				if (i === idx) d.classList.add("is-active");
-				else d.classList.remove("is-active");
+				var active = (i === idx);
+				d.classList.toggle("is-active", active);
+				d.setAttribute("aria-selected", active ? "true" : "false");
+				d.setAttribute("tabindex", active ? "0" : "-1");
 			});
 		}
 
