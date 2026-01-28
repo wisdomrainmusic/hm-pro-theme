@@ -84,20 +84,21 @@
 .hmpro-pft.is-fullwidth,
 .hmpro-product-tabs.is-fullwidth {
   position: relative;
-  width: 100vw;
-  max-width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
+  width: 100dvw;
+  max-width: 100dvw;
+  margin-left: calc(50% - 50dvw);
+  margin-right: calc(50% - 50dvw);
+  box-sizing: border-box;
   overflow-x: clip;
 }
 
-@supports (width: 100dvw){
+@supports not (width: 100dvw) {
   .hmpro-pft.is-fullwidth,
   .hmpro-product-tabs.is-fullwidth {
-    width: 100dvw;
-    max-width: 100dvw;
-    margin-left: calc(50% - 50dvw);
-    margin-right: calc(50% - 50dvw);
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
   }
 }
 
