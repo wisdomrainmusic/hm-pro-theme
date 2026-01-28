@@ -27,6 +27,32 @@
   overflow-x: clip;
 }
 
+/*
+ * Full-width breakout (hero mode)
+ *
+ * The theme does not ship global .alignfull styles, so relying on Gutenberg's
+ * alignment support is not enough to achieve a true viewport-width hero.
+ *
+ * When fullWidth is enabled we break the entire block out to the viewport width
+ * (using dvw when available to avoid scrollbar-induced overflow), while keeping
+ * the internal max-width variable for the content group.
+ */
+.hmpro-hero-slider.is-fullwidth{
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+@supports (width: 100dvw){
+  .hmpro-hero-slider.is-fullwidth{
+    width: 100dvw;
+    max-width: 100dvw;
+    margin-left: calc(50% - 50dvw);
+    margin-right: calc(50% - 50dvw);
+  }
+}
+
 @media (max-width: 767px){
   .hmpro-hero-slider.is-hide-mobile{ display: none; }
 }
@@ -55,6 +81,9 @@
 
 .hmpro-hero-slider.is-fullwidth .hmpro-hero__frame{
   border-radius: 0;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 /* Mobile height handling */
@@ -86,13 +115,9 @@
 }
 
 .hmpro-hero-slider.is-fullwidth .hmpro-hero__bleed{
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-}
-
-@supports (width: 100dvw){
-  .hmpro-hero-slider.is-fullwidth .hmpro-hero__bleed{ width: 100dvw; }
+  left: 0;
+  transform: none;
+  width: 100%;
 }
 
 /* Slides */

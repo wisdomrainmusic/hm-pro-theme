@@ -50,6 +50,29 @@
   .hmpro-pft.is-fullwidth .hmpro-pft__bleed{ width: 100dvw; }
 }
 
+/*
+ * Fullwidth (Hero Like): editor preview breakout.
+ * In the editor canvas, blocks still live inside a constrained wrapper.
+ * Break the block to viewport width so the preview matches the front-end.
+ */
+.hmpro-pft.is-fullwidth{
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  overflow-x: clip;
+}
+
+@supports (width: 100dvw){
+  .hmpro-pft.is-fullwidth{
+    width: 100dvw;
+    max-width: 100dvw;
+    margin-left: calc(50% - 50dvw);
+    margin-right: calc(50% - 50dvw);
+  }
+}
+
 .hmpro-pft.is-fullwidth .hmpro-pft__panel{
   background: transparent;
   border: 0;

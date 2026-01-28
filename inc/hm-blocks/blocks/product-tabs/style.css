@@ -69,14 +69,36 @@
   .hmpro-pft.is-fullwidth .hmpro-pft__bleed{ width: 100dvw; }
 }
 
-/* Fullwidth (safe): keep within container to avoid horizontal overflow */
+/*
+ * Fullwidth (Hero Like): true breakout to viewport width.
+ *
+ * Why: Some themes (and some builder templates) place the content area inside
+ * a max-width wrapper and/or apply overflow clipping. In that setup, keeping
+ * the block "within container" means it can NEVER become full width.
+ *
+ * This mirrors the Hero Slider's full-bleed behavior:
+ * - the block itself breaks out to 100vw
+ * - inner readable content remains centered via .hmpro-pft__frame max-width
+ * - overflow is clipped at the block level to prevent horizontal scrolling
+ */
 .hmpro-pft.is-fullwidth,
 .hmpro-product-tabs.is-fullwidth {
-  width: 100%;
-  max-width: 100%;
-  margin-left: 0;
-  margin-right: 0;
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   overflow-x: clip;
+}
+
+@supports (width: 100dvw){
+  .hmpro-pft.is-fullwidth,
+  .hmpro-product-tabs.is-fullwidth {
+    width: 100dvw;
+    max-width: 100dvw;
+    margin-left: calc(50% - 50dvw);
+    margin-right: calc(50% - 50dvw);
+  }
 }
 
 .hmpro-pft__tabs,
