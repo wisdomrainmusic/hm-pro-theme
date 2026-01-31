@@ -99,6 +99,7 @@ $layout_json = wp_json_encode( $layout );
 		'spacer' => __( 'Spacer', 'hmpro' ),
 	];
 	if ( 'footer' === $area ) {
+		$elements['footer_image'] = __( 'Footer Image', 'hmpro' );
 		$elements['footer_menu'] = __( 'Footer Column Menu', 'hmpro' );
 		$elements['footer_info'] = __( 'Footer Info Text', 'hmpro' );
 	}

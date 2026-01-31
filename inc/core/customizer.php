@@ -129,6 +129,19 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'section'     => $hmpro_header_section,
 	] ) );
 
+	// Primary Menu color override for Header Banner overlay state.
+	// Use this when the header sits on top of a dark banner/hero image and needs higher contrast.
+	$wp_customize->add_setting( 'hmpro_menu_text_color_overlay', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_menu_text_color_overlay', [
+		'label'       => __( 'Primary Menu Text Color (Banner Overlay)', 'hm-pro-theme' ),
+		'description' => __( 'Applies only when the Header Background Banner is active (e.g., homepage hero overlay). Leave empty to use the normal menu color.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
 	$wp_customize->add_setting( 'hmpro_menu_hover_color', [
 		'default'           => '',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -151,7 +164,33 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'section'     => $hmpro_header_section,
 	] ) );
 
-	// Header Logo visibility (Header Builder: Logo component)
+	
+	// --------------------------------------------------
+	// Mega Menu color controls (Mega Menu v2 Canvas)
+	// --------------------------------------------------
+	$wp_customize->add_setting( 'hmpro_mega_menu_bg_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_mega_menu_bg_color', [
+		'label'       => __( 'Mega Menu Background Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies to the Mega Menu v2 dropdown panel background. Leave empty to use default styling.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+	$wp_customize->add_setting( 'hmpro_mega_menu_link_color', [
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'hmpro_mega_menu_link_color', [
+		'label'       => __( 'Mega Menu Link Color', 'hm-pro-theme' ),
+		'description' => __( 'Applies to links inside the Mega Menu v2 dropdown panel. Leave empty to inherit.', 'hm-pro-theme' ),
+		'section'     => $hmpro_header_section,
+	] ) );
+
+// Header Logo visibility (Header Builder: Logo component)
 	$wp_customize->add_setting( 'hmpro_show_header_logo', [
 		'default'           => 1,
 		'sanitize_callback' => function ( $v ) {
@@ -1034,8 +1073,11 @@ add_action( 'wp_ajax_hmpro_reset_header_footer_colors', function () {
 	remove_theme_mod( 'hmpro_topbar_search_text_color' );
 	remove_theme_mod( 'hmpro_topbar_search_placeholder_color' );
 	remove_theme_mod( 'hmpro_menu_text_color' );
+	remove_theme_mod( 'hmpro_menu_text_color_overlay' );
 	remove_theme_mod( 'hmpro_menu_hover_color' );
 	remove_theme_mod( 'hmpro_menu_active_color' );
+	remove_theme_mod( 'hmpro_mega_menu_bg_color' );
+	remove_theme_mod( 'hmpro_mega_menu_link_color' );
 	remove_theme_mod( 'hmpro_show_header_logo' );
 	remove_theme_mod( 'hmpro_header_backdrop_enable' );
 	remove_theme_mod( 'hmpro_header_backdrop_color' );

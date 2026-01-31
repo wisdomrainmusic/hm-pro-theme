@@ -76,7 +76,7 @@ function hmpro_builder_update_layout( $area, array $layout ) {
 function hmpro_builder_sanitize_layout( $area, $payload ) {
 	$area = ( 'footer' === $area ) ? 'footer' : 'header';
 
-	$allowed_types = array( 'logo', 'menu', 'search', 'social', 'social_icon_button', 'cart', 'button', 'html', 'spacer', 'footer_menu', 'footer_info' );
+	$allowed_types = array( 'logo', 'menu', 'search', 'social', 'social_icon_button', 'cart', 'button', 'html', 'spacer', 'footer_menu', 'footer_info', 'footer_image' );
 	$allowed_icon_modes = array( 'preset', 'custom' );
 	$allowed_icon_presets = array( 'facebook', 'instagram', 'linkedin', 'x', 'youtube', 'tiktok', 'whatsapp', 'telegram' );
 	$allowed_svg_tags = array(
@@ -134,6 +134,7 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 		'spacer' => array( 'visibility', 'spacing', 'width', 'height' ),
 		'footer_menu' => array( 'alignment', 'visibility', 'spacing', 'menu_id', 'title', 'show_title' ),
 		'footer_info' => array( 'alignment', 'visibility', 'spacing', 'title', 'lines' ),
+		'footer_image' => array( 'visibility', 'spacing', 'attachment_id', 'url', 'max_width', 'link', 'new_tab' ),
 	);
 
 	$out = hmpro_builder_default_schema( $area );
@@ -216,7 +217,7 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 							$clean_settings[ $k ] = is_scalar( $v ) ? sanitize_textarea_field( (string) $v ) : '';
 						} elseif ( in_array( $k, array( 'placeholder', 'title', 'alignment', 'visibility', 'spacing', 'rel', 'target', 'source', 'location', 'size', 'gap' ), true ) ) {
 							$clean_settings[ $k ] = is_scalar( $v ) ? sanitize_text_field( (string) $v ) : '';
-						} elseif ( in_array( $k, array( 'menu_id', 'depth', 'width', 'height', 'root_item_id' ), true ) ) {
+					} elseif ( in_array( $k, array( 'menu_id', 'depth', 'width', 'height', 'root_item_id', 'attachment_id', 'max_width' ), true ) ) {
 						$clean_settings[ $k ] = absint( $v );
 					} elseif ( 'show_title' === $k ) {
 						$clean_settings[ $k ] = ! empty( $v ) ? 1 : 0;
@@ -224,7 +225,7 @@ function hmpro_builder_sanitize_layout( $area, $payload ) {
 							$clean_settings[ $k ] = ! empty( $v ) ? 1 : 0;
 						} elseif ( 'transparent' === $k ) {
 							$clean_settings[ $k ] = ! empty( $v ) ? 1 : 0;
-						} elseif ( 'url' === $k ) {
+					} elseif ( 'url' === $k || 'link' === $k ) {
 							$clean_settings[ $k ] = is_scalar( $v ) ? esc_url_raw( (string) $v ) : '';
 						} elseif ( 'icon_mode' === $k ) {
 							$mode = is_scalar( $v ) ? sanitize_key( (string) $v ) : '';

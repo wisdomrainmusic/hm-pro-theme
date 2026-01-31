@@ -66,8 +66,11 @@ add_action( 'wp_head', function () {
 	$foot_bg  = sanitize_hex_color( get_theme_mod( 'hmpro_footer_bg_color', '' ) );
 	$foot_txt = sanitize_hex_color( get_theme_mod( 'hmpro_footer_text_color', '' ) );
 	$menu_text   = sanitize_hex_color( get_theme_mod( 'hmpro_menu_text_color', '' ) );
+	$menu_text_overlay = sanitize_hex_color( get_theme_mod( 'hmpro_menu_text_color_overlay', '' ) );
 	$menu_hover  = sanitize_hex_color( get_theme_mod( 'hmpro_menu_hover_color', '' ) );
 	$menu_active = sanitize_hex_color( get_theme_mod( 'hmpro_menu_active_color', '' ) );
+	$mega_bg     = sanitize_hex_color( get_theme_mod( 'hmpro_mega_menu_bg_color', '' ) );
+	$mega_link   = sanitize_hex_color( get_theme_mod( 'hmpro_mega_menu_link_color', '' ) );
 	$show_logo   = (int) get_theme_mod( 'hmpro_show_header_logo', 1 );
 	$hdr_backdrop_enable  = (int) get_theme_mod( 'hmpro_header_backdrop_enable', 0 );
 	$hdr_backdrop_color   = sanitize_hex_color( get_theme_mod( 'hmpro_header_backdrop_color', '' ) );
@@ -176,12 +179,26 @@ add_action( 'wp_head', function () {
 	if ( $menu_text ) {
 		$css .= ':root{--hmpro-menu-text-color:' . $menu_text . ';}';
 	}
+
+	// If the Header Background Banner is active for this request, optionally override
+	// the primary menu text color to improve contrast on top of dark hero imagery.
+	if ( $menu_text_overlay && function_exists( 'hmpro_header_bg_banner_is_enabled' ) && hmpro_header_bg_banner_is_enabled() ) {
+		$css .= ':root{--hmpro-menu-text-color:' . $menu_text_overlay . ';}';
+	}
 	if ( $menu_hover ) {
 		$css .= ':root{--hmpro-menu-hover-color:' . $menu_hover . ';}';
 	}
 	if ( $menu_active ) {
 		$css .= ':root{--hmpro-menu-active-color:' . $menu_active . ';}';
 	}
+	// Mega Menu v2 colors (dropdown panel only) via CSS variables.
+	if ( $mega_bg ) {
+		$css .= ':root{--hmpro-mega-bg-color:' . $mega_bg . ';}';
+	}
+	if ( $mega_link ) {
+		$css .= ':root{--hmpro-mega-link-color:' . $mega_link . ';}';
+	}
+
 
 	// Footer Builder wrapper + regions
 	if ( $foot_bg ) {
@@ -337,6 +354,9 @@ function hmpro_builder_render_component( $comp, $context = 'header' ) {
 			break;
 		case 'html':
 			hmpro_builder_comp_html( $set );
+			break;
+		case 'footer_image':
+			hmpro_builder_comp_footer_image( $set );
 			break;
 		case 'spacer':
 			hmpro_builder_comp_spacer( $set );
@@ -902,6 +922,52 @@ function hmpro_builder_comp_html( array $set ) {
 	);
 
 	echo '<div class="hmpro-html">' . wp_kses( $rendered, $allowed ) . '</div>';
+}
+
+/**
+ * Footer Image (Footer Builder)
+ * Simple image renderer for footer logos / payment icons / trust badges.
+ */
+function hmpro_builder_comp_footer_image( array $set ) {
+	$attachment_id = isset( $set['attachment_id'] ) ? absint( $set['attachment_id'] ) : 0;
+	$url           = isset( $set['url'] ) ? esc_url( (string) $set['url'] ) : '';
+	$max_w         = isset( $set['max_width'] ) ? absint( $set['max_width'] ) : 140;
+	$link          = isset( $set['link'] ) ? esc_url( (string) $set['link'] ) : '';
+	$new_tab       = ! empty( $set['new_tab'] );
+
+	if ( $max_w < 10 ) {
+		$max_w = 10;
+	}
+	if ( $max_w > 2000 ) {
+		$max_w = 2000;
+	}
+
+	$img_html = '';
+	if ( $attachment_id > 0 ) {
+		$img_html = wp_get_attachment_image(
+			$attachment_id,
+			'full',
+			false,
+			[
+				'class' => 'hmpro-footer-image__img',
+				'alt'   => '',
+			]
+		);
+	} elseif ( '' !== $url ) {
+		$img_html = '<img class="hmpro-footer-image__img" src="' . esc_url( $url ) . '" alt="" loading="lazy" />';
+	}
+
+	if ( '' === $img_html ) {
+		return;
+	}
+
+	if ( '' !== $link ) {
+		$attrs    = $new_tab ? ' target="_blank" rel="noopener noreferrer"' : '';
+		$img_html = '<a class="hmpro-footer-image__link" href="' . esc_url( $link ) . '"' . $attrs . '>' . $img_html . '</a>';
+	}
+
+	$style = 'max-width:' . (int) $max_w . 'px;';
+	echo '<div class="hmpro-footer-image" style="' . esc_attr( $style ) . '">' . $img_html . '</div>';
 }
 
 function hmpro_builder_comp_spacer( array $set ) {
