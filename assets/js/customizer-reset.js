@@ -32,6 +32,8 @@
 						'hmpro_menu_text_color',
 						'hmpro_menu_hover_color',
 						'hmpro_menu_active_color',
+						'hmpro_mega_menu_bg_color',
+						'hmpro_mega_menu_link_color',
 						'hmpro_header_backdrop_enable',
 						'hmpro_header_backdrop_color',
 						'hmpro_header_backdrop_opacity',

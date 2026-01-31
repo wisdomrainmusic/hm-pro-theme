@@ -24,10 +24,15 @@
 	width: 100vw !important;
 	z-index: 999999;
 	box-sizing: border-box;
-	background: #fff;
+	background: var(--hmpro-mega-bg-color, #fff);
 	border-top: 1px solid rgba(0,0,0,0.08);
 	box-shadow: 0 18px 40px rgba(0,0,0,0.14);
 	overflow-x: hidden;
+}
+
+/* Link color inside mega panel only */
+.hmpro-primary-nav li.hmpro-li-has-mega > .hmpro-mega-panel a{
+	color: var(--hmpro-mega-link-color, inherit);
 }
 
 /* Show on hover/focus (keep your existing JS/CSS behavior; this is a safe fallback) */
@@ -264,11 +269,25 @@ body.hmpro-mega-click .hmpro-mega-wrap {
 	width: auto;
 	max-width: none;
 	z-index: 9999;
-	background: #fff;
+	background: var(--hmpro-mega-bg-color, #fff);
 	border-top: 1px solid rgba(0, 0, 0, 0.08);
 	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
 	transform: none;
 	overflow-x: hidden;
+}
+
+/* Ensure customizer Mega Menu colors apply even when markup nests the panel
+   (e.g. panel inside .hmpro-mega-wrap / .hmpro-mega-dropdown). */
+.hmpro-primary-nav .hmpro-mega-wrap,
+.hmpro-primary-nav .hmpro-mega-dropdown,
+.hmpro-primary-nav .hmpro-mega-panel{
+	background: var(--hmpro-mega-bg-color, #fff);
+}
+
+.hmpro-primary-nav .hmpro-mega-wrap a,
+.hmpro-primary-nav .hmpro-mega-dropdown a,
+.hmpro-primary-nav .hmpro-mega-panel a{
+	color: var(--hmpro-mega-link-color, inherit);
 }
 
 /* Reveal on hover (desktop default) */
@@ -750,7 +769,7 @@ body.hmpro-mega-click .hmpro-mega-wrap {
 	max-width: min(var(--hmpro-mega-panel-max), calc(100vw - (var(--hmpro-mega-panel-gap) * 2))) !important;
 	box-sizing: border-box;
 	z-index: 999999;
-	background: #fff;
+	background: var(--hmpro-mega-bg-color, #fff);
 	border-top: 1px solid rgba(0,0,0,0.08);
 	box-shadow: 0 18px 40px rgba(0,0,0,0.14);
 	overflow: hidden;

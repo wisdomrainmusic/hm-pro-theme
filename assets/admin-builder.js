@@ -189,6 +189,7 @@
 		var map = {
 			'logo': 'Logo',
 			'menu': 'Menu',
+			'footer_image': 'Footer Image',
 			'footer_menu': 'Footer Menu',
 			'search': 'Search',
 			'social_icon_button': 'Social Icon Button',
@@ -856,6 +857,126 @@
 			});
 		}
 
+		// Footer Image (Footer Builder) – simplified image picker for logos / payment icons.
+		if (type === 'footer_image') {
+			var wrapF = document.createElement('div');
+			wrapF.className = 'hmpro-field';
+
+			var lblF = document.createElement('label');
+			lblF.textContent = 'Image (Media Library)';
+			wrapF.appendChild(lblF);
+
+			var previewF = document.createElement('div');
+			previewF.style.marginTop = '8px';
+			previewF.style.border = '1px solid #e5e5e5';
+			previewF.style.borderRadius = '10px';
+			previewF.style.padding = '10px';
+			previewF.style.background = '#fff';
+			previewF.innerHTML = settings.url ? '<img src="' + settings.url + '" style="max-width:100%;height:auto;display:block;border-radius:8px;" />' : '<em>No image selected</em>';
+			wrapF.appendChild(previewF);
+
+			var hiddenIdF = document.createElement('input');
+			hiddenIdF.type = 'hidden';
+			hiddenIdF.id = 'hmproSettingFooterImageAttachmentId';
+			hiddenIdF.value = settings.attachment_id ? String(settings.attachment_id) : '';
+			wrapF.appendChild(hiddenIdF);
+
+			var hiddenUrlF = document.createElement('input');
+			hiddenUrlF.type = 'hidden';
+			hiddenUrlF.id = 'hmproSettingFooterImageUrl';
+			hiddenUrlF.value = settings.url || '';
+			wrapF.appendChild(hiddenUrlF);
+
+			var btnF = document.createElement('button');
+			btnF.type = 'button';
+			btnF.className = 'button';
+			btnF.textContent = 'Select Image';
+			btnF.style.marginTop = '10px';
+			wrapF.appendChild(btnF);
+
+			var btnClearF = document.createElement('button');
+			btnClearF.type = 'button';
+			btnClearF.className = 'button';
+			btnClearF.textContent = 'Clear';
+			btnClearF.style.marginLeft = '8px';
+			btnClearF.style.marginTop = '10px';
+			wrapF.appendChild(btnClearF);
+
+			modalBody.appendChild(wrapF);
+
+			var fMaxW = document.createElement('div');
+			fMaxW.className = 'hmpro-field';
+			var lMaxW = document.createElement('label');
+			lMaxW.textContent = 'Max width (px)';
+			var iMaxW = document.createElement('input');
+			iMaxW.type = 'number';
+			iMaxW.min = '10';
+			iMaxW.max = '1200';
+			iMaxW.id = 'hmproSettingFooterImageMaxWidth';
+			iMaxW.value = (settings.max_width !== undefined && settings.max_width !== null && settings.max_width !== '') ? String(settings.max_width) : '140';
+			fMaxW.appendChild(lMaxW);
+			fMaxW.appendChild(iMaxW);
+			modalBody.appendChild(fMaxW);
+
+			var fLinkF = document.createElement('div');
+			fLinkF.className = 'hmpro-field';
+			var lLinkF = document.createElement('label');
+			lLinkF.textContent = 'Link (optional)';
+			var iLinkF = document.createElement('input');
+			iLinkF.type = 'url';
+			iLinkF.id = 'hmproSettingFooterImageLink';
+			iLinkF.placeholder = 'https://';
+			iLinkF.value = settings.link || '';
+			fLinkF.appendChild(lLinkF);
+			fLinkF.appendChild(iLinkF);
+			modalBody.appendChild(fLinkF);
+
+			var fTabF = document.createElement('div');
+			fTabF.className = 'hmpro-field';
+			var lTabF = document.createElement('label');
+			lTabF.textContent = 'Open in new tab';
+			var cTabF = document.createElement('input');
+			cTabF.type = 'checkbox';
+			cTabF.id = 'hmproSettingFooterImageNewTab';
+			cTabF.checked = !!settings.new_tab;
+			fTabF.appendChild(lTabF);
+			fTabF.appendChild(cTabF);
+			modalBody.appendChild(fTabF);
+
+			btnF.addEventListener('click', function () {
+				if (!window.wp || !wp.media) return;
+
+				var frameF = wp.media({
+					title: 'Select Image',
+					library: { type: 'image' },
+					button: { text: 'Use this image' },
+					multiple: false
+				});
+
+				frameF.on('select', function () {
+					var attF = frameF.state().get('selection').first();
+					if (!attF) return;
+					var dataF = attF.toJSON();
+					var urlF = dataF.url;
+					if (dataF.sizes && dataF.sizes.full && dataF.sizes.full.url) {
+						urlF = dataF.sizes.full.url;
+					}
+
+					hiddenIdF.value = dataF.id ? String(dataF.id) : '';
+					hiddenUrlF.value = urlF || '';
+					previewF.innerHTML = urlF ? '<img src="' + urlF + '" style="max-width:100%;height:auto;display:block;border-radius:8px;" />' : '<em>No image selected</em>';
+				});
+
+				frameF.open();
+			});
+
+			btnClearF.addEventListener('click', function () {
+				hiddenIdF.value = '';
+				hiddenUrlF.value = '';
+				previewF.innerHTML = '<em>No image selected</em>';
+			});
+		}
+
 		if (type === 'footer_menu') {
 			var footerMenuField = document.createElement('div');
 			footerMenuField.className = 'hmpro-field';
@@ -1255,6 +1376,19 @@
 				comp.settings.alt = alt ? (alt.value || '') : '';
 				comp.settings.link = link ? (link.value || '') : '';
 				comp.settings.new_tab = tab && tab.checked ? 1 : 0;
+			}
+			if (type === 'footer_image') {
+				var aidF = document.getElementById('hmproSettingFooterImageAttachmentId');
+				var urlF = document.getElementById('hmproSettingFooterImageUrl');
+				var mwF = document.getElementById('hmproSettingFooterImageMaxWidth');
+				var linkF = document.getElementById('hmproSettingFooterImageLink');
+				var tabF = document.getElementById('hmproSettingFooterImageNewTab');
+
+				comp.settings.attachment_id = aidF ? parseInt(aidF.value || '0', 10) : 0;
+				comp.settings.url = urlF ? (urlF.value || '') : '';
+				comp.settings.max_width = mwF ? parseInt(mwF.value || '140', 10) : 140;
+				comp.settings.link = linkF ? (linkF.value || '') : '';
+				comp.settings.new_tab = tabF && tabF.checked ? 1 : 0;
 			}
 			if (type === 'footer_menu') {
 				var fmId = document.getElementById('hmproSettingFooterMenuId');

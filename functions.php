@@ -195,8 +195,8 @@ add_action( 'admin_enqueue_scripts', function () {
 	// Builder-specific assets (only on builder screens).
 	$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
 	if ( in_array( $page, [ 'hmpro-header-builder', 'hmpro-footer-builder', 'hmpro-mega-menu-builder' ], true ) ) {
-		// ✅ Only Mega Menu Builder needs media library for Image widget
-		if ( 'hmpro-mega-menu-builder' === $page ) {
+		// ✅ Media Library is needed for builder image pickers (Mega Menu + Footer Image).
+		if ( in_array( $page, [ 'hmpro-mega-menu-builder', 'hmpro-footer-builder' ], true ) ) {
 			wp_enqueue_media();
 		}
 
