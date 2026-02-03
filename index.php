@@ -37,6 +37,8 @@ get_header();
 
 					if ( $posts_page && 'publish' === $posts_page->post_status ) {
 
+						global $post;
+						$__hmpro_prev_post = $post;
 						$page_content = (string) $posts_page->post_content;
 
 						// If the Posts page contains our grid block, we can rely on it for listing.
@@ -52,8 +54,18 @@ get_header();
 							</header>
 							<div class="entry-content">
 								<?php
-								// Render blocks/content exactly like a normal page.
-								echo apply_filters( 'the_content', $page_content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								/**
+								 * IMPORTANT:
+								 * Render posts-page content with correct global $post context
+								 * so block rendering behaves exactly like a normal page.
+								 */
+								$post = $posts_page; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+								setup_postdata( $post );
+
+								echo apply_filters( 'the_content', (string) $posts_page->post_content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+								wp_reset_postdata();
+								$post = $__hmpro_prev_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 								?>
 							</div>
 						</article>

@@ -132,6 +132,15 @@ function hmpro_blocks_enqueue_frontend_assets() {
 		$should = true;
 	}
 
+	// Blog "Posts page" (is_home) may be built with HM Pro blocks.
+	if ( ! $should && is_home() && ! is_front_page() ) {
+		$posts_page_id = (int) get_option( 'page_for_posts' );
+		if ( $posts_page_id > 0 ) {
+			$content = (string) get_post_field( 'post_content', $posts_page_id );
+			$should  = ( $content && has_block( 'hmpro/', $content ) );
+		}
+	}
+
 	// Singular content: load if any hmpro/* block is present in post content.
 	if ( ! $should && is_singular() ) {
 		$should = has_block( 'hmpro/' );
