@@ -62,7 +62,20 @@ get_header();
 								$post = $posts_page; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 								setup_postdata( $post );
 
-								echo apply_filters( 'the_content', (string) $posts_page->post_content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								$raw_content = (string) $posts_page->post_content;
+
+								// Render blocks directly (do not rely on the_content filters in posts-page context).
+								$rendered = '';
+								if ( function_exists( 'do_blocks' ) && $raw_content !== '' ) {
+									$rendered = do_blocks( $raw_content );
+								}
+
+								// Fallback for classic content or if blocks returned empty for any reason.
+								if ( trim( (string) $rendered ) === '' ) {
+									$rendered = apply_filters( 'the_content', $raw_content );
+								}
+
+								echo $rendered; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 								wp_reset_postdata();
 								$post = $__hmpro_prev_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
