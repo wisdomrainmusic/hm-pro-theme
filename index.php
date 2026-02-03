@@ -27,6 +27,7 @@ get_header();
 		if ( is_home() || is_archive() || is_search() ) :
 
 			$rendered_posts_page = false;
+			$posts_page_had_grid = false;
 
 			// If this is the Posts page, render its block content first.
 			if ( is_home() && ! is_front_page() ) {
@@ -41,8 +42,8 @@ get_header();
 						$__hmpro_prev_post = $post;
 						$page_content = (string) $posts_page->post_content;
 
-						// If the Posts page contains our grid block, we can rely on it for listing.
-						$rendered_posts_page = has_block( 'hmpro/blog-grid', $page_content );
+						// Track whether the page contains the grid block.
+						$posts_page_had_grid = has_block( 'hmpro/blog-grid', $page_content );
 						?>
 						<article id="page-<?php echo esc_attr( $posts_page_id ); ?>" <?php post_class( 'hmpro-posts-page', $posts_page_id ); ?>>
 							<header class="entry-header">
@@ -75,7 +76,16 @@ get_header();
 									$rendered = apply_filters( 'the_content', $raw_content );
 								}
 
+								// Always output the page content (could include hero/heading etc).
 								echo $rendered; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+								/**
+								 * Decide whether we should SKIP fallback listing.
+								 * Only skip fallback if:
+								 * - page contains the grid block
+								 * - AND rendered output is not empty (grid actually produced markup)
+								 */
+								$rendered_posts_page = ( $posts_page_had_grid && trim( wp_strip_all_tags( (string) $rendered ) ) !== '' );
 
 								wp_reset_postdata();
 								$post = $__hmpro_prev_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
