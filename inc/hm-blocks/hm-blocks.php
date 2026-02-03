@@ -27,6 +27,7 @@ if ( ! defined( 'HMPRO_BLOCKS_URL' ) ) {
 
 // Shared renderer utilities.
 require_once HMPRO_BLOCKS_PATH . '/render/shared/helpers.php';
+require_once HMPRO_BLOCKS_PATH . '/render/blog-grid.php';
 require_once HMPRO_BLOCKS_PATH . '/render/shared/sanitize.php';
 require_once HMPRO_BLOCKS_PATH . '/render/shared/svg-presets.php';
 require_once HMPRO_BLOCKS_PATH . '/render/shared/templates.php';
@@ -104,6 +105,10 @@ function hmpro_blocks_enqueue_block_assets() {
 			'path' => HMPRO_BLOCKS_PATH . '/blocks/feature-item/style.css',
 			'url'  => HMPRO_BLOCKS_URL  . '/blocks/feature-item/style.css',
 		),
+		'blog-grid' => array(
+			'path' => HMPRO_BLOCKS_PATH . '/blocks/blog-grid/style.css',
+			'url'  => HMPRO_BLOCKS_URL  . '/blocks/blog-grid/style.css',
+		),
 	);
 
 	foreach ( $preload as $key => $asset ) {
@@ -167,6 +172,10 @@ function hmpro_blocks_enqueue_frontend_assets() {
 		'feature-item' => array(
 			'path' => HMPRO_BLOCKS_PATH . '/blocks/feature-item/style.css',
 			'url'  => HMPRO_BLOCKS_URL  . '/blocks/feature-item/style.css',
+		),
+		'blog-grid' => array(
+			'path' => HMPRO_BLOCKS_PATH . '/blocks/blog-grid/style.css',
+			'url'  => HMPRO_BLOCKS_URL  . '/blocks/blog-grid/style.css',
 		),
 	);
 
@@ -286,6 +295,22 @@ function hmpro_blocks_register_blocks() {
 	foreach ( $entries as $dir ) {
 		$block_json = trailingslashit( $dir ) . 'block.json';
 		if ( file_exists( $block_json ) ) {
+			$slug = basename( $dir );
+
+			// WP version-safe: blog-grid must use render_callback (block.json "render" is not honored everywhere).
+			if ( 'blog-grid' === $slug && function_exists( 'hmpro_render_blog_grid_block' ) ) {
+				if ( function_exists( 'register_block_type_from_metadata' ) ) {
+					register_block_type_from_metadata( $dir, array(
+						'render_callback' => 'hmpro_render_blog_grid_block',
+					) );
+				} else {
+					register_block_type( $dir, array(
+						'render_callback' => 'hmpro_render_blog_grid_block',
+					) );
+				}
+				continue;
+			}
+
 			register_block_type( $dir );
 		}
 	}
