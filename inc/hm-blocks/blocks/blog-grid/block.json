@@ -29,7 +29,18 @@
     "metaStyle": { "type": "string", "default": "date" },
 
     "cardStyle": { "type": "string", "default": "soft" },
-    "buttonLabel": { "type": "string", "default": "Read more" }
+    "buttonLabel": { "type": "string", "default": "Read more" },
+
+    "enableCategoryTabs": { "type": "boolean", "default": false },
+    "tabsPosition": { "type": "string", "default": "top" },
+    "tabsSource": { "type": "string", "default": "all" },
+    "selectedCategories": { "type": "array", "default": [] },
+    "allTabLabel": { "type": "string", "default": "All" },
+
+    "enablePagination": { "type": "boolean", "default": true },
+    "paginationType": { "type": "string", "default": "numbers" },
+    "paginationPrevLabel": { "type": "string", "default": "Prev" },
+    "paginationNextLabel": { "type": "string", "default": "Next" }
   },
   "editorScript": "file:./index.js",
   "editorStyle": "file:./editor.css",

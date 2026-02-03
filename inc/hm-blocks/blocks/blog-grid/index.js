@@ -2,7 +2,8 @@
 	const { registerBlockType } = wp.blocks;
 	const { __ } = wp.i18n;
 	const { InspectorControls, useBlockProps } = wp.blockEditor;
-	const { PanelBody, RangeControl, SelectControl, ToggleControl, TextControl } = wp.components;
+	const { PanelBody, RangeControl, SelectControl, ToggleControl, TextControl, CheckboxControl } = wp.components;
+	const { useSelect } = wp.data;
 
 	registerBlockType( 'hmpro/blog-grid', {
 		edit: function ( props ) {
@@ -13,8 +14,18 @@
 				showImage, imageRatio,
 				showExcerpt, excerptLength,
 				showMeta, metaStyle,
-				cardStyle, buttonLabel
+				cardStyle, buttonLabel,
+				enableCategoryTabs, tabsPosition, tabsSource, selectedCategories, allTabLabel,
+				enablePagination, paginationPrevLabel, paginationNextLabel
 			} = attributes;
+
+			const categories = useSelect( function ( select ) {
+				const core = select( 'core' );
+				const terms = core && core.getEntityRecords
+					? core.getEntityRecords( 'taxonomy', 'category', { per_page: 100, hide_empty: false } )
+					: null;
+				return Array.isArray( terms ) ? terms : [];
+			}, [] );
 
 			const blockProps = useBlockProps( {
 				className: 'hmpro-blog-grid is-style-' + ( cardStyle || 'soft' ),
@@ -74,6 +85,78 @@
 							value: category,
 							onChange: function ( v ) { setAttributes( { category: parseInt( v || '0', 10 ) || 0 } ); }
 						} )
+					),
+					wp.element.createElement(
+						PanelBody,
+						{ title: __( 'Filters', 'hm-pro-theme' ), initialOpen: false },
+						wp.element.createElement( ToggleControl, {
+							label: __( 'Enable category tabs', 'hm-pro-theme' ),
+							checked: !! enableCategoryTabs,
+							onChange: function ( v ) { setAttributes( { enableCategoryTabs: !! v } ); }
+						} ),
+						enableCategoryTabs ? wp.element.createElement( SelectControl, {
+							label: __( 'Tabs position', 'hm-pro-theme' ),
+							value: tabsPosition || 'top',
+							options: [
+								{ label: 'Top', value: 'top' },
+								{ label: 'Left', value: 'left' }
+							],
+							onChange: function ( v ) { setAttributes( { tabsPosition: v } ); }
+						} ) : null,
+						enableCategoryTabs ? wp.element.createElement( SelectControl, {
+							label: __( 'Tabs source', 'hm-pro-theme' ),
+							value: tabsSource || 'all',
+							options: [
+								{ label: 'All categories', value: 'all' },
+								{ label: 'Selected categories', value: 'selected' }
+							],
+							onChange: function ( v ) { setAttributes( { tabsSource: v } ); }
+						} ) : null,
+						enableCategoryTabs ? wp.element.createElement( TextControl, {
+							label: __( '"All" tab label', 'hm-pro-theme' ),
+							value: allTabLabel,
+							onChange: function ( v ) { setAttributes( { allTabLabel: v } ); }
+						} ) : null,
+						enableCategoryTabs && ( tabsSource === 'selected' ) ? wp.element.createElement(
+							'div',
+							{ className: 'hmpro-blog-grid__term-picker' },
+							( categories || [] ).map( function ( term ) {
+								const id = term && term.id ? term.id : 0;
+								if ( ! id ) { return null; }
+								const checked = Array.isArray( selectedCategories ) && selectedCategories.indexOf( id ) !== -1;
+								return wp.element.createElement( CheckboxControl, {
+									key: id,
+									label: term.name || ( 'Category ' + id ),
+									checked: checked,
+									onChange: function ( v ) {
+										const next = Array.isArray( selectedCategories ) ? selectedCategories.slice() : [];
+										const idx = next.indexOf( id );
+										if ( v && idx === -1 ) { next.push( id ); }
+										if ( ! v && idx !== -1 ) { next.splice( idx, 1 ); }
+										setAttributes( { selectedCategories: next } );
+									}
+								} );
+							} )
+						) : null
+					),
+					wp.element.createElement(
+						PanelBody,
+						{ title: __( 'Pagination', 'hm-pro-theme' ), initialOpen: false },
+						wp.element.createElement( ToggleControl, {
+							label: __( 'Enable pagination', 'hm-pro-theme' ),
+							checked: !! enablePagination,
+							onChange: function ( v ) { setAttributes( { enablePagination: !! v } ); }
+						} ),
+						enablePagination ? wp.element.createElement( TextControl, {
+							label: __( 'Previous label', 'hm-pro-theme' ),
+							value: paginationPrevLabel,
+							onChange: function ( v ) { setAttributes( { paginationPrevLabel: v } ); }
+						} ) : null,
+						enablePagination ? wp.element.createElement( TextControl, {
+							label: __( 'Next label', 'hm-pro-theme' ),
+							value: paginationNextLabel,
+							onChange: function ( v ) { setAttributes( { paginationNextLabel: v } ); }
+						} ) : null
 					),
 					wp.element.createElement(
 						PanelBody,

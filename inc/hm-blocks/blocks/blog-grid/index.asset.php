@@ -4,6 +4,8 @@ return array(
 		'wp-blocks',
 		'wp-i18n',
 		'wp-element',
+		'wp-data',
+		'wp-core-data',
 		'wp-components',
 		'wp-block-editor',
 	),
