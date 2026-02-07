@@ -1452,8 +1452,47 @@ class HM_Master_Importer {
     $urls = array_values(array_unique(array_filter($urls)));
     if (!$urls) return;
 
-    // only if empty (same as your current behavior)
-    if ($existingFeatured || !empty($existingGallery)) return;
+    // Default behavior was "only if empty".
+    // Problem: many products get created with a placeholder / previously importer-set image,
+    // so CSV image never gets applied. We keep manual images safe:
+    // - If existing images are NOT managed by this importer (no META_SOURCE_KEY), do NOT override.
+    // - If existing images ARE managed by this importer, allow replace when CSV points to a different source key.
+    if ($existingFeatured || !empty($existingGallery)) {
+      $current_ids = [];
+      if ($existingFeatured) $current_ids[] = (int)$existingFeatured;
+      if (!empty($existingGallery)) {
+        foreach ((array)$existingGallery as $gid) {
+          $gid = (int)$gid;
+          if ($gid) $current_ids[] = $gid;
+        }
+      }
+      $current_ids = array_values(array_unique(array_filter($current_ids)));
+
+      $current_keys = [];
+      foreach ($current_ids as $aid) {
+        $k = (string) get_post_meta($aid, self::META_SOURCE_KEY, true);
+        if ($k !== '') $current_keys[] = $k;
+      }
+
+      // If none of the current images are importer-managed, treat them as manual and do not override.
+      if (empty($current_keys)) return;
+
+      $incoming_keys = [];
+      foreach ($urls as $u) {
+        $incoming_keys[] = self::build_source_key_from_url($u);
+      }
+      $incoming_keys = array_values(array_unique(array_filter($incoming_keys)));
+
+      // If incoming keys are identical, skip (no need to rewrite).
+      $needs_replace = false;
+      foreach ($incoming_keys as $k) {
+        if (!in_array($k, $current_keys, true)) {
+          $needs_replace = true;
+          break;
+        }
+      }
+      if (!$needs_replace) return;
+    }
 
     $baseText = self::build_image_base_text($d);
     $fileBase = $baseText !== '' ? $baseText : (string)($d['urun_adi'] ?? 'image');
@@ -1808,6 +1847,15 @@ class HM_Master_Importer {
       if (!is_wp_error($tmp)) break;
 
       hm_import_log('IMG TRY FAIL url=' . $url . ' | ' . $tmp->get_error_message());
+
+      // If URL is on our uploads (same-domain / CDN / etc.) and download fails for ANY reason,
+      // fallback to local file mapping (most common fix for webp already present in uploads).
+      $mapped2 = self::try_map_any_uploads_url_to_local($url);
+      if ($mapped2) {
+        hm_import_log('IMG LOCAL FALLBACK due to download failure url=' . $url);
+        $attLocal2 = self::get_or_create_attachment_from_local($mapped2, $source_key);
+        if ($attLocal2) return $attLocal2;
+      }
 
       if (stripos($tmp->get_error_message(), 'forbidden') !== false) {
         $mapped2 = self::try_map_any_uploads_url_to_local($url);
