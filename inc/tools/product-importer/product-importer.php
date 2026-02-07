@@ -1663,6 +1663,54 @@ class HM_Master_Importer {
     return null;
   }
 
+  // Extract "YYYY/MM/file.ext" style relative uploads path from any URL containing /wp-content/uploads/...
+  // Does NOT touch filesystem (safe on locked-down hosting / permissions issues).
+  private static function extract_uploads_rel_from_url(string $url): string {
+    $url = trim($url);
+    if ($url === '') return '';
+
+    $path = (string) parse_url($url, PHP_URL_PATH);
+    if ($path === '') return '';
+
+    $needle = '/wp-content/uploads/';
+    $pos = strpos($path, $needle);
+    if ($pos === false) return '';
+
+    $rel = substr($path, $pos + strlen($needle));
+    if ($rel === false) return '';
+    $rel = ltrim((string)$rel, '/');
+
+    // normalize slashes
+    $rel = str_replace('\\', '/', $rel);
+    return $rel;
+  }
+
+  // Find existing attachment by _wp_attached_file without requiring file_exists()/read access.
+  // This fixes cases where the file is already in Media Library but importer cannot read filesystem.
+  private static function find_attachment_by_attached_file_rel(string $rel_path, string $source_key): int {
+    $rel_path = trim($rel_path);
+    if ($rel_path === '') return 0;
+
+    $q = new WP_Query([
+      'post_type'      => 'attachment',
+      'post_status'    => 'inherit',
+      'posts_per_page' => 1,
+      'fields'         => 'ids',
+      'meta_query'     => [[
+        'key'     => '_wp_attached_file',
+        'value'   => $rel_path,
+        'compare' => '=',
+      ]]
+    ]);
+    if (empty($q->posts[0])) return 0;
+
+    $aid = (int)$q->posts[0];
+    if ($aid && $source_key !== '') {
+      update_post_meta($aid, self::META_SOURCE_KEY, $source_key);
+    }
+    return $aid;
+  }
+
   private static function canonical_url_no_query(string $url): string {
     $url = trim($url);
     if ($url === '') return $url;
@@ -1796,6 +1844,21 @@ class HM_Master_Importer {
 
     $found = self::find_attachment_by_source_key($source_key);
     if ($found) return $found;
+
+    // NEW FIX: If the image is already in Media Library, match by _wp_attached_file (rel path)
+    // BEFORE any filesystem mapping or download attempts.
+    $rel1 = self::extract_uploads_rel_from_url($canon);
+    if ($rel1 !== '') {
+      $aid1 = self::find_attachment_by_attached_file_rel($rel1, $source_key);
+      if ($aid1) return $aid1;
+    }
+    if ($url !== $canon) {
+      $rel2 = self::extract_uploads_rel_from_url($url);
+      if ($rel2 !== '' && $rel2 !== $rel1) {
+        $aid2 = self::find_attachment_by_attached_file_rel($rel2, $source_key);
+        if ($aid2) return $aid2;
+      }
+    }
 
     $mapped = self::try_map_any_uploads_url_to_local($canon);
     if (!$mapped && $canon !== $url) {
