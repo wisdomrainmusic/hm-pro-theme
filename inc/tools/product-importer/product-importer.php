@@ -1452,47 +1452,8 @@ class HM_Master_Importer {
     $urls = array_values(array_unique(array_filter($urls)));
     if (!$urls) return;
 
-    // Default behavior was "only if empty".
-    // Problem: many products get created with a placeholder / previously importer-set image,
-    // so CSV image never gets applied. We keep manual images safe:
-    // - If existing images are NOT managed by this importer (no META_SOURCE_KEY), do NOT override.
-    // - If existing images ARE managed by this importer, allow replace when CSV points to a different source key.
-    if ($existingFeatured || !empty($existingGallery)) {
-      $current_ids = [];
-      if ($existingFeatured) $current_ids[] = (int)$existingFeatured;
-      if (!empty($existingGallery)) {
-        foreach ((array)$existingGallery as $gid) {
-          $gid = (int)$gid;
-          if ($gid) $current_ids[] = $gid;
-        }
-      }
-      $current_ids = array_values(array_unique(array_filter($current_ids)));
-
-      $current_keys = [];
-      foreach ($current_ids as $aid) {
-        $k = (string) get_post_meta($aid, self::META_SOURCE_KEY, true);
-        if ($k !== '') $current_keys[] = $k;
-      }
-
-      // If none of the current images are importer-managed, treat them as manual and do not override.
-      if (empty($current_keys)) return;
-
-      $incoming_keys = [];
-      foreach ($urls as $u) {
-        $incoming_keys[] = self::build_source_key_from_url($u);
-      }
-      $incoming_keys = array_values(array_unique(array_filter($incoming_keys)));
-
-      // If incoming keys are identical, skip (no need to rewrite).
-      $needs_replace = false;
-      foreach ($incoming_keys as $k) {
-        if (!in_array($k, $current_keys, true)) {
-          $needs_replace = true;
-          break;
-        }
-      }
-      if (!$needs_replace) return;
-    }
+    // only if empty (same as your current behavior)
+    if ($existingFeatured || !empty($existingGallery)) return;
 
     $baseText = self::build_image_base_text($d);
     $fileBase = $baseText !== '' ? $baseText : (string)($d['urun_adi'] ?? 'image');
@@ -1663,54 +1624,6 @@ class HM_Master_Importer {
     return null;
   }
 
-  // Extract "YYYY/MM/file.ext" style relative uploads path from any URL containing /wp-content/uploads/...
-  // Does NOT touch filesystem (safe on locked-down hosting / permissions issues).
-  private static function extract_uploads_rel_from_url(string $url): string {
-    $url = trim($url);
-    if ($url === '') return '';
-
-    $path = (string) parse_url($url, PHP_URL_PATH);
-    if ($path === '') return '';
-
-    $needle = '/wp-content/uploads/';
-    $pos = strpos($path, $needle);
-    if ($pos === false) return '';
-
-    $rel = substr($path, $pos + strlen($needle));
-    if ($rel === false) return '';
-    $rel = ltrim((string)$rel, '/');
-
-    // normalize slashes
-    $rel = str_replace('\\', '/', $rel);
-    return $rel;
-  }
-
-  // Find existing attachment by _wp_attached_file without requiring file_exists()/read access.
-  // This fixes cases where the file is already in Media Library but importer cannot read filesystem.
-  private static function find_attachment_by_attached_file_rel(string $rel_path, string $source_key): int {
-    $rel_path = trim($rel_path);
-    if ($rel_path === '') return 0;
-
-    $q = new WP_Query([
-      'post_type'      => 'attachment',
-      'post_status'    => 'inherit',
-      'posts_per_page' => 1,
-      'fields'         => 'ids',
-      'meta_query'     => [[
-        'key'     => '_wp_attached_file',
-        'value'   => $rel_path,
-        'compare' => '=',
-      ]]
-    ]);
-    if (empty($q->posts[0])) return 0;
-
-    $aid = (int)$q->posts[0];
-    if ($aid && $source_key !== '') {
-      update_post_meta($aid, self::META_SOURCE_KEY, $source_key);
-    }
-    return $aid;
-  }
-
   private static function canonical_url_no_query(string $url): string {
     $url = trim($url);
     if ($url === '') return $url;
@@ -1845,21 +1758,6 @@ class HM_Master_Importer {
     $found = self::find_attachment_by_source_key($source_key);
     if ($found) return $found;
 
-    // NEW FIX: If the image is already in Media Library, match by _wp_attached_file (rel path)
-    // BEFORE any filesystem mapping or download attempts.
-    $rel1 = self::extract_uploads_rel_from_url($canon);
-    if ($rel1 !== '') {
-      $aid1 = self::find_attachment_by_attached_file_rel($rel1, $source_key);
-      if ($aid1) return $aid1;
-    }
-    if ($url !== $canon) {
-      $rel2 = self::extract_uploads_rel_from_url($url);
-      if ($rel2 !== '' && $rel2 !== $rel1) {
-        $aid2 = self::find_attachment_by_attached_file_rel($rel2, $source_key);
-        if ($aid2) return $aid2;
-      }
-    }
-
     $mapped = self::try_map_any_uploads_url_to_local($canon);
     if (!$mapped && $canon !== $url) {
       $mapped = self::try_map_any_uploads_url_to_local($url);
@@ -1910,15 +1808,6 @@ class HM_Master_Importer {
       if (!is_wp_error($tmp)) break;
 
       hm_import_log('IMG TRY FAIL url=' . $url . ' | ' . $tmp->get_error_message());
-
-      // If URL is on our uploads (same-domain / CDN / etc.) and download fails for ANY reason,
-      // fallback to local file mapping (most common fix for webp already present in uploads).
-      $mapped2 = self::try_map_any_uploads_url_to_local($url);
-      if ($mapped2) {
-        hm_import_log('IMG LOCAL FALLBACK due to download failure url=' . $url);
-        $attLocal2 = self::get_or_create_attachment_from_local($mapped2, $source_key);
-        if ($attLocal2) return $attLocal2;
-      }
 
       if (stripos($tmp->get_error_message(), 'forbidden') !== false) {
         $mapped2 = self::try_map_any_uploads_url_to_local($url);
