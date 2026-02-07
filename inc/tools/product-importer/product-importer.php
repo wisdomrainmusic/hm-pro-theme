@@ -1752,7 +1752,15 @@ class HM_Master_Importer {
     $url = self::normalize_csv_url_value($url);
     if ($url === '') return 0;
 
+    // CRITICAL FIX:
+    // If this exact URL already exists in Media Library, use it immediately.
+    // This is the original (working) behavior that was lost.
     $canon = self::canonical_url_no_query($url);
+    $existing = attachment_url_to_postid($canon);
+    if ($existing) {
+      return (int)$existing;
+    }
+
     $source_key = self::build_source_key_from_url($canon);
 
     $found = self::find_attachment_by_source_key($source_key);
