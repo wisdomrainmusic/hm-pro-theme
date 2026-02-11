@@ -5,6 +5,8 @@ get_header( 'shop' );
 
 do_action( 'woocommerce_before_main_content' );
 
+do_action( 'woocommerce_archive_description' );
+
 echo '<div class="hmpro-woo-archive-layout">';
 
 get_sidebar( 'shop' );
