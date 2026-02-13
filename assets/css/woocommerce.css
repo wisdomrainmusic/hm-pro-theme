@@ -543,3 +543,29 @@
 	background: #fff;
 	margin: 10px 0 18px;
 }
+
+/* === HM PVI / Lightbox stacking fix ===
+   Header + mega menu use very high z-index values, causing video lightbox close button
+   to render behind them. Force common lightbox containers + close buttons above the UI.
+*/
+.mfp-bg,
+.mfp-wrap,
+.fancybox-container,
+.pswp,
+.elementor-lightbox,
+.lg-backdrop,
+.lg-outer {
+	z-index: 1000000 !important;
+}
+
+.mfp-close,
+.fancybox-button--close,
+.pswp__button--close,
+.lg-close,
+.elementor-lightbox .dialog-close-button {
+	z-index: 1000001 !important;
+	position: fixed !important;
+	top: 12px !important;
+	right: 12px !important;
+	pointer-events: auto !important;
+}
