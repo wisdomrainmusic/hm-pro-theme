@@ -90,4 +90,20 @@ body.hm-pvi-modal-open {
 	.hm-pvi-modal__dialog {
 		max-height: calc(100vh - 24px - env(safe-area-inset-bottom));
 	}
+
+	/* Portrait video: use height-driven sizing for perfect centering */
+	.hm-pvi-modal.hm-pvi-modal--portrait .hm-pvi-modal__dialog {
+		/* take almost full height (respect safe areas) */
+		height: calc(100vh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+		max-height: calc(100vh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+
+		/* width derived from height for 9:16, capped by viewport width */
+		width: min(92vw, calc((100vh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 9 / 16)) !important;
+		margin: 0 auto !important;
+	}
+
+	.hm-pvi-modal.hm-pvi-modal--portrait .hm-pvi-modal__content {
+		height: 100% !important;
+		aspect-ratio: auto !important; /* height controls sizing now */
+	}
 }
