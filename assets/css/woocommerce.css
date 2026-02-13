@@ -569,3 +569,38 @@
 	right: 12px !important;
 	pointer-events: auto !important;
 }
+
+/* HM PVI: Magnific Popup iframe sizing + close button reliability */
+.mfp-wrap, .mfp-container { pointer-events: auto !important; }
+
+.mfp-close{
+	display:block !important;
+	opacity:1 !important;
+	pointer-events:auto !important;
+	position:fixed !important;
+	top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+	right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+	z-index: 1000002 !important;
+}
+
+.mfp-iframe-holder .mfp-content{
+	max-width: 96vw !important;
+}
+
+@media (max-width: 768px){
+	.mfp-iframe-holder .mfp-content{
+		width: 96vw !important;
+		height: 86vh !important;
+	}
+	.mfp-iframe-holder .mfp-iframe-scaler{
+		width: 96vw !important;
+		height: 86vh !important;
+		max-width: 96vw !important;
+		max-height: 86vh !important;
+		padding-top: 0 !important;
+	}
+	.mfp-iframe-holder .mfp-iframe-scaler iframe{
+		width: 100% !important;
+		height: 100% !important;
+	}
+}
