@@ -141,6 +141,7 @@ require_once HMPRO_PATH . '/inc/core/template-tags.php';
 
 // WooCommerce tweaks (single product gallery UX).
 require_once HMPRO_PATH . '/inc/woocommerce/gallery-tweaks.php';
+require_once HMPRO_PATH . '/inc/woocommerce/hm-pvi-youtube-normalize.php';
 // WooCommerce checkout UX (ship-to-different-address + accordion).
 require_once HMPRO_PATH . '/inc/woocommerce/checkout-tweaks.php';
 // WooCommerce extensions.
